@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavComponent } from './layout/nav/nav.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
@@ -23,6 +23,10 @@ import { StoreService } from './services/store.service';
     main { padding-top: 70px; min-height: 100vh; }
   `]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   store = inject(StoreService);
+
+  ngOnInit() {
+    this.store.init();
+  }
 }

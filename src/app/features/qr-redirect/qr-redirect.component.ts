@@ -69,6 +69,7 @@ export class QrRedirectComponent implements OnInit {
       return;
     }
     this.status.set('redirecting');
+    this.store.incrementQrScans(qr.id);
     setTimeout(() => { window.location.href = qr.destination; }, 800);
   }
 }

@@ -158,8 +158,8 @@ export class QrGeneratorComponent implements AfterViewInit {
   downloadPng() { this.qr.download({ name: 'qrcode-sc', extension: 'png' }); }
   downloadSvg() { this.qr.download({ name: 'qrcode-sc', extension: 'svg' }); }
 
-  saveDynamic() {
-    const id = this.store.createQrCode({
+  async saveDynamic() {
+    const id = await this.store.createQrCode({
       name:        this.qrName() || 'QR Code ' + new Date().toLocaleDateString('fr-FR'),
       destination: this.rawValue(),
       active:      true,
