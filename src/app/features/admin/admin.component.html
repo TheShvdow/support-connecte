@@ -15,6 +15,9 @@
         </button>
       }
       <div class="admin-spacer"></div>
+      <button class="admin-menu-item admin-menu-qr" (click)="store.setAdminTab('qrcodes'); openQrGenerator()">
+        <span class="ico">⚡</span>Nouveau QR
+      </button>
       <a class="admin-menu-item" routerLink="/">
         <span class="ico">🏠</span>{{ t().viewSite }}
       </a>

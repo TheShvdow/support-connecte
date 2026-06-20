@@ -465,6 +465,11 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--cobalt); ou
   &:hover, &.active { background: rgba(255,255,255,.08); color: #fff; }
 }
 .admin-spacer { flex: 1; }
+.admin-menu-qr {
+  background: rgba(35,71,230,.3); color: #fff !important;
+  border: 1.5px solid rgba(35,71,230,.5); margin-bottom: 6px;
+  &:hover { background: rgba(35,71,230,.5) !important; }
+}
 .admin-content { flex: 1; padding: 32px; overflow: auto; background: var(--cream); }
 .admin-header { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; margin-bottom: 28px;
   h2 { font-size: 24px; font-weight: 800; font-family: 'Bricolage Grotesque', sans-serif; }
