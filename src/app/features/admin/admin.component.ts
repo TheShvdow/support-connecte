@@ -18,24 +18,9 @@ import { AdminTab, Demande, Product, Realisation, Contenu, QrCode } from '../../
 })
 export class AdminComponent {
   store = inject(StoreService);
-  auth = inject(AuthService);
+  auth  = inject(AuthService);
   private router = inject(Router);
   t = this.store.t;
-
-  // ── Profile
-  editingName  = signal(false);
-  nameInput    = signal('');
-
-  startEditName() {
-    this.nameInput.set(this.auth.displayName());
-    this.editingName.set(true);
-  }
-
-  async saveName() {
-    const n = this.nameInput().trim();
-    if (n) await this.auth.updateName(n);
-    this.editingName.set(false);
-  }
 
   async logout() {
     await this.auth.logout();
@@ -46,19 +31,74 @@ export class AdminComponent {
   @ViewChild(ModalComponent) modal!: ModalComponent;
 
   tabs = [
-    { key: 'demandes' as AdminTab, ico: '📋' },
-    { key: 'catalogue' as AdminTab, ico: '🛍️' },
-    { key: 'realisations' as AdminTab, ico: '🖼️' },
-    { key: 'contenus' as AdminTab, ico: '✏️' },
-    { key: 'qrcodes' as AdminTab, ico: '📱' },
+    { key: 'demandes'    as AdminTab, ico: '📋' },
+    { key: 'catalogue'   as AdminTab, ico: '🛍️' },
+    { key: 'realisations'as AdminTab, ico: '🖼️' },
+    { key: 'contenus'    as AdminTab, ico: '✏️' },
+    { key: 'qrcodes'     as AdminTab, ico: '📱' },
   ];
 
   tabLabel(key: AdminTab) {
-    if (key === 'demandes') return this.t().adminDemandes;
-    if (key === 'catalogue') return this.t().adminCatalogue;
+    if (key === 'demandes')     return this.t().adminDemandes;
+    if (key === 'catalogue')    return this.t().adminCatalogue;
     if (key === 'realisations') return this.t().adminReal;
-    if (key === 'qrcodes') return 'QR Codes';
+    if (key === 'qrcodes')      return 'QR Codes';
+    if (key === 'profil')       return 'Mon profil';
     return this.t().adminContenus;
+  }
+
+  // ── Profile page
+  profileName        = signal('');
+  profileEmail       = signal('');
+  profilePassword    = signal('');
+  profilePasswordCfm = signal('');
+  profileSaving      = signal(false);
+  profileMsg         = signal<{ type: 'ok' | 'err'; text: string } | null>(null);
+
+  openProfile() {
+    this.profileName.set(this.auth.displayName());
+    this.profileEmail.set(this.auth.userEmail());
+    this.profilePassword.set('');
+    this.profilePasswordCfm.set('');
+    this.profileMsg.set(null);
+    this.store.setAdminTab('profil');
+  }
+
+  async saveProfile() {
+    this.profileSaving.set(true);
+    this.profileMsg.set(null);
+    const errors: string[] = [];
+
+    const name = this.profileName().trim();
+    if (name && name !== this.auth.displayName()) {
+      await this.auth.updateName(name);
+    }
+
+    const email = this.profileEmail().trim();
+    if (email && email !== this.auth.userEmail()) {
+      const r = await this.auth.updateEmail(email);
+      if (r.error) errors.push('Email : ' + r.error);
+    }
+
+    const pwd = this.profilePassword().trim();
+    if (pwd) {
+      if (pwd !== this.profilePasswordCfm()) {
+        errors.push('Les mots de passe ne correspondent pas.');
+      } else if (pwd.length < 6) {
+        errors.push('Le mot de passe doit faire au moins 6 caractères.');
+      } else {
+        const r = await this.auth.updatePassword(pwd);
+        if (r.error) errors.push('Mot de passe : ' + r.error);
+        else { this.profilePassword.set(''); this.profilePasswordCfm.set(''); }
+      }
+    }
+
+    this.profileSaving.set(false);
+    if (errors.length) {
+      this.profileMsg.set({ type: 'err', text: errors.join(' ') });
+    } else {
+      this.profileMsg.set({ type: 'ok', text: 'Profil mis à jour ✓' });
+    }
   }
 
   // ── QR view state
@@ -69,7 +109,7 @@ export class AdminComponent {
   openQrDetail(qr: QrCode) { this.showQrGenerator.set(false); this.selectedQr.set(qr); }
   backToQrList()    { this.showQrGenerator.set(false); this.selectedQr.set(null); }
 
-  // ── QR management
+  // ── Filtered lists
   get filteredQrCodes() {
     const q = this.store.adminSearch().toLowerCase();
     return !q ? this.store.qrCodes()
@@ -117,17 +157,17 @@ export class AdminComponent {
   get stats() {
     const d = this.store.demandes();
     return [
-      { n: d.filter(x => x.statut === 'Nouveau').length, l: 'Nouvelles', sub: 'Ce mois' },
-      { n: d.filter(x => x.statut === 'En cours').length, l: 'En cours', sub: 'Actif' },
-      { n: d.filter(x => x.statut === 'Livré').length, l: 'Livrées', sub: 'Total' },
-      { n: d.length, l: 'Total', sub: 'Toutes statuts' },
+      { n: d.filter(x => x.statut === 'Nouveau').length,  l: 'Nouvelles',  sub: 'Ce mois' },
+      { n: d.filter(x => x.statut === 'En cours').length, l: 'En cours',   sub: 'Actif' },
+      { n: d.filter(x => x.statut === 'Livré').length,    l: 'Livrées',    sub: 'Total' },
+      { n: d.length,                                       l: 'Total',      sub: 'Toutes statuts' },
     ];
   }
 
-  openDemande(d: Demande) { this.panel.openWith(d); }
-  openProductModal(p?: Product) { this.modal.openProduct(p); }
+  openDemande(d: Demande)        { this.panel.openWith(d); }
+  openProductModal(p?: Product)  { this.modal.openProduct(p); }
   openRealModal(r?: Realisation) { this.modal.openRealisation(r); }
-  openContenuModal(c: Contenu) { this.modal.openContenu(c); }
+  openContenuModal(c: Contenu)   { this.modal.openContenu(c); }
 
   deleteProduct(id: string, event: Event) {
     event.stopPropagation();

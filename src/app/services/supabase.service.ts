@@ -48,6 +48,9 @@ export class SupabaseService {
   async updateUserMeta(meta: { display_name?: string }) {
     return this.client.auth.updateUser({ data: meta });
   }
+  async updateUser(data: { email?: string; password?: string }) {
+    return this.client.auth.updateUser(data);
+  }
 
   // ── QR Codes
   async getQrCodes()     { return this.client.from('qr_codes').select('*').order('created_at', { ascending: false }); }

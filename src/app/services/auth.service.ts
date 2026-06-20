@@ -44,6 +44,17 @@ export class AuthService {
     await this.sb.updateUserMeta({ display_name: name });
   }
 
+  async updateEmail(email: string): Promise<{ error: string | null }> {
+    const { error } = await this.sb.updateUser({ email });
+    if (!error) this.userEmail.set(email);
+    return { error: error?.message ?? null };
+  }
+
+  async updatePassword(password: string): Promise<{ error: string | null }> {
+    const { error } = await this.sb.updateUser({ password });
+    return { error: error?.message ?? null };
+  }
+
   async logout() {
     await this.sb.signOut();
     this.isLoggedIn.set(false);

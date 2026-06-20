@@ -2,35 +2,16 @@
 
   <!-- Sidebar -->
   <div class="admin-sidebar">
-    <!-- <div class="admin-brand">
-      <div class="logo">
-        <div class="logo-icon"><div class="logo-ring"></div><div class="logo-dot"></div></div>
-        <div class="logo-text">Support<span>Connecté</span></div>
-      </div>
-    </div> -->
 
-    <!-- Profil -->
-    <div class="admin-profile">
+    <!-- Profil cliquable -->
+    <div class="admin-profile" [class.active]="store.adminTab() === 'profil'" (click)="openProfile()" title="Modifier mon profil">
       <div class="admin-avatar">{{ auth.initials() }}</div>
       <div class="admin-profile-info">
-        @if (!editingName()) {
-          <div class="admin-profile-name" (click)="startEditName()" title="Cliquer pour modifier">
-            {{ auth.displayName() }}
-          </div>
-        } @else {
-          <input
-            class="admin-name-input"
-            [ngModel]="nameInput()"
-            (ngModelChange)="nameInput.set($event)"
-            (keydown.enter)="saveName()"
-            (keydown.escape)="editingName.set(false)"
-            (blur)="saveName()"
-            autofocus>
-        }
+        <div class="admin-profile-name">{{ auth.displayName() }}</div>
         @if (auth.userEmail()) {
           <div class="admin-profile-email">{{ auth.userEmail() }}</div>
         }
-        <div class="admin-profile-role">Administrateur</div>
+        <div class="admin-profile-role">Administrateur · Modifier →</div>
       </div>
     </div>
 
@@ -55,6 +36,63 @@
 
   <!-- Content -->
   <div class="admin-content">
+
+    <!-- PROFIL -->
+    @if (store.adminTab() === 'profil') {
+      <div class="admin-header">
+        <h2>Mon profil</h2>
+      </div>
+      <div class="profil-page">
+        <!-- Avatar -->
+        <div class="profil-avatar-block">
+          <div class="profil-avatar">{{ auth.initials() }}</div>
+          <div class="profil-avatar-hint">Les initiales sont générées depuis votre nom d'affichage</div>
+        </div>
+
+        <div class="profil-form">
+
+          <!-- Section identité -->
+          <div class="profil-section">
+            <div class="profil-section-title">Identité</div>
+            <div class="profil-field">
+              <label class="field-label-sm">Nom d'affichage</label>
+              <input class="field-input" [ngModel]="profileName()" (ngModelChange)="profileName.set($event)" placeholder="Votre nom">
+            </div>
+            <div class="profil-field">
+              <label class="field-label-sm">Adresse email</label>
+              <input class="field-input" type="email" [ngModel]="profileEmail()" (ngModelChange)="profileEmail.set($event)" placeholder="votre@email.com">
+              <p class="profil-hint">Un email de confirmation sera envoyé à la nouvelle adresse.</p>
+            </div>
+          </div>
+
+          <!-- Section sécurité -->
+          <div class="profil-section">
+            <div class="profil-section-title">Sécurité</div>
+            <div class="profil-field">
+              <label class="field-label-sm">Nouveau mot de passe</label>
+              <input class="field-input" type="password" [ngModel]="profilePassword()" (ngModelChange)="profilePassword.set($event)" placeholder="Laisser vide pour ne pas modifier" autocomplete="new-password">
+            </div>
+            <div class="profil-field">
+              <label class="field-label-sm">Confirmer le mot de passe</label>
+              <input class="field-input" type="password" [ngModel]="profilePasswordCfm()" (ngModelChange)="profilePasswordCfm.set($event)" placeholder="Répétez le mot de passe" autocomplete="new-password">
+            </div>
+          </div>
+
+          <!-- Message retour -->
+          @if (profileMsg()) {
+            <div class="profil-msg" [class.profil-msg-ok]="profileMsg()!.type === 'ok'" [class.profil-msg-err]="profileMsg()!.type === 'err'">
+              {{ profileMsg()!.text }}
+            </div>
+          }
+
+          <div class="profil-actions">
+            <button class="cta-primary" (click)="saveProfile()" [disabled]="profileSaving()">
+              {{ profileSaving() ? 'Enregistrement…' : 'Enregistrer les modifications' }}
+            </button>
+          </div>
+        </div>
+      </div>
+    }
 
     <!-- DEMANDES -->
     @if (store.adminTab() === 'demandes') {
@@ -187,7 +225,6 @@
     @if (store.adminTab() === 'qrcodes') {
 
       @if (showQrGenerator()) {
-        <!-- Générateur intégré -->
         <div class="admin-header">
           <div style="display:flex;align-items:center;gap:12px">
             <button class="action-btn" style="font-size:13px;padding:6px 12px;border:1.5px solid rgba(15,23,41,.15);border-radius:8px" (click)="backToQrList()">← Retour</button>
@@ -197,11 +234,9 @@
         <app-qr-generator [embedded]="true" />
 
       } @else if (selectedQr()) {
-        <!-- Détail QR -->
         <app-qr-detail [qr]="selectedQr()!" (closed)="backToQrList()" />
 
       } @else {
-        <!-- Liste des QR codes -->
         <div class="admin-header">
           <div>
             <h2>QR Codes dynamiques <span class="count">({{ store.qrCodes().length }})</span></h2>
@@ -211,7 +246,6 @@
             <button class="admin-add-btn" (click)="openQrGenerator()">+ Nouveau QR</button>
           </div>
         </div>
-
         <div class="qr-admin-grid">
           @for (qr of filteredQrCodes; track qr.id) {
             <div class="qr-admin-card qr-card-clickable" [class.qr-inactive]="!qr.active" [class.qr-expired]="isExpired(qr)" (click)="openQrDetail(qr)">
@@ -230,12 +264,11 @@
             </div>
           }
         </div>
-      } <!-- fin @else liste -->
+      }
     }
 
   </div>
 </div>
 
-<!-- Global panel & modal for admin -->
 <app-slide-panel />
 <app-modal />

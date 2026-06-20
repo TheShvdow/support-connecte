@@ -95,5 +95,5 @@ export interface QrCode {
 }
 
 export type DevisType = 'impression' | 'qr' | 'digital' | null;
-export type AdminTab = 'demandes' | 'catalogue' | 'realisations' | 'contenus' | 'qrcodes';
+export type AdminTab = 'demandes' | 'catalogue' | 'realisations' | 'contenus' | 'qrcodes' | 'profil';
 export type Lang = 'fr' | 'en';
