@@ -29,7 +29,7 @@ export class SupabaseService {
   async getDemandes()    { return this.client.from('demandes').select('*').order('created_at', { ascending: false }); }
   async upsertDemande(d: any)  { return this.client.from('demandes').upsert(d); }
   async updateDemande(id: number, statut: string, notes: string) {
-    return this.client.from('demandes').update<Database['public']['Tables']['demandes']['Update']>({ statut, notes }).eq('id', id);
+    return this.client.from('demandes').update({ statut, notes }).eq('id', id);
   }
   async deleteDemande(id: number) { return this.client.from('demandes').delete().eq('id', id); }
 
