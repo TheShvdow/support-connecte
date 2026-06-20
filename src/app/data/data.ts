@@ -54,7 +54,7 @@ export const STR = {
     call: 'Appel', quickMsg: 'Message rapide', quoteForm: 'Formulaire devis', replyTime: 'Réponse sous 24 h',
   },
   en: {
-    navHome: 'Home', navProducts: 'Catalogue', navWork: 'Work', navQuote: 'Quote', navAdmin: 'Admin', navQr: 'QR Code',
+    navHome: 'Home', navProducts: 'Catalogue', navWork: 'Work', navQuote: 'Quote', navAdmin: 'Admin', navQr: 'QR Code',navRealisations: 'Realisations',
     ctaQuote: 'Request a quote', ctaExplore: 'Explore products',
     eyebrow: 'Visual & digital communication',
     heroA: ['From print to digital,', 'all connected.'],
