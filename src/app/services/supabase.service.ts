@@ -10,7 +10,13 @@ export class SupabaseService {
   constructor() {
     this.client = createClient<Database>(
       environment.supabaseUrl,
-      environment.supabaseKey
+      environment.supabaseKey,
+      {
+        global: {
+          headers: { 'X-Client-Info': 'support-connecte' },
+        },
+        auth: { persistSession: false },
+      }
     );
   }
 
