@@ -48,7 +48,6 @@ export class NavComponent {
     return [
       { path: '/', label: this.t().navHome },
       { path: '/catalogue', label: this.t().navProducts },
-      { path: '/realisations', label: this.t().navWork },
       { path: '/devis', label: this.t().navQuote },
     ];
   }

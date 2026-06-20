@@ -132,33 +132,6 @@
   </div>
 </div>
 
-<!-- Réalisations teaser -->
-<div class="works-section">
-  <div class="container">
-    <div class="works-header">
-      <div>
-        <h2>{{ t().realTitle }}</h2>
-        <p>{{ t().realSub }}</p>
-      </div>
-      <a class="cta-outline-sm" routerLink="/realisations">{{ t().allWork }}</a>
-    </div>
-    <div class="works-grid">
-      @for (r of realisations; track r.id) {
-        <a class="work-card" routerLink="/realisations">
-          <div class="work-thumb">
-            @if (r.img) { <img [src]="r.img" [alt]="store.lang() === 'fr' ? r.fr : r.en"> }
-            <div class="work-badge">
-              <span class="badge-dot" [style.background]="r.color"></span>{{ r.cat }}
-            </div>
-            @if (!r.img) { <div class="work-ph">◆</div> }
-          </div>
-          <div class="work-info">{{ store.lang() === 'fr' ? r.fr : r.en }}</div>
-        </a>
-      }
-    </div>
-  </div>
-</div>
-
 <!-- Process -->
 <div class="process-section">
   <div class="process-inner">

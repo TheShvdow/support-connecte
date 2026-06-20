@@ -30,8 +30,6 @@ export class HomeComponent {
     { n: 4, key: 'step4' as const, dk: 'step4d' as const },
   ];
 
-  get realisations() { return this.store.realisations().slice(0, 6); }
-
   poleText(pole: typeof POLES[number]) {
     return pole[this.store.lang() as 'fr' | 'en'];
   }

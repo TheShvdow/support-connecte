@@ -18,7 +18,6 @@ import { StoreService } from '../../services/store.service';
             <h4>{{ t().footerLinks }}</h4>
             <a routerLink="/">{{ t().navHome }}</a>
             <a routerLink="/catalogue">{{ t().navProducts }}</a>
-            <a routerLink="/realisations">{{ t().navWork }}</a>
             <a routerLink="/devis">{{ t().navQuote }}</a>
           </div>
           <div class="footer-col">
