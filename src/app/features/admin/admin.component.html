@@ -3,7 +3,10 @@
   <!-- Sidebar -->
   <div class="admin-sidebar">
     <div class="admin-brand">
-      <div class="logo" style="color:#fff"><span class="logo-dot"></span>Support Connecté</div>
+      <div class="logo">
+        <div class="logo-icon"><div class="logo-ring"></div><div class="logo-dot"></div></div>
+        <div class="logo-text">Support<span>Connecté</span></div>
+      </div>
     </div>
     <div class="admin-menu">
       @for (tab of tabs; track tab.key) {
@@ -11,7 +14,7 @@
           <span class="ico">{{ tab.ico }}</span>{{ tabLabel(tab.key) }}
         </button>
       }
-      <div style="flex:1"></div>
+      <div class="admin-spacer"></div>
       <a class="admin-menu-item" routerLink="/">
         <span class="ico">🏠</span>{{ t().viewSite }}
       </a>
@@ -24,15 +27,17 @@
     <!-- DEMANDES -->
     @if (store.adminTab() === 'demandes') {
       <div class="admin-header">
-        <h2>{{ t().adminDemandes }} <span class="count">({{ store.demandes().length }})</span></h2>
+        <div>
+          <h2>{{ t().adminDemandes }} <span class="count">({{ store.demandes().length }})</span></h2>
+        </div>
         <input class="admin-search" [placeholder]="t().search" [value]="store.adminSearch()" (input)="store.setAdminSearch($any($event.target).value)">
       </div>
       <div class="admin-stats">
         @for (st of stats; track st.l) {
           <div class="admin-stat-card">
-            <div class="admin-stat-num">{{ st.n }}</div>
-            <div class="admin-stat-label">{{ st.l }}</div>
-            <div class="admin-stat-delta">{{ st.sub }}</div>
+            <div class="stat-n">{{ st.n }}</div>
+            <div class="stat-l">{{ st.l }}</div>
+            <div class="stat-d">{{ st.sub }}</div>
           </div>
         }
       </div>
@@ -47,7 +52,7 @@
                 <td class="ref-col">{{ d.ref }}</td>
                 <td><strong>{{ d.client }}</strong></td>
                 <td class="muted">{{ d.detail }}</td>
-                <td><span class="type-tag">{{ d.type }}</span></td>
+                <td class="muted">{{ d.type }}</td>
                 <td class="muted">{{ d.date }}</td>
                 <td><span class="badge" [ngClass]="badgeClass(d.statut)">{{ d.statut }}</span></td>
               </tr>
@@ -60,7 +65,9 @@
     <!-- CATALOGUE -->
     @if (store.adminTab() === 'catalogue') {
       <div class="admin-header">
-        <h2>{{ t().adminCatalogue }} <span class="count">({{ store.products().length }})</span></h2>
+        <div>
+          <h2>{{ t().adminCatalogue }} <span class="count">({{ store.products().length }})</span></h2>
+        </div>
         <div class="header-actions">
           <input class="admin-search" [placeholder]="t().search" [value]="store.adminSearch()" (input)="store.setAdminSearch($any($event.target).value)">
           <button class="admin-add-btn" (click)="openProductModal()">{{ t().addProduct }}</button>
@@ -91,7 +98,9 @@
     <!-- REALISATIONS -->
     @if (store.adminTab() === 'realisations') {
       <div class="admin-header">
-        <h2>{{ t().adminReal }} <span class="count">({{ store.realisations().length }})</span></h2>
+        <div>
+          <h2>{{ t().adminReal }} <span class="count">({{ store.realisations().length }})</span></h2>
+        </div>
         <div class="header-actions">
           <input class="admin-search" [placeholder]="t().search" [value]="store.adminSearch()" (input)="store.setAdminSearch($any($event.target).value)">
           <button class="admin-add-btn" (click)="openRealModal()">{{ t().addReal }}</button>
@@ -125,7 +134,9 @@
     <!-- CONTENUS -->
     @if (store.adminTab() === 'contenus') {
       <div class="admin-header">
-        <h2>{{ t().adminContenus }}</h2>
+        <div>
+          <h2>{{ t().adminContenus }}</h2>
+        </div>
       </div>
       <div class="contenus-list">
         @for (c of store.contenus(); track c.id) {
@@ -146,4 +157,3 @@
 <!-- Global panel & modal for admin -->
 <app-slide-panel />
 <app-modal />
-

@@ -20,7 +20,7 @@ import { StoreService } from './services/store.service';
     <app-modal />
   `,
   styles: [`
-    main { padding-top: 64px; min-height: 100vh; }
+    main { padding-top: 70px; min-height: 100vh; }
   `]
 })
 export class AppComponent {

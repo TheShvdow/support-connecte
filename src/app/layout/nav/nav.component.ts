@@ -10,7 +10,8 @@ import { StoreService } from '../../services/store.service';
     <nav id="nav">
       <div class="nav-inner">
         <a class="logo" routerLink="/">
-          <span class="logo-dot"></span>Support Connecté
+          <div class="logo-icon"><div class="logo-ring"></div><div class="logo-dot"></div></div>
+          <div class="logo-text">Support<span>Connecté</span></div>
         </a>
         <div class="nav-links">
           @for (link of links; track link.path) {

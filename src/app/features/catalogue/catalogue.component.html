@@ -1,6 +1,7 @@
-<div class="section">
-  <p class="section-label">Catalogue</p>
-  <h2 class="section-title">{{ store.lang() === 'fr' ? 'Nos produits & services' : 'Our products & services' }}</h2>
+<div class="catalogue-wrap">
+  <span class="cat-badge"><span class="dot"></span>Catalogue</span>
+  <h1 class="cat-h1">{{ store.lang() === 'fr' ? 'Nos produits & services' : 'Our products & services' }}</h1>
+  <p class="cat-sub">{{ store.lang() === 'fr' ? 'Découvrez l\'ensemble de nos solutions de communication.' : 'Discover all our communication solutions.' }}</p>
 
   <div class="filter-bar">
     @for (cat of categories(); track cat) {
@@ -8,17 +9,22 @@
         {{ cat }}
       </button>
     }
+    <span class="cat-count">{{ filtered().length }} {{ store.lang() === 'fr' ? 'produit(s)' : 'product(s)' }}</span>
   </div>
 
   <div class="products-grid">
     @for (p of filtered(); track p.id) {
       <a class="product-card" [routerLink]="['/catalogue', p.id]">
-        <div class="product-thumb" [style.background]="p.color">{{ p.ico }}</div>
+        <div class="product-thumb-btn">
+          <span class="tag-badge">{{ store.lang() === 'fr' ? p.cat : p.catEn }}</span>
+          <span class="ph">{{ p.ico }}</span>
+        </div>
         <div class="product-body">
-          <div class="product-cat">{{ store.lang() === 'fr' ? p.cat : p.catEn }}</div>
-          <div class="product-name">{{ store.lang() === 'fr' ? p.fr : p.en }}</div>
-          <div class="product-desc">{{ store.lang() === 'fr' ? p.d : p.dEn }}</div>
-          <div class="product-price">{{ store.lang() === 'fr' ? p.price : p.priceEn }}</div>
+          <h3>{{ store.lang() === 'fr' ? p.fr : p.en }}</h3>
+          <p>{{ store.lang() === 'fr' ? p.d : p.dEn }}</p>
+          <div class="product-footer">
+            <span class="product-price">{{ store.lang() === 'fr' ? p.price : p.priceEn }}</span>
+          </div>
         </div>
       </a>
     }

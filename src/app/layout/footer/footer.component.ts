@@ -11,7 +11,7 @@ import { StoreService } from '../../services/store.service';
       <div class="footer-inner">
         <div class="footer-grid">
           <div class="footer-brand">
-            <h3><span class="logo-dot"></span> Support Connecté</h3>
+            <h3>Support<span style="color:var(--cobalt)">Connecté</span></h3>
             <p>{{ t().footerDesc }}</p>
           </div>
           <div class="footer-col">

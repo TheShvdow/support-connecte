@@ -1,32 +1,46 @@
 @if (product(); as p) {
-  <div class="product-detail">
-    <a class="back-btn" routerLink="/catalogue">← {{ t().backToCatalogue }}</a>
+  <div class="product-detail-wrap">
+    <button class="back-btn" routerLink="/catalogue">← {{ t().backToCatalogue }}</button>
     <div class="product-detail-grid">
-      <div class="product-gallery" [style.background]="p.color">{{ p.ico }}</div>
-      <div class="product-detail-info">
-        <div class="product-cat-label">{{ store.lang() === 'fr' ? p.cat : p.catEn }}</div>
+      <div>
+        <div class="product-main-img">{{ p.ico }}</div>
+        <div class="product-thumbs">
+          <div class="thumb">01</div>
+          <div class="thumb">02</div>
+          <div class="thumb">03</div>
+        </div>
+      </div>
+      <div class="product-info">
+        <div class="product-tag">{{ store.lang() === 'fr' ? p.cat : p.catEn }}</div>
         <h1>{{ store.lang() === 'fr' ? p.fr : p.en }}</h1>
-        <div class="product-detail-price">{{ store.lang() === 'fr' ? p.price : p.priceEn }}</div>
-        <p class="product-detail-desc">{{ store.lang() === 'fr' ? p.d : p.dEn }}</p>
+        <p class="product-long">{{ store.lang() === 'fr' ? p.d : p.dEn }}</p>
+        <div class="product-price-row">
+          <span class="from">{{ store.lang() === 'fr' ? 'À partir de' : 'From' }}</span>
+          <span class="price-val">{{ store.lang() === 'fr' ? p.price : p.priceEn }}</span>
+        </div>
         @if (p.avantages.length) {
-          <div class="avantages">
-            <h3>{{ t().advantages }}</h3>
-            @for (a of p.avantages; track a) {
-              <div class="avantage-item">{{ a }}</div>
-            }
+          <div class="advantages">
+            <div class="adv-label">{{ t().advantages }}</div>
+            <div class="adv-list">
+              @for (a of p.avantages; track a) {
+                <div class="adv-item">
+                  <span class="check">✓</span>{{ a }}
+                </div>
+              }
+            </div>
           </div>
         }
-        <div class="detail-actions">
+        <div class="product-actions">
           <a class="cta-primary" routerLink="/devis">{{ t().ctaQuote }}</a>
-          <a class="cta-outline" routerLink="/catalogue">{{ t().back }}</a>
+          <a class="cta-whatsapp">💬 WhatsApp</a>
         </div>
       </div>
     </div>
   </div>
 } @else {
-  <div class="section" style="text-align:center;padding-top:80px">
-    <p>Produit introuvable.</p>
-    <a class="cta-outline" routerLink="/catalogue" style="margin-top:16px;display:inline-block">Retour au catalogue</a>
+  <div class="product-detail-wrap" style="text-align:center;padding-top:80px">
+    <p>{{ store.lang() === 'fr' ? 'Produit introuvable.' : 'Product not found.' }}</p>
+    <a class="cta-outline" routerLink="/catalogue" style="margin-top:16px;display:inline-block">{{ t().backToCatalogue }}</a>
   </div>
 }
 

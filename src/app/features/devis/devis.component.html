@@ -1,13 +1,17 @@
 <!-- Confirmation -->
 @if (store.submitted()) {
   <div class="devis-wrap">
-    <div class="devis-card">
-      <div class="confirm-wrap">
-        <div class="confirm-icon">✓</div>
-        <h2>{{ t().confirmTitle }}</h2>
-        <p class="confirm-ref">{{ store.devisRef() }}</p>
-        <p class="confirm-sub">{{ t().confirmSub }}</p>
+    <div class="confirm-wrap">
+      <div class="confirm-circle">✓</div>
+      <h1>{{ t().confirmTitle }}</h1>
+      <div class="confirm-ref-box">
+        <span class="ref-label">{{ store.lang() === 'fr' ? 'Référence' : 'Reference' }}</span>
+        <span class="ref-val">{{ store.devisRef() }}</span>
+      </div>
+      <p class="confirm-sub">{{ t().confirmSub }}</p>
+      <div class="confirm-actions">
         <button class="cta-primary" (click)="store.resetDevis()">{{ t().newRequest }}</button>
+        <a class="cta-outline" routerLink="/">{{ store.lang() === 'fr' ? 'Accueil' : 'Home' }}</a>
       </div>
     </div>
   </div>
@@ -19,245 +23,247 @@
   <!-- Progress -->
   <div class="devis-progress">
     @for (step of steps; track step; let i = $index) {
-      <div class="prog-step">
-        <div style="display:flex;flex-direction:column;align-items:center">
-          <div class="prog-dot" [class.done]="i < store.devisStep()" [class.active]="i === store.devisStep()" [class.todo]="i > store.devisStep()">
-            {{ i < store.devisStep() ? '✓' : i + 1 }}
-          </div>
-          <div class="prog-label">{{ t()[step] }}</div>
-        </div>
-        @if (i < steps.length - 1) {
-          <div class="prog-line" [class.done]="i < store.devisStep()"></div>
-        }
+      @if (i > 0) { <div class="prog-sep"></div> }
+      <div class="prog-item"
+        [class.active]="i === store.devisStep()"
+        [class.done]="i < store.devisStep()"
+        [class.todo]="i > store.devisStep()">
+        {{ i < store.devisStep() ? '✓' : t()[step] }}
       </div>
     }
   </div>
 
-  <div class="devis-card">
+  <!-- Step 0: Type -->
+  @if (store.devisStep() === 0) {
+    <h1 class="devis-h1">{{ t().devisTitle }}</h1>
+    <p class="devis-lead">{{ t().chooseType }}</p>
+    <div class="type-grid">
+      <button class="type-card" [class.selected]="store.devisType() === 'impression'" (click)="store.setDevisType('impression')">
+        <div class="type-icon" style="background:rgba(35,71,230,.1)">🖨️</div>
+        <h3>{{ t().impTitle }}</h3>
+        <p>{{ store.lang() === 'fr' ? 'Bâches, enseignes, stickers…' : 'Banners, signs, stickers…' }}</p>
+      </button>
+      <button class="type-card" [class.selected]="store.devisType() === 'qr'" (click)="store.setDevisType('qr')">
+        <div class="type-icon" style="background:rgba(15,181,126,.1)">📱</div>
+        <h3>{{ t().qrTitle }}</h3>
+        <p>{{ store.lang() === 'fr' ? 'QR menus, NFC, digital…' : 'QR menus, NFC, digital…' }}</p>
+      </button>
+      <button class="type-card" [class.selected]="store.devisType() === 'digital'" (click)="store.setDevisType('digital')">
+        <div class="type-icon" style="background:rgba(124,58,237,.1)">✦</div>
+        <h3>{{ t().digTitle }}</h3>
+        <p>{{ store.lang() === 'fr' ? 'Logo, web, vidéo, réseaux…' : 'Logo, web, video, social…' }}</p>
+      </button>
+    </div>
+    <div class="devis-nav">
+      <button class="cta-primary" (click)="next()">{{ t().next }} →</button>
+    </div>
+  }
 
-    <!-- Step 0: Type -->
-    @if (store.devisStep() === 0) {
-      <h2>{{ t().devisTitle }}</h2>
-      <p class="sub">{{ store.lang() === 'fr' ? 'Sélectionnez votre type de projet' : 'Select your project type' }}</p>
-      <div class="type-grid">
-        <button class="type-btn" [class.selected]="store.devisType() === 'impression'" (click)="store.setDevisType('impression')">
-          <div class="ico">🖨️</div>
-          <div class="lbl">{{ t().impTitle }}</div>
-          <div class="desc">{{ store.lang() === 'fr' ? 'Bâches, enseignes, stickers…' : 'Banners, signs, stickers…' }}</div>
-        </button>
-        <button class="type-btn" [class.selected]="store.devisType() === 'qr'" (click)="store.setDevisType('qr')">
-          <div class="ico">📱</div>
-          <div class="lbl">{{ t().qrTitle }}</div>
-          <div class="desc">{{ store.lang() === 'fr' ? 'QR menus, NFC, digital…' : 'QR menus, NFC, digital…' }}</div>
-        </button>
-        <button class="type-btn" [class.selected]="store.devisType() === 'digital'" (click)="store.setDevisType('digital')">
-          <div class="ico">✦</div>
-          <div class="lbl">{{ t().digTitle }}</div>
-          <div class="desc">{{ store.lang() === 'fr' ? 'Logo, web, vidéo, réseaux…' : 'Logo, web, video, social…' }}</div>
-        </button>
-      </div>
-      <div class="devis-nav">
-        <button class="btn-next" (click)="next()">{{ t().next }}</button>
-      </div>
-    }
-
-    <!-- Step 1: Details -->
-    @if (store.devisStep() === 1) {
+  <!-- Step 1: Détails -->
+  @if (store.devisStep() === 1) {
+    <div class="config-card">
 
       <!-- Impression -->
       @if (store.devisType() === 'impression') {
-        <h2>{{ t().impTitle }}</h2><p class="sub">{{ t().impSub }}</p>
         <div class="field-group">
-          <label>{{ t().desired }}</label>
-          <div class="chips-wrap">
-            @for (o of opts.imprProduits; track o) {
-              <button class="chip" [class.on]="store.impression().produit === o" (click)="store.updateImpression({produit: o})">{{ o }}</button>
-            }
+          <div>
+            <label class="field-label-sm">{{ t().desired }}</label>
+            <div class="chips-wrap">
+              @for (o of opts.imprProduits; track o) {
+                <button class="chip" [class.on]="store.impression().produit === o" (click)="store.updateImpression({produit: o})">{{ o }}</button>
+              }
+            </div>
           </div>
-        </div>
-        <div class="field-row">
-          <div class="field-group">
-            <label>{{ t().width }}</label>
-            <input type="number" placeholder="100" [value]="store.impression().largeur" (input)="store.updateImpression({largeur: $any($event.target).value})">
+          <div class="field-row-2">
+            <div>
+              <label class="field-label-sm">{{ t().width }}</label>
+              <input class="field-input" type="number" placeholder="100" [value]="store.impression().largeur" (input)="store.updateImpression({largeur: $any($event.target).value})">
+            </div>
+            <div>
+              <label class="field-label-sm">{{ t().height }}</label>
+              <input class="field-input" type="number" placeholder="200" [value]="store.impression().hauteur" (input)="store.updateImpression({hauteur: $any($event.target).value})">
+            </div>
           </div>
-          <div class="field-group">
-            <label>{{ t().height }}</label>
-            <input type="number" placeholder="200" [value]="store.impression().hauteur" (input)="store.updateImpression({hauteur: $any($event.target).value})">
+          <div class="field-row-2">
+            <div>
+              <label class="field-label-sm">{{ t().quantity }}</label>
+              <input class="field-input" type="number" min="1" [value]="store.impression().quantite" (input)="store.updateImpression({quantite: $any($event.target).value})">
+            </div>
+            <div>
+              <label class="field-label-sm">Support</label>
+              <select class="field-input" [value]="store.impression().support" (change)="store.updateImpression({support: $any($event.target).value})">
+                <option value="">{{ t().choose }}</option>
+                @for (o of opts.supports; track o) { <option [value]="o">{{ o }}</option> }
+              </select>
+            </div>
           </div>
-        </div>
-        <div class="field-row">
-          <div class="field-group">
-            <label>{{ t().quantity }}</label>
-            <input type="number" min="1" [value]="store.impression().quantite" (input)="store.updateImpression({quantite: $any($event.target).value})">
-          </div>
-          <div class="field-group">
-            <label>Support</label>
-            <select [value]="store.impression().support" (change)="store.updateImpression({support: $any($event.target).value})">
-              <option value="">{{ t().choose }}</option>
-              @for (o of opts.supports; track o) { <option [value]="o">{{ o }}</option> }
-            </select>
-          </div>
-        </div>
-        <div class="field-group">
-          <label>{{ t().finishes }}</label>
-          <div class="chips-wrap">
-            @for (o of opts.finitions; track o) {
-              <button class="chip" [class.on]="store.impression().finitions.includes(o)" (click)="toggleFinition(o)">{{ o }}</button>
-            }
+          <div>
+            <label class="field-label-sm">{{ t().finishes }}</label>
+            <div class="chips-wrap">
+              @for (o of opts.finitions; track o) {
+                <button class="chip" [class.on]="store.impression().finitions.includes(o)" (click)="toggleFinition(o)">{{ o }}</button>
+              }
+            </div>
           </div>
         </div>
       }
 
       <!-- QR -->
       @if (store.devisType() === 'qr') {
-        <h2>{{ t().qrTitle }}</h2><p class="sub">{{ t().qrSub }}</p>
         <div class="field-group">
-          <label>{{ store.lang() === 'fr' ? 'Type de solution' : 'Solution type' }}</label>
-          <div class="chips-wrap">
-            @for (o of opts.qrTypes; track o) {
-              <button class="chip" [class.on]="store.qr().type === o" (click)="store.updateQr({type: o})">{{ o }}</button>
-            }
+          <div>
+            <label class="field-label-sm">{{ store.lang() === 'fr' ? 'Type de solution' : 'Solution type' }}</label>
+            <div class="chips-wrap">
+              @for (o of opts.qrTypes; track o) {
+                <button class="chip" [class.on]="store.qr().type === o" (click)="store.updateQr({type: o})">{{ o }}</button>
+              }
+            </div>
           </div>
-        </div>
-        <div class="field-group">
-          <label>{{ t().use }}</label>
-          <input [placeholder]="store.lang() === 'fr' ? 'Ex: restaurant 80 couverts…' : 'E.g. restaurant 80 covers…'" [value]="store.qr().usage" (input)="store.updateQr({usage: $any($event.target).value})">
-        </div>
-        <div class="field-group">
-          <label>{{ t().currentUrl }}</label>
-          <input placeholder="https://" [value]="store.qr().url" (input)="store.updateQr({url: $any($event.target).value})">
-        </div>
-        <div class="field-group">
-          <label>{{ t().users }}</label>
-          <input [placeholder]="store.lang() === 'fr' ? 'Ex: 200/semaine' : 'E.g. 200/week'" [value]="store.qr().users" (input)="store.updateQr({users: $any($event.target).value})">
+          <div>
+            <label class="field-label-sm">{{ t().use }}</label>
+            <input class="field-input" [placeholder]="store.lang() === 'fr' ? 'Ex: restaurant 80 couverts…' : 'E.g. restaurant 80 covers…'" [value]="store.qr().usage" (input)="store.updateQr({usage: $any($event.target).value})">
+          </div>
+          <div>
+            <label class="field-label-sm">{{ t().currentUrl }}</label>
+            <input class="field-input" placeholder="https://" [value]="store.qr().url" (input)="store.updateQr({url: $any($event.target).value})">
+          </div>
+          <div>
+            <label class="field-label-sm">{{ t().users }}</label>
+            <input class="field-input" [placeholder]="store.lang() === 'fr' ? 'Ex: 200/semaine' : 'E.g. 200/week'" [value]="store.qr().users" (input)="store.updateQr({users: $any($event.target).value})">
+          </div>
         </div>
       }
 
       <!-- Digital -->
       @if (store.devisType() === 'digital') {
-        <h2>{{ t().digTitle }}</h2><p class="sub">{{ t().digSub }}</p>
         <div class="field-group">
-          <label>{{ t().service }}</label>
-          <div class="chips-wrap">
-            @for (o of opts.prestations; track o) {
-              <button class="chip" [class.on]="store.digital().prestation === o" (click)="store.updateDigital({prestation: o})">{{ o }}</button>
-            }
-          </div>
-        </div>
-        <div class="field-group">
-          <label>Secteur</label>
-          <div class="chips-wrap">
-            @for (o of opts.secteurs; track o) {
-              <button class="chip" [class.on]="store.digital().secteur === o" (click)="store.updateDigital({secteur: o})">{{ o }}</button>
-            }
-          </div>
-        </div>
-        <div class="field-group">
-          <label>{{ t().budget }}</label>
-          <div class="chips-wrap">
-            @for (o of opts.budgets; track o) {
-              <button class="chip" [class.on]="store.digital().budget === o" (click)="store.updateDigital({budget: o})">{{ o }}</button>
-            }
-          </div>
-        </div>
-        <div class="field-group">
-          <label>{{ t().needDesc }}</label>
-          <textarea rows="3" [placeholder]="store.lang() === 'fr' ? 'Ex: refonte identité visuelle…' : 'E.g. brand refresh…'" [value]="store.digital().besoin" (input)="store.updateDigital({besoin: $any($event.target).value})"></textarea>
-        </div>
-      }
-
-      <div class="devis-nav">
-        <button class="btn-prev" (click)="prev()">{{ t().prev }}</button>
-        <button class="btn-next" (click)="next()">{{ t().next }}</button>
-      </div>
-    }
-
-    <!-- Step 2: Files & Contact -->
-    @if (store.devisStep() === 2) {
-      <h2>{{ t().contactDetails }}</h2>
-      <p class="sub">{{ store.lang() === 'fr' ? 'Ajoutez vos fichiers et vos coordonnées.' : 'Add your files and contact details.' }}</p>
-
-      <div class="upload-zone" (click)="fileInput.click()">
-        <div class="upload-icon">📁</div>
-        <div class="upload-label">{{ t().addFiles }}</div>
-        <div class="upload-sub">{{ t().addFilesSub }}</div>
-      </div>
-      <input #fileInput type="file" multiple style="display:none" (change)="handleFiles($event)">
-
-      @if (store.files().length) {
-        <div class="files-list">
-          @for (f of store.files(); track f; let i = $index) {
-            <div class="file-item">
-              <span class="file-item-name">📎 {{ f }}</span>
-              <span class="file-item-remove" (click)="store.removeFile(i)">×</span>
+          <div>
+            <label class="field-label-sm">{{ t().service }}</label>
+            <div class="chips-wrap">
+              @for (o of opts.prestations; track o) {
+                <button class="chip" [class.on]="store.digital().prestation === o" (click)="store.updateDigital({prestation: o})">{{ o }}</button>
+              }
             </div>
-          }
+          </div>
+          <div>
+            <label class="field-label-sm">Secteur</label>
+            <div class="chips-wrap">
+              @for (o of opts.secteurs; track o) {
+                <button class="chip" [class.on]="store.digital().secteur === o" (click)="store.updateDigital({secteur: o})">{{ o }}</button>
+              }
+            </div>
+          </div>
+          <div>
+            <label class="field-label-sm">{{ t().budget }}</label>
+            <div class="chips-wrap">
+              @for (o of opts.budgets; track o) {
+                <button class="chip" [class.on]="store.digital().budget === o" (click)="store.updateDigital({budget: o})">{{ o }}</button>
+              }
+            </div>
+          </div>
+          <div>
+            <label class="field-label-sm">{{ t().needDesc }}</label>
+            <textarea class="field-input" rows="3" [placeholder]="store.lang() === 'fr' ? 'Ex: refonte identité visuelle…' : 'E.g. brand refresh…'" [value]="store.digital().besoin" (input)="store.updateDigital({besoin: $any($event.target).value})"></textarea>
+          </div>
         </div>
       }
 
-      <div class="divider"></div>
+    </div>
+    <div class="devis-nav">
+      <button class="cta-outline" (click)="prev()">← {{ t().prev }}</button>
+      <button class="cta-primary" (click)="next()">{{ t().next }} →</button>
+    </div>
+  }
 
-      <div class="field-row">
-        <div class="field-group">
-          <label>{{ t().fullName }} *</label>
-          <input [value]="store.contact().nom" (input)="store.updateContact({nom: $any($event.target).value})" [placeholder]="store.lang() === 'fr' ? 'Prénom Nom' : 'First Last'">
+  <!-- Step 2: Fichiers & Contact -->
+  @if (store.devisStep() === 2) {
+    <div class="files-section">
+      <div class="upload-card">
+        <div class="upload-title">{{ store.lang() === 'fr' ? 'Fichiers' : 'Files' }}</div>
+        <div class="upload-hint">{{ t().addFilesSub }}</div>
+        <div class="upload-label" (click)="fileInput.click()">
+          <span class="upload-ico">📁</span>
+          <span class="upload-main">{{ t().addFiles }}</span>
+          <span class="upload-sub">{{ t().addFilesSub }}</span>
         </div>
+        <input #fileInput type="file" multiple style="display:none" (change)="handleFiles($event)">
+        @if (store.files().length) {
+          <div class="file-list">
+            @for (f of store.files(); track f; let i = $index) {
+              <div class="file-item">
+                <span class="file-ico">📎</span>
+                <span class="file-name">{{ f }}</span>
+                <button class="file-remove" (click)="store.removeFile(i)">×</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+      <div class="contact-card-form">
+        <div class="form-title">{{ t().contactDetails }}</div>
         <div class="field-group">
-          <label>{{ t().company }}</label>
-          <input [value]="store.contact().entreprise" (input)="store.updateContact({entreprise: $any($event.target).value})">
+          <div class="field-row-2">
+            <div>
+              <label class="field-label-sm">{{ t().fullName }} *</label>
+              <input class="field-input" [value]="store.contact().nom" (input)="store.updateContact({nom: $any($event.target).value})" [placeholder]="store.lang() === 'fr' ? 'Prénom Nom' : 'First Last'">
+            </div>
+            <div>
+              <label class="field-label-sm">{{ t().company }}</label>
+              <input class="field-input" [value]="store.contact().entreprise" (input)="store.updateContact({entreprise: $any($event.target).value})">
+            </div>
+          </div>
+          <div class="field-row-2">
+            <div>
+              <label class="field-label-sm">Email *</label>
+              <input class="field-input" type="email" [value]="store.contact().email" (input)="store.updateContact({email: $any($event.target).value})" placeholder="vous&#64;exemple.com">
+            </div>
+            <div>
+              <label class="field-label-sm">{{ t().phone }}</label>
+              <input class="field-input" type="tel" [value]="store.contact().tel" (input)="store.updateContact({tel: $any($event.target).value})" placeholder="+33…">
+            </div>
+          </div>
         </div>
       </div>
-      <div class="field-row">
-        <div class="field-group">
-          <label>Email *</label>
-          <input type="email" [value]="store.contact().email" (input)="store.updateContact({email: $any($event.target).value})" placeholder="vous@exemple.com">
-        </div>
-        <div class="field-group">
-          <label>{{ t().phone }}</label>
-          <input type="tel" [value]="store.contact().tel" (input)="store.updateContact({tel: $any($event.target).value})" placeholder="+33…">
-        </div>
-      </div>
+    </div>
+    <div class="devis-nav">
+      <button class="cta-outline" (click)="prev()">← {{ t().prev }}</button>
+      <button class="cta-primary" (click)="next()">{{ t().next }} →</button>
+    </div>
+  }
 
-      <div class="devis-nav">
-        <button class="btn-prev" (click)="prev()">{{ t().prev }}</button>
-        <button class="btn-next" (click)="next()">{{ t().next }}</button>
-      </div>
-    }
-
-    <!-- Step 3: Recap -->
-    @if (store.devisStep() === 3) {
+  <!-- Step 3: Récapitulatif -->
+  @if (store.devisStep() === 3) {
+    <div class="recap-section">
       <h2>{{ t().recapTitle }}</h2>
-      <p class="sub">{{ t().reviewBefore }}</p>
-
+      <p class="recap-hint">{{ t().reviewBefore }}</p>
       <div class="recap-row" style="font-weight:700">
-        <span>{{ t().projectType }}</span><span>{{ typeLabel }}</span>
+        <span class="rk">{{ t().projectType }}</span><span>{{ typeLabel }}</span>
       </div>
       @for (row of recap; track row[0]) {
-        <div class="recap-row"><span>{{ row[0] }}</span><span>{{ row[1] }}</span></div>
+        <div class="recap-row"><span class="rk">{{ row[0] }}</span><span>{{ row[1] }}</span></div>
       }
       @if (store.contact().nom) {
         <div class="recap-row">
-          <span>{{ t().contact }}</span>
+          <span class="rk">{{ t().contact }}</span>
           <span>{{ store.contact().nom }}{{ store.contact().entreprise ? ' — ' + store.contact().entreprise : '' }}</span>
         </div>
       }
       @if (store.contact().email) {
-        <div class="recap-row"><span>Email</span><span>{{ store.contact().email }}</span></div>
+        <div class="recap-row"><span class="rk">Email</span><span>{{ store.contact().email }}</span></div>
       }
       @if (store.files().length) {
         <div class="recap-row">
-          <span>{{ t().files }}</span>
+          <span class="rk">{{ t().files }}</span>
           <span>{{ store.files().length }} fichier{{ store.files().length > 1 ? 's' : '' }}</span>
         </div>
       }
+    </div>
+    <div class="devis-nav">
+      <button class="cta-outline" (click)="prev()">← {{ t().prev }}</button>
+      <button class="cta-primary" (click)="store.submitDevis()">{{ t().submit }}</button>
+    </div>
+  }
 
-      <div class="devis-nav">
-        <button class="btn-prev" (click)="prev()">{{ t().prev }}</button>
-        <button class="btn-next" (click)="store.submitDevis()">{{ t().submit }}</button>
-      </div>
-    }
-
-  </div>
 </div>
 
 <app-footer />

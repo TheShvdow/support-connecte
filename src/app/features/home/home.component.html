@@ -1,106 +1,102 @@
-<!-- Hero variant switcher -->
-<div class="hero-switcher">
-  @for (v of variants; track v) {
-    <button [class.active]="store.heroVariant() === v" (click)="store.setHeroVariant(v)">
-      {{ v === 0 ? t().dir0 : v === 1 ? t().dir1 : t().dir2 }}
-    </button>
-  }
-</div>
-
-<!-- Hero A — Bold -->
-@if (store.heroVariant() === 0) {
-  <div class="hero-bold">
-    <div class="hero-bold-left">
-      <p class="eyebrow">{{ t().eyebrow }}</p>
-      <h1>
-        <span>{{ t().heroA[0] }}</span><br>
-        <span class="text-cobalt">{{ t().heroA[1] }}</span>
-      </h1>
-      <p>{{ t().heroSub }}</p>
-      <div class="gap-12">
-        <a class="cta-primary" routerLink="/devis">{{ t().ctaQuote }}</a>
-        <a class="cta-outline" routerLink="/catalogue">{{ t().ctaExplore }}</a>
-      </div>
-    </div>
-    <div class="hero-bold-right">
-      <div class="hero-grid">
-        @for (pole of poles; track pole.key) {
-          <a class="hero-card" routerLink="/catalogue">
-            <div class="hero-card-bg" [style.background]="pole.color"></div>
-            <span class="hero-card-ico">{{ pole.ico }}</span>
-            <span>{{ poleText(pole).t }}</span>
-            <small>{{ pole.tags[0] }}</small>
-          </a>
-        }
-      </div>
-    </div>
-  </div>
-}
-
-<!-- Hero B — Corporate -->
-@if (store.heroVariant() === 1) {
-  <div class="hero-corp-wrap">
-    <div class="hero-corp">
-      <p class="eyebrow">{{ t().eyebrow }}</p>
-      <h1>{{ t().heroB[0] }}<br>{{ t().heroB[1] }}</h1>
-      <p>{{ t().heroSubB }}</p>
-      <div class="gap-12" style="justify-content:center">
-        <a class="cta-primary" routerLink="/devis">{{ t().ctaQuote }}</a>
-        <a class="cta-outline" routerLink="/catalogue">{{ t().ctaExplore }}</a>
-      </div>
-      <div class="hero-corp-logos">
-        @for (pole of poles; track pole.key) {
-          <span>{{ pole[store.lang()].t.split(' ')[0].toUpperCase() }}</span>
-        }
-      </div>
-    </div>
-  </div>
-}
-
-<!-- Hero C — Editorial -->
-@if (store.heroVariant() === 2) {
-  <div class="hero-edit-wrap">
-    <div class="hero-edit">
-      <span class="hero-edit-tag">{{ t().eyebrow }}</span>
-      <h1>{{ t().heroC[0] }}<br>{{ t().heroC[1] }}</h1>
-      <div class="hero-edit-row">
-        <div class="hero-edit-counter">05</div>
-        <div>
-          <p>{{ t().heroSub }}</p>
-          <div class="gap-12" style="margin-top:20px">
-            <a class="cta-primary" routerLink="/devis">{{ t().ctaQuote }}</a>
-            <a class="cta-outline-light" routerLink="/catalogue">{{ t().ctaExplore }}</a>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-}
-
-<!-- Pôles -->
-<div class="section">
-  <p class="section-label">{{ t().eyebrow }}</p>
-  <h2 class="section-title">{{ t().polesTitle }}</h2>
-  <p class="section-sub">{{ t().polesSub }}</p>
-  <div class="poles-grid">
-    @for (pole of poles; track pole.key) {
-      <a class="pole-card" routerLink="/catalogue">
-        <div class="pole-icon" [style.background]="pole.tint" [style.color]="pole.color">{{ pole.ico }}</div>
-        <h3>{{ poleText(pole).t }}</h3>
-        <p>{{ poleText(pole).d }}</p>
-        <div class="pole-tags">
-          @for (tag of pole.tags; track tag) {
-            <span class="pole-tag" [style.background]="pole.tint" [style.color]="pole.color">{{ tag }}</span>
-          }
-        </div>
-      </a>
+<!-- Hero Switcher -->
+<div class="hero-switcher-wrap">
+  <div class="hero-switcher">
+    <span class="seg-label">Direction</span>
+    @for (v of variants; track v) {
+      <button [class.active]="store.heroVariant() === v" (click)="store.setHeroVariant(v)">
+        {{ v === 0 ? t().dir0 : v === 1 ? t().dir1 : t().dir2 }}
+      </button>
     }
   </div>
 </div>
 
-<!-- Stats -->
-<div class="stats-band">
-  <div class="stats-inner">
+<div class="hero-section">
+  <div class="container">
+
+    <!-- Hero A — Bold -->
+    @if (store.heroVariant() === 0) {
+      <div class="hero-bold">
+        <div>
+          <div class="hero-eyebrow"><span class="dot"></span>{{ t().eyebrow }}</div>
+          <h1 class="hero-h1">
+            {{ t().heroA[0] }}<br>
+            <span class="cobalt">{{ t().heroA[1] }}</span>
+          </h1>
+          <p class="hero-sub">{{ t().heroSub }}</p>
+          <div class="hero-actions">
+            <a class="cta-primary" routerLink="/devis">{{ t().ctaQuote }}</a>
+            <a class="cta-outline" routerLink="/catalogue">{{ t().ctaExplore }}</a>
+          </div>
+        </div>
+        <div class="hero-a-grid">
+          <div class="card-tall">
+            <span class="card-label">{{ poleText(poles[0]).t }}</span>
+            <span class="card-title">{{ poles[0].tags[0] }}<br>{{ poles[0].tags[1] }}</span>
+          </div>
+          <div class="card-sm qr">
+            <span class="card-label">{{ poleText(poles[1]).t }}</span>
+            <span class="card-title">{{ poles[1].tags[0] }}</span>
+          </div>
+          <div class="card-sm digital">
+            <span class="card-label">{{ poleText(poles[2]).t }}</span>
+            <span class="card-title">{{ poles[2].tags[0] }}</span>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Hero B — Corporate -->
+    @if (store.heroVariant() === 1) {
+      <div class="hero-b-wrap">
+        <div class="hero-eyebrow-plain">{{ t().eyebrow }}</div>
+        <h1 class="hero-h1-center">{{ t().heroB[0] }}<br><span class="cobalt">{{ t().heroB[1] }}</span></h1>
+        <p class="hero-sub-center">{{ t().heroSubB }}</p>
+        <div class="hero-b-actions">
+          <a class="cta-primary" routerLink="/devis">{{ t().ctaQuote }}</a>
+          <a class="cta-outline" routerLink="/catalogue">{{ t().ctaExplore }}</a>
+        </div>
+        <div class="hero-b-image">
+          <div class="ph-inner">
+            <div class="ph-icon">✦</div>
+            <span>Support Connecté</span>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- Hero C — Éditorial -->
+    @if (store.heroVariant() === 2) {
+      <div class="hero-c-grid">
+        <div>
+          <div class="hero-c-eyebrow">{{ t().eyebrow }}</div>
+          <h1 class="hero-c-h1">
+            <span>{{ t().heroC[0] }}</span>
+            <span class="cobalt">{{ t().heroC[1] }}</span>
+          </h1>
+          <p class="hero-c-sub">{{ t().heroSub }}</p>
+          <div class="gap-12" style="margin-top:28px">
+            <a class="cta-primary" routerLink="/devis">{{ t().ctaQuote }}</a>
+            <a class="cta-outline" routerLink="/catalogue">{{ t().ctaExplore }}</a>
+          </div>
+        </div>
+        <div class="hero-c-list">
+          @for (pole of poles; track pole.key; let i = $index) {
+            <a class="pole-row" routerLink="/catalogue">
+              <span class="pole-num">0{{ i + 1 }}</span>
+              <span class="pole-name">{{ poleText(pole).t }}</span>
+              <span class="pole-color-dot" [style.background]="pole.color"></span>
+            </a>
+          }
+        </div>
+      </div>
+    }
+
+  </div>
+</div>
+
+<!-- Trust Strip -->
+<div class="trust-strip">
+  <div class="trust-inner">
     @for (st of stats; track st.num) {
       <div>
         <div class="stat-num">{{ st.num }}</div>
@@ -110,68 +106,107 @@
   </div>
 </div>
 
-<!-- Réalisations teaser -->
-<div class="section">
-  <p class="section-label">Portfolio</p>
-  <h2 class="section-title">{{ t().realTitle }}</h2>
-  <p class="section-sub">{{ t().realSub }}</p>
-  <div class="real-grid">
-    @for (r of realisations; track r.id) {
-      <a class="real-card" routerLink="/realisations">
-        <div class="real-card-bg" [style.background]="r.color"></div>
-        <div class="real-card-info">
-          <h4>{{ store.lang() === 'fr' ? r.fr : r.en }}</h4>
-          <span>{{ r.cat }} · {{ r.year }}</span>
-        </div>
-      </a>
-    }
+<!-- Pôles -->
+<div class="poles-section">
+  <div class="container">
+    <div class="section-head">
+      <h2>{{ t().polesTitle }}</h2>
+      <p>{{ t().polesSub }}</p>
+    </div>
+    <div class="poles-grid">
+      @for (pole of poles; track pole.key; let i = $index) {
+        <a class="pole-card" routerLink="/catalogue">
+          <div class="pole-card-header">
+            <div class="pole-num-icon" [style.background]="pole.tint" [style.color]="pole.color">0{{ i + 1 }}</div>
+            <div class="pole-arrow">→</div>
+          </div>
+          <div class="pole-content">
+            <h3>{{ poleText(pole).t }}</h3>
+            <p>{{ poleText(pole).d }}</p>
+          </div>
+          <div class="pole-tags">
+            @for (tag of pole.tags; track tag) {
+              <span>{{ tag }}</span>
+            }
+          </div>
+        </a>
+      }
+    </div>
   </div>
-  <div style="text-align:center;margin-top:32px">
-    <a class="cta-outline" routerLink="/realisations">{{ t().allWork }}</a>
+</div>
+
+<!-- Réalisations teaser -->
+<div class="works-section">
+  <div class="container">
+    <div class="works-header">
+      <div>
+        <h2>{{ t().realTitle }}</h2>
+        <p>{{ t().realSub }}</p>
+      </div>
+      <a class="cta-outline-sm" routerLink="/realisations">{{ t().allWork }}</a>
+    </div>
+    <div class="works-grid">
+      @for (r of realisations; track r.id) {
+        <a class="work-card" routerLink="/realisations">
+          <div class="work-thumb" [style.background]="r.color + '18'">
+            <div class="work-badge">
+              <span class="badge-dot" [style.background]="r.color"></span>{{ r.cat }}
+            </div>
+            <div class="work-ph">◆</div>
+          </div>
+          <div class="work-info">{{ store.lang() === 'fr' ? r.fr : r.en }}</div>
+        </a>
+      }
+    </div>
   </div>
 </div>
 
 <!-- Process -->
-<div class="process-band">
+<div class="process-section">
   <div class="process-inner">
-    <p class="section-label" style="color:rgba(255,255,255,.4)">{{ t().processTitle }}</p>
-    <h2 class="section-title" style="color:#fff">{{ t().processTitle }}</h2>
-    <div class="process-steps">
+    <h2>{{ t().processTitle }}</h2>
+    <div class="process-grid">
       @for (step of steps; track step.n) {
         <div class="process-step">
           <div class="step-num">0{{ step.n }}</div>
-          <div class="step-title" style="color:#fff">{{ t()[step.key] }}</div>
-          <div class="step-desc">{{ t()[step.dk] }}</div>
+          <div class="step-divider"></div>
+          <h3>{{ t()[step.key] }}</h3>
+          <p>{{ t()[step.dk] }}</p>
         </div>
       }
     </div>
   </div>
 </div>
 
-<!-- Contact channels -->
-<div class="section">
-  <h2 class="section-title">{{ t().contactTitle }}</h2>
-  <div class="channels-grid">
-    <div class="channel-card">
-      <div class="channel-icon">📞</div>
-      <div class="channel-title">{{ t().call }}</div>
-      <div class="channel-sub">+33 5 00 00 00 00</div>
+<!-- Contact -->
+<div class="contact-section">
+  <div class="container">
+    <div class="contact-card">
+      <h2>{{ t().contactTitle }}</h2>
+      <p>{{ store.lang() === 'fr' ? 'Choisissez le canal qui vous convient.' : 'Choose the channel that works for you.' }}</p>
+      <div class="contact-grid">
+        <div class="ch">
+          <span class="ch-ico">📞</span>
+          <span class="ch-label">{{ t().call }}</span>
+          <span>+33 5 00 00 00 00</span>
+        </div>
+        <div class="ch wa">
+          <span class="ch-ico">💬</span>
+          <span class="ch-label">WhatsApp</span>
+          <span>{{ t().quickMsg }}</span>
+        </div>
+        <div class="ch">
+          <span class="ch-ico">✉️</span>
+          <span class="ch-label">Email</span>
+          <span>contact&#64;supportconnecte.fr</span>
+        </div>
+        <a class="ch dark" routerLink="/devis">
+          <span class="ch-ico">📋</span>
+          <span class="ch-label">{{ t().quoteForm }}</span>
+          <span>{{ t().replyTime }}</span>
+        </a>
+      </div>
     </div>
-    <div class="channel-card">
-      <div class="channel-icon">💬</div>
-      <div class="channel-title">WhatsApp</div>
-      <div class="channel-sub">{{ t().quickMsg }}</div>
-    </div>
-    <div class="channel-card">
-      <div class="channel-icon">✉️</div>
-      <div class="channel-title">Email</div>
-      <div class="channel-sub">contact&#64;supportconnecte.fr</div>
-    </div>
-    <a class="channel-card" routerLink="/devis">
-      <div class="channel-icon">📋</div>
-      <div class="channel-title">{{ t().quoteForm }}</div>
-      <div class="channel-sub">{{ t().replyTime }}</div>
-    </a>
   </div>
 </div>
 
