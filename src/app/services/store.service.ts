@@ -59,19 +59,19 @@ export class StoreService {
       ]);
 
       if (p.error) console.error('[Supabase] products:', p.error.message);
-      else if (p.data?.length) this.products.set(p.data.map(this.mapProduct));
+      else { console.log(`[Supabase] products: ${p.data?.length ?? 0} ligne(s)`); if (p.data?.length) this.products.set(p.data.map(this.mapProduct)); }
 
       if (r.error) console.error('[Supabase] realisations:', r.error.message);
-      else if (r.data?.length) this.realisations.set(r.data.map(this.mapRealisation));
+      else { console.log(`[Supabase] realisations: ${r.data?.length ?? 0} ligne(s)`); if (r.data?.length) this.realisations.set(r.data.map(this.mapRealisation)); }
 
       if (d.error) console.error('[Supabase] demandes:', d.error.message);
-      else if (d.data?.length) this.demandes.set(d.data.map(this.mapDemande));
+      else { console.log(`[Supabase] demandes: ${d.data?.length ?? 0} ligne(s)`); if (d.data?.length) this.demandes.set(d.data.map(this.mapDemande)); }
 
       if (c.error) console.error('[Supabase] contenus:', c.error.message);
-      else if (c.data?.length) this.contenus.set(c.data.map(this.mapContenu));
+      else { console.log(`[Supabase] contenus: ${c.data?.length ?? 0} ligne(s)`); if (c.data?.length) this.contenus.set(c.data.map(this.mapContenu)); }
 
       if (q.error) console.error('[Supabase] qr_codes:', q.error.message);
-      else if (q.data?.length) this.qrCodes.set(q.data.map(this.mapQrCode));
+      else { console.log(`[Supabase] qr_codes: ${q.data?.length ?? 0} ligne(s)`); if (q.data?.length) this.qrCodes.set(q.data.map(this.mapQrCode)); }
 
     } catch (e) {
       console.error('[Supabase] init failed:', e);
@@ -181,7 +181,7 @@ export class StoreService {
   // ────────────────────────────────────────────────────────────
   async saveDemande(id: number, statut: string, notes: string) {
     this.demandes.set(this.demandes().map(d => d.id === id ? { ...d, statut, notes } : d));
-    await this.dbWrite(this.sb.upsertDemande({ id, statut, notes } as any), 'saveDemande');
+    await this.dbWrite(this.sb.updateDemande(id, statut, notes), 'saveDemande');
     this.toast(this.t().toastSaved);
   }
 
