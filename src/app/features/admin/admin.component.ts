@@ -1,8 +1,9 @@
 import { Component, inject, ViewChild } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { StoreService } from '../../services/store.service';
+import { AuthService } from '../../services/auth.service';
 import { SlidePanelComponent } from '../../shared/components/slide-panel/slide-panel.component';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { AdminTab, Demande, Product, Realisation, Contenu } from '../../models/types';
@@ -15,7 +16,14 @@ import { AdminTab, Demande, Product, Realisation, Contenu } from '../../models/t
 })
 export class AdminComponent {
   store = inject(StoreService);
+  auth = inject(AuthService);
+  private router = inject(Router);
   t = this.store.t;
+
+  logout() {
+    this.auth.logout();
+    this.router.navigate(['/login']);
+  }
 
   @ViewChild(SlidePanelComponent) panel!: SlidePanelComponent;
   @ViewChild(ModalComponent) modal!: ModalComponent;

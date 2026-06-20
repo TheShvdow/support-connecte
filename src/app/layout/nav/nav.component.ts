@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { StoreService } from '../../services/store.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-nav',
@@ -14,12 +15,14 @@ import { StoreService } from '../../services/store.service';
           <div class="logo-text">Support<span>Connecté</span></div>
         </a>
         <div class="nav-links">
-          @for (link of links; track link.path) {
+          @for (link of publicLinks; track link.path) {
             <a [routerLink]="link.path" routerLinkActive="active" [routerLinkActiveOptions]="{exact: link.path === '/'}">
-              {{ link.path === '/' ? t().navHome : link.path === '/catalogue' ? t().navProducts
-                : link.path === '/realisations' ? t().navWork : link.path === '/devis' ? t().navQuote : t().navAdmin }}
+              {{ link.label }}
             </a>
           }
+          <a [routerLink]="auth.isLoggedIn() ? '/admin' : '/login'" routerLinkActive="active">
+            {{ t().navAdmin }}{{ auth.isLoggedIn() ? '' : ' 🔒' }}
+          </a>
         </div>
         <div class="nav-right">
           <button class="lang-btn" (click)="store.toggleLang()">{{ store.lang() === 'fr' ? 'EN' : 'FR' }}</button>
@@ -31,23 +34,28 @@ import { StoreService } from '../../services/store.service';
       </div>
     </nav>
     <div class="mobile-nav" [class.open]="mobileOpen()">
-      @for (link of links; track link.path) {
-        <a [routerLink]="link.path" (click)="mobileOpen.set(false)">
-          {{ link.path === '/' ? t().navHome : link.path === '/catalogue' ? t().navProducts
-            : link.path === '/realisations' ? t().navWork : link.path === '/devis' ? t().navQuote : t().navAdmin }}
-        </a>
+      @for (link of publicLinks; track link.path) {
+        <a [routerLink]="link.path" (click)="mobileOpen.set(false)">{{ link.label }}</a>
       }
+      <a [routerLink]="auth.isLoggedIn() ? '/admin' : '/login'" (click)="mobileOpen.set(false)">
+        {{ t().navAdmin }}{{ auth.isLoggedIn() ? '' : ' 🔒' }}
+      </a>
       <a routerLink="/devis" class="mobile-cta" (click)="mobileOpen.set(false)">{{ t().ctaQuote }}</a>
     </div>
   `
 })
 export class NavComponent {
   store = inject(StoreService);
+  auth = inject(AuthService);
   t = this.store.t;
   mobileOpen = signal(false);
 
-  links = [
-    { path: '/' }, { path: '/catalogue' }, { path: '/realisations' },
-    { path: '/devis' }, { path: '/admin' }
-  ];
+  get publicLinks() {
+    return [
+      { path: '/', label: this.t().navHome },
+      { path: '/catalogue', label: this.t().navProducts },
+      { path: '/realisations', label: this.t().navWork },
+      { path: '/devis', label: this.t().navQuote },
+    ];
+  }
 }
