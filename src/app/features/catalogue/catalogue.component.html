@@ -16,8 +16,9 @@
     @for (p of filtered(); track p.id) {
       <a class="product-card" [routerLink]="['/catalogue', p.id]">
         <div class="product-thumb-btn">
+          @if (p.img) { <img [src]="p.img" [alt]="store.lang() === 'fr' ? p.fr : p.en"> }
           <span class="tag-badge">{{ store.lang() === 'fr' ? p.cat : p.catEn }}</span>
-          <span class="ph">{{ p.ico }}</span>
+          @if (!p.img) { <span class="ph">{{ p.ico }}</span> }
         </div>
         <div class="product-body">
           <h3>{{ store.lang() === 'fr' ? p.fr : p.en }}</h3>

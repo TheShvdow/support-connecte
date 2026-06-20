@@ -11,6 +11,7 @@ export interface Product {
   color: string;
   ico: string;
   avantages: string[];
+  img?: string;
 }
 
 export interface Realisation {
@@ -20,6 +21,7 @@ export interface Realisation {
   cat: string;
   color: string;
   year: string;
+  img?: string;
 }
 
 export interface Demande {

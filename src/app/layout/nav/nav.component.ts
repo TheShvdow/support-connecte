@@ -20,9 +20,6 @@ import { AuthService } from '../../services/auth.service';
               {{ link.label }}
             </a>
           }
-          <a [routerLink]="auth.isLoggedIn() ? '/admin' : '/login'" routerLinkActive="active">
-            {{ t().navAdmin }}{{ auth.isLoggedIn() ? '' : ' 🔒' }}
-          </a>
         </div>
         <div class="nav-right">
           <button class="lang-btn" (click)="store.toggleLang()">{{ store.lang() === 'fr' ? 'EN' : 'FR' }}</button>
@@ -37,9 +34,6 @@ import { AuthService } from '../../services/auth.service';
       @for (link of publicLinks; track link.path) {
         <a [routerLink]="link.path" (click)="mobileOpen.set(false)">{{ link.label }}</a>
       }
-      <a [routerLink]="auth.isLoggedIn() ? '/admin' : '/login'" (click)="mobileOpen.set(false)">
-        {{ t().navAdmin }}{{ auth.isLoggedIn() ? '' : ' 🔒' }}
-      </a>
       <a routerLink="/devis" class="mobile-cta" (click)="mobileOpen.set(false)">{{ t().ctaQuote }}</a>
     </div>
   `

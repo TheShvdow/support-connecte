@@ -56,10 +56,7 @@
           <a class="cta-outline" routerLink="/catalogue">{{ t().ctaExplore }}</a>
         </div>
         <div class="hero-b-image">
-          <div class="ph-inner">
-            <div class="ph-icon">✦</div>
-            <span>Support Connecté</span>
-          </div>
+          <img src="https://picsum.photos/seed/hero-sc/1200/500" alt="Support Connecté">
         </div>
       </div>
     }
@@ -148,11 +145,12 @@
     <div class="works-grid">
       @for (r of realisations; track r.id) {
         <a class="work-card" routerLink="/realisations">
-          <div class="work-thumb" [style.background]="r.color + '18'">
+          <div class="work-thumb">
+            @if (r.img) { <img [src]="r.img" [alt]="store.lang() === 'fr' ? r.fr : r.en"> }
             <div class="work-badge">
               <span class="badge-dot" [style.background]="r.color"></span>{{ r.cat }}
             </div>
-            <div class="work-ph">◆</div>
+            @if (!r.img) { <div class="work-ph">◆</div> }
           </div>
           <div class="work-info">{{ store.lang() === 'fr' ? r.fr : r.en }}</div>
         </a>

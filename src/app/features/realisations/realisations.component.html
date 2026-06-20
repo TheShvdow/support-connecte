@@ -13,11 +13,12 @@
   <div class="real-grid-full">
     @for (r of filtered(); track r.id) {
       <div class="work-card">
-        <div class="work-thumb" [style.background]="r.color + '18'">
+        <div class="work-thumb">
+          @if (r.img) { <img [src]="r.img" [alt]="store.lang() === 'fr' ? r.fr : r.en"> }
           <div class="work-badge">
             <span class="badge-dot" [style.background]="r.color"></span>{{ r.cat }}
           </div>
-          <div class="work-ph">◆</div>
+          @if (!r.img) { <div class="work-ph">◆</div> }
         </div>
         <div class="work-info">{{ store.lang() === 'fr' ? r.fr : r.en }}</div>
       </div>

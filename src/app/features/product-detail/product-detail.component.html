@@ -3,7 +3,10 @@
     <button class="back-btn" routerLink="/catalogue">← {{ t().backToCatalogue }}</button>
     <div class="product-detail-grid">
       <div>
-        <div class="product-main-img">{{ p.ico }}</div>
+        <div class="product-main-img">
+          @if (p.img) { <img [src]="p.img" [alt]="store.lang() === 'fr' ? p.fr : p.en"> }
+          @else { <span class="ph-ico">{{ p.ico }}</span> }
+        </div>
         <div class="product-thumbs">
           <div class="thumb">01</div>
           <div class="thumb">02</div>
