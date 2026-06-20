@@ -4,7 +4,7 @@ import { SupabaseService } from './supabase.service';
 import {
   Product, Realisation, Demande, Contenu, QrCode,
   ImpressionForm, QrForm, DigitalForm, ContactForm,
-  DevisType, AdminTab, Lang
+  DevisType, AdminTab, Lang, ContactBody
 } from '../models/types';
 
 @Injectable({ providedIn: 'root' })
@@ -242,7 +242,7 @@ export class StoreService {
   // ────────────────────────────────────────────────────────────
   // CONTENUS
   // ────────────────────────────────────────────────────────────
-  async updateContenu(id: string, body: string | object) {
+  async updateContenu(id: string, body: string | ContactBody) {
     this.contenus.set(this.contenus().map(c => c.id === id ? { ...c, body } : c));
     const updated = this.contenus().find(c => c.id === id)!;
     await this.dbWrite(this.sb.upsertContenu(updated), 'updateContenu');
