@@ -48,7 +48,9 @@
           </div>
           <div class="qrd-meta-item">
             <div class="qrd-meta-label">Scans</div>
-            <div class="qrd-meta-value qrd-scans">{{ qr().scans }}</div>
+            <div class="qrd-meta-value qrd-scans">
+              {{ qr().scans }}{{ qr().maxScans ? ' / ' + qr().maxScans : '' }}
+            </div>
           </div>
           <div class="qrd-meta-item">
             <div class="qrd-meta-label">Créé le</div>
@@ -83,6 +85,10 @@
 
           <label class="field-label-sm" style="margin-top:14px">Date d'expiration (optionnel)</label>
           <input class="field-input" type="date" [min]="todayMin" [ngModel]="editExpiry()" (ngModelChange)="editExpiry.set($event)">
+
+          <label class="field-label-sm" style="margin-top:14px">Limite de scans (optionnel)</label>
+          <input class="field-input" type="number" min="1" placeholder="Illimité"
+            [ngModel]="editMaxScans()" (ngModelChange)="editMaxScans.set($event ? +$event : null)">
 
           <div style="display:flex;gap:8px;margin-top:20px">
             <button class="cta-primary" style="font-size:13px;padding:10px 20px" (click)="saveEdit()">Enregistrer</button>

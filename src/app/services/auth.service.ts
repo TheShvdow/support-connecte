@@ -1,34 +1,53 @@
-import { Injectable, signal, computed } from '@angular/core';
-
-const CREDENTIALS = { username: 'admin', password: 'admin2024' };
-const STORAGE_KEY  = 'sc_auth';
-const NAME_KEY     = 'sc_name';
+import { Injectable, signal, computed, inject } from '@angular/core';
+import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  isLoggedIn   = signal(!!sessionStorage.getItem(STORAGE_KEY));
-  displayName  = signal(sessionStorage.getItem(NAME_KEY) || 'Administrateur');
-  initials     = computed(() => {
-    const parts = this.displayName().trim().split(' ');
-    return (parts[0][0] + (parts[1]?.[0] ?? '')).toUpperCase();
+  private sb = inject(SupabaseService);
+
+  isLoggedIn  = signal(false);
+  displayName = signal('Administrateur');
+  userEmail   = signal('');
+  initials    = computed(() => {
+    const parts = this.displayName().trim().split(' ').filter(Boolean);
+    return ((parts[0]?.[0] ?? '') + (parts[1]?.[0] ?? '')).toUpperCase() || 'A';
   });
 
-  login(username: string, password: string): boolean {
-    if (username === CREDENTIALS.username && password === CREDENTIALS.password) {
-      sessionStorage.setItem(STORAGE_KEY, '1');
+  async init() {
+    const { data: { session } } = await this.sb.getSession();
+    if (session?.user) {
       this.isLoggedIn.set(true);
-      return true;
+      this.userEmail.set(session.user.email ?? '');
+      this.displayName.set(
+        session.user.user_metadata?.['display_name'] ||
+        session.user.email?.split('@')[0] ||
+        'Administrateur'
+      );
     }
-    return false;
   }
 
-  updateName(name: string) {
+  async login(email: string, password: string): Promise<boolean> {
+    const { data, error } = await this.sb.signIn(email, password);
+    if (error || !data.user) return false;
+    this.isLoggedIn.set(true);
+    this.userEmail.set(data.user.email ?? '');
+    this.displayName.set(
+      data.user.user_metadata?.['display_name'] ||
+      data.user.email?.split('@')[0] ||
+      'Administrateur'
+    );
+    return true;
+  }
+
+  async updateName(name: string) {
     this.displayName.set(name);
-    sessionStorage.setItem(NAME_KEY, name);
+    await this.sb.updateUserMeta({ display_name: name });
   }
 
-  logout() {
-    sessionStorage.removeItem(STORAGE_KEY);
+  async logout() {
+    await this.sb.signOut();
     this.isLoggedIn.set(false);
+    this.displayName.set('Administrateur');
+    this.userEmail.set('');
   }
 }

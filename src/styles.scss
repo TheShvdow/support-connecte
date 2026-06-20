@@ -480,6 +480,10 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--cobalt); ou
   padding: 4px 8px; outline: none;
   &:focus { border-color: var(--cobalt); }
 }
+.admin-profile-email {
+  font-size: 11px; color: rgba(255,255,255,.35); font-weight: 400; margin-top: 1px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
 .admin-profile-role {
   font-size: 11px; color: rgba(255,255,255,.4); font-weight: 500; margin-top: 2px; text-transform: uppercase; letter-spacing: .5px;
 }

@@ -24,10 +24,11 @@ export class QrDetailComponent implements AfterViewInit, OnChanges {
   private ready = false;
 
   // ── Edit state
-  editing    = signal(false);
-  editName   = signal('');
-  editDest   = signal('');
-  editExpiry = signal('');
+  editing      = signal(false);
+  editName     = signal('');
+  editDest     = signal('');
+  editExpiry   = signal('');
+  editMaxScans = signal<number | null>(null);
 
   copied = signal(false);
 
@@ -105,14 +106,16 @@ export class QrDetailComponent implements AfterViewInit, OnChanges {
     this.editName.set(q.name);
     this.editDest.set(q.destination);
     this.editExpiry.set(q.expiresAt ?? '');
+    this.editMaxScans.set(q.maxScans);
     this.editing.set(true);
   }
 
   async saveEdit() {
     await this.store.updateQrCode(this.qr().id, {
-      name:      this.editName(),
+      name:        this.editName(),
       destination: this.editDest(),
-      expiresAt: this.editExpiry() || null,
+      expiresAt:   this.editExpiry() || null,
+      maxScans:    this.editMaxScans(),
     });
     this.editing.set(false);
   }

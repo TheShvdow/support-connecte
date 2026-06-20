@@ -39,7 +39,7 @@ export interface Database {
         Row: {
           id: string; name: string; destination: string; active: boolean;
           expires_at: string | null; created_at: string; scans: number;
-          style: Json;
+          max_scans: number | null; style: Json;
         };
         Insert: Omit<Database['public']['Tables']['qr_codes']['Row'], 'scans' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['qr_codes']['Insert']>;

@@ -15,7 +15,7 @@ export class SupabaseService {
         global: {
           headers: { 'X-Client-Info': 'support-connecte' },
         },
-        auth: { persistSession: false },
+        auth: { persistSession: true },
       }
     );
   }
@@ -38,6 +38,16 @@ export class SupabaseService {
   // ── Contenus
   async getContenus()    { return this.client.from('contenus').select('*'); }
   async upsertContenu(c: any)  { return this.client.from('contenus').upsert(c); }
+
+  // ── Auth
+  async signIn(email: string, password: string) {
+    return this.client.auth.signInWithPassword({ email, password });
+  }
+  async signOut()    { return this.client.auth.signOut(); }
+  async getSession() { return this.client.auth.getSession(); }
+  async updateUserMeta(meta: { display_name?: string }) {
+    return this.client.auth.updateUser({ data: meta });
+  }
 
   // ── QR Codes
   async getQrCodes()     { return this.client.from('qr_codes').select('*').order('created_at', { ascending: false }); }

@@ -65,8 +65,12 @@ CREATE TABLE IF NOT EXISTS qr_codes (
   expires_at  DATE,
   created_at  DATE DEFAULT CURRENT_DATE,
   scans       INTEGER DEFAULT 0,
+  max_scans   INTEGER NULL,
   style       JSONB DEFAULT '{}'
 );
+
+-- À exécuter si la table existe déjà :
+-- ALTER TABLE qr_codes ADD COLUMN IF NOT EXISTS max_scans INTEGER NULL;
 
 -- ── Fonction pour incrémenter les scans atomiquement
 CREATE OR REPLACE FUNCTION increment_qr_scans(qr_id TEXT)

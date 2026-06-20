@@ -27,6 +27,9 @@
             (blur)="saveName()"
             autofocus>
         }
+        @if (auth.userEmail()) {
+          <div class="admin-profile-email">{{ auth.userEmail() }}</div>
+        }
         <div class="admin-profile-role">Administrateur</div>
       </div>
     </div>
@@ -221,7 +224,7 @@
               <div class="qr-card-meta">
                 <span>📅 Créé {{ qr.createdAt }}</span>
                 @if (qr.expiresAt) { <span>⏱ Exp. {{ qr.expiresAt }}</span> }
-                <span>👁 {{ qr.scans }} scans</span>
+                <span>👁 {{ qr.scans }}{{ qr.maxScans ? '/' + qr.maxScans : '' }} scans</span>
               </div>
               <div class="qr-card-hint">Cliquer pour voir le détail →</div>
             </div>

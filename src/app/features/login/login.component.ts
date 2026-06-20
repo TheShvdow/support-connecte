@@ -19,8 +19,8 @@ import { AuthService } from '../../services/auth.service';
 
         <div class="field-group" style="gap:14px">
           <div>
-            <label class="field-label-sm">Identifiant</label>
-            <input class="field-input" [(ngModel)]="username" placeholder="admin" (keyup.enter)="submit()">
+            <label class="field-label-sm">Email</label>
+            <input class="field-input" type="email" [(ngModel)]="email" placeholder="admin@exemple.com" (keyup.enter)="submit()">
           </div>
           <div>
             <label class="field-label-sm">Mot de passe</label>
@@ -32,7 +32,9 @@ import { AuthService } from '../../services/auth.service';
           <div class="login-error">Identifiant ou mot de passe incorrect.</div>
         }
 
-        <button class="cta-primary login-btn" (click)="submit()">Se connecter →</button>
+        <button class="cta-primary login-btn" (click)="submit()" [disabled]="loading()">
+          {{ loading() ? 'Connexion…' : 'Se connecter →' }}
+        </button>
 
         <a class="login-back" routerLink="/">← Retour au site</a>
       </div>
@@ -69,12 +71,18 @@ export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
 
-  username = '';
+  email    = '';
   password = '';
-  error = signal(false);
+  error    = signal(false);
+  loading  = signal(false);
 
-  submit() {
-    if (this.auth.login(this.username, this.password)) {
+  async submit() {
+    if (!this.email || !this.password) return;
+    this.loading.set(true);
+    this.error.set(false);
+    const ok = await this.auth.login(this.email, this.password);
+    this.loading.set(false);
+    if (ok) {
       this.router.navigate(['/admin']);
     } else {
       this.error.set(true);

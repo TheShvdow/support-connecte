@@ -1,6 +1,7 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { StoreService } from '../../services/store.service';
+import { SupabaseService } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-qr-redirect',
@@ -8,10 +9,10 @@ import { StoreService } from '../../services/store.service';
   imports: [RouterLink],
   template: `
     <div class="qr-redir-wrap">
-      @if (status() === 'redirecting') {
+      @if (status() === 'loading' || status() === 'redirecting') {
         <div class="qr-redir-card">
           <div class="qr-redir-spinner"></div>
-          <p>Redirection en cours…</p>
+          <p>{{ status() === 'loading' ? 'Chargement…' : 'Redirection en cours…' }}</p>
         </div>
       }
       @if (status() === 'inactive') {
@@ -52,17 +53,35 @@ import { StoreService } from '../../services/store.service';
 })
 export class QrRedirectComponent implements OnInit {
   store = inject(StoreService);
+  sb    = inject(SupabaseService);
   route = inject(ActivatedRoute);
 
-  status = signal<'redirecting' | 'inactive' | 'expired' | 'notfound'>('redirecting');
+  status     = signal<'loading' | 'redirecting' | 'inactive' | 'expired' | 'notfound'>('loading');
   expiryDate = signal('');
 
-  ngOnInit() {
+  async ngOnInit() {
     const id = this.route.snapshot.paramMap.get('id');
-    const qr = this.store.qrCodes().find(q => q.id === id);
+    if (!id) { this.status.set('notfound'); return; }
 
-    if (!qr) { this.status.set('notfound'); return; }
+    // Check store first (already loaded)
+    let qr = this.store.qrCodes().find(q => q.id === id);
+
+    // Fallback: fetch directly from Supabase if not in store yet
+    if (!qr) {
+      const { data, error } = await this.sb.client
+        .from('qr_codes').select('*').eq('id', id).single();
+      if (error || !data) { this.status.set('notfound'); return; }
+      qr = {
+        id: data.id, name: data.name, destination: data.destination,
+        active: data.active, expiresAt: data.expires_at,
+        createdAt: data.created_at, scans: data.scans,
+        maxScans: (data as any).max_scans ?? null,
+        style: (data as any).style ?? {},
+      };
+    }
+
     if (!qr.active) { this.status.set('inactive'); return; }
+    if (qr.maxScans !== null && qr.scans >= qr.maxScans) { this.status.set('inactive'); return; }
     if (qr.expiresAt && new Date(qr.expiresAt) < new Date()) {
       this.expiryDate.set(new Date(qr.expiresAt).toLocaleDateString('fr-FR'));
       this.status.set('expired');
@@ -70,6 +89,6 @@ export class QrRedirectComponent implements OnInit {
     }
     this.status.set('redirecting');
     this.store.incrementQrScans(qr.id);
-    setTimeout(() => { window.location.href = qr.destination; }, 800);
+    setTimeout(() => { window.location.href = qr!.destination; }, 800);
   }
 }

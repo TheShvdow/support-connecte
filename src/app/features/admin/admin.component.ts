@@ -31,14 +31,14 @@ export class AdminComponent {
     this.editingName.set(true);
   }
 
-  saveName() {
+  async saveName() {
     const n = this.nameInput().trim();
-    if (n) this.auth.updateName(n);
+    if (n) await this.auth.updateName(n);
     this.editingName.set(false);
   }
 
-  logout() {
-    this.auth.logout();
+  async logout() {
+    await this.auth.logout();
     this.router.navigate(['/login']);
   }
 

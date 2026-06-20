@@ -81,6 +81,7 @@ export interface QrCode {
   expiresAt: string | null;
   createdAt: string;
   scans: number;
+  maxScans: number | null;
   style: {
     dotType: string;
     cornerType: string;

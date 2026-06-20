@@ -57,16 +57,32 @@ export class StoreService {
         this.sb.getContenus(),
         this.sb.getQrCodes(),
       ]);
-      if (p.data?.length)  this.products.set(p.data.map(this.mapProduct));
-      if (r.data?.length)  this.realisations.set(r.data.map(this.mapRealisation));
-      if (d.data?.length)  this.demandes.set(d.data.map(this.mapDemande));
-      if (c.data?.length)  this.contenus.set(c.data.map(this.mapContenu));
-      if (q.data?.length)  this.qrCodes.set(q.data.map(this.mapQrCode));
+
+      if (p.error) console.error('[Supabase] products:', p.error.message);
+      else if (p.data?.length) this.products.set(p.data.map(this.mapProduct));
+
+      if (r.error) console.error('[Supabase] realisations:', r.error.message);
+      else if (r.data?.length) this.realisations.set(r.data.map(this.mapRealisation));
+
+      if (d.error) console.error('[Supabase] demandes:', d.error.message);
+      else if (d.data?.length) this.demandes.set(d.data.map(this.mapDemande));
+
+      if (c.error) console.error('[Supabase] contenus:', c.error.message);
+      else if (c.data?.length) this.contenus.set(c.data.map(this.mapContenu));
+
+      if (q.error) console.error('[Supabase] qr_codes:', q.error.message);
+      else if (q.data?.length) this.qrCodes.set(q.data.map(this.mapQrCode));
+
     } catch (e) {
-      console.warn('Supabase non configuré — données locales utilisées', e);
+      console.error('[Supabase] init failed:', e);
     } finally {
       this.loading.set(false);
     }
+  }
+
+  private async dbWrite(op: Promise<{ data: any; error: any }>, label: string) {
+    const { error } = await op;
+    if (error) console.error(`[Supabase] ${label}:`, error.message);
   }
 
   // ── Mappers DB → modèle app
@@ -93,6 +109,7 @@ export class StoreService {
   private mapQrCode = (q: any): QrCode => ({
     id: q.id, name: q.name, destination: q.destination, active: q.active,
     expiresAt: q.expires_at, createdAt: q.created_at, scans: q.scans,
+    maxScans: q.max_scans ?? null,
     style: q.style ?? {},
   });
 
@@ -143,11 +160,11 @@ export class StoreService {
     this.demandes.set([newD, ...this.demandes()]);
     this.devisRef.set(ref);
     this.submitted.set(true);
-    await this.sb.upsertDemande({
+    await this.dbWrite(this.sb.upsertDemande({
       ref: newD.ref, client: newD.client, detail: newD.detail, type: newD.type,
       date: newD.date, statut: newD.statut, notes: newD.notes,
       email: newD.email, tel: newD.tel,
-    });
+    }), 'submitDevis');
   }
 
   resetDevis() {
@@ -164,7 +181,7 @@ export class StoreService {
   // ────────────────────────────────────────────────────────────
   async saveDemande(id: number, statut: string, notes: string) {
     this.demandes.set(this.demandes().map(d => d.id === id ? { ...d, statut, notes } : d));
-    await this.sb.upsertDemande({ id, statut, notes } as any);
+    await this.dbWrite(this.sb.upsertDemande({ id, statut, notes } as any), 'saveDemande');
     this.toast(this.t().toastSaved);
   }
 
@@ -174,20 +191,20 @@ export class StoreService {
   async addProduct(p: Omit<Product, 'id'>) {
     const product: Product = { ...p, id: 'prod-' + Date.now(), avantages: [] };
     this.products.set([...this.products(), product]);
-    await this.sb.upsertProduct(this.toDbProduct(product));
+    await this.dbWrite(this.sb.upsertProduct(this.toDbProduct(product)), 'addProduct');
     this.toast(this.t().toastAdded);
   }
 
   async updateProduct(id: string, patch: Partial<Product>) {
     this.products.set(this.products().map(p => p.id === id ? { ...p, ...patch } : p));
     const updated = this.products().find(p => p.id === id)!;
-    await this.sb.upsertProduct(this.toDbProduct(updated));
+    await this.dbWrite(this.sb.upsertProduct(this.toDbProduct(updated)), 'updateProduct');
     this.toast(this.t().toastSaved);
   }
 
   async deleteProduct(id: string) {
     this.products.set(this.products().filter(p => p.id !== id));
-    await this.sb.deleteProduct(id);
+    await this.dbWrite(this.sb.deleteProduct(id), 'deleteProduct');
     this.toast(this.t().toastDeleted);
   }
 
@@ -205,20 +222,20 @@ export class StoreService {
   async addRealisation(r: Omit<Realisation, 'id'>) {
     const real: Realisation = { ...r, id: Date.now() };
     this.realisations.set([...this.realisations(), real]);
-    await this.sb.upsertRealisation({ fr: r.fr, en: r.en, cat: r.cat, color: r.color, year: r.year, img: r.img ?? null });
+    await this.dbWrite(this.sb.upsertRealisation({ fr: r.fr, en: r.en, cat: r.cat, color: r.color, year: r.year, img: r.img ?? null }), 'addRealisation');
     this.toast(this.t().toastAdded);
   }
 
   async updateRealisation(id: number, patch: Partial<Realisation>) {
     this.realisations.set(this.realisations().map(r => r.id === id ? { ...r, ...patch } : r));
     const updated = this.realisations().find(r => r.id === id)!;
-    await this.sb.upsertRealisation({ id: updated.id, fr: updated.fr, en: updated.en, cat: updated.cat, color: updated.color, year: updated.year, img: updated.img ?? null });
+    await this.dbWrite(this.sb.upsertRealisation({ id: updated.id, fr: updated.fr, en: updated.en, cat: updated.cat, color: updated.color, year: updated.year, img: updated.img ?? null }), 'updateRealisation');
     this.toast(this.t().toastSaved);
   }
 
   async deleteRealisation(id: number) {
     this.realisations.set(this.realisations().filter(r => r.id !== id));
-    await this.sb.deleteRealisation(id);
+    await this.dbWrite(this.sb.deleteRealisation(id), 'deleteRealisation');
     this.toast(this.t().toastDeleted);
   }
 
@@ -228,7 +245,7 @@ export class StoreService {
   async updateContenu(id: string, body: string) {
     this.contenus.set(this.contenus().map(c => c.id === id ? { ...c, body } : c));
     const updated = this.contenus().find(c => c.id === id)!;
-    await this.sb.upsertContenu(updated);
+    await this.dbWrite(this.sb.upsertContenu(updated), 'updateContenu');
     this.toast(this.t().toastSaved);
   }
 
@@ -241,10 +258,10 @@ export class StoreService {
     const id    = 'SC-' + rand;
     const qr: QrCode = { ...data, id, createdAt: new Date().toISOString().split('T')[0], scans: 0 };
     this.qrCodes.set([qr, ...this.qrCodes()]);
-    await this.sb.upsertQrCode({
+    await this.dbWrite(this.sb.upsertQrCode({
       id: qr.id, name: qr.name, destination: qr.destination,
-      active: qr.active, expires_at: qr.expiresAt, style: qr.style,
-    });
+      active: qr.active, expires_at: qr.expiresAt, max_scans: qr.maxScans ?? null, style: qr.style,
+    }), 'createQrCode');
     this.toast('QR créé ✓');
     return id;
   }
@@ -254,25 +271,34 @@ export class StoreService {
     if (!qr) return;
     const next = { ...qr, active: !qr.active };
     this.qrCodes.set(this.qrCodes().map(q => q.id === id ? next : q));
-    await this.sb.upsertQrCode({ id, active: next.active });
+    await this.dbWrite(this.sb.upsertQrCode({ id, active: next.active }), 'toggleQrCode');
     this.toast(this.t().toastSaved);
   }
 
   async updateQrCode(id: string, patch: Partial<QrCode>) {
     this.qrCodes.set(this.qrCodes().map(q => q.id === id ? { ...q, ...patch } : q));
-    await this.sb.upsertQrCode({ id, name: patch.name, destination: patch.destination, expires_at: patch.expiresAt ?? null });
+    await this.dbWrite(this.sb.upsertQrCode({
+      id, name: patch.name, destination: patch.destination,
+      expires_at: patch.expiresAt ?? null,
+      max_scans: patch.maxScans !== undefined ? patch.maxScans : undefined,
+    }), 'updateQrCode');
     this.toast(this.t().toastSaved);
   }
 
   async deleteQrCode(id: string) {
     this.qrCodes.set(this.qrCodes().filter(q => q.id !== id));
-    await this.sb.deleteQrCode(id);
+    await this.dbWrite(this.sb.deleteQrCode(id), 'deleteQrCode');
     this.toast(this.t().toastDeleted);
   }
 
   async incrementQrScans(id: string) {
-    this.qrCodes.set(this.qrCodes().map(q => q.id === id ? { ...q, scans: q.scans + 1 } : q));
+    const updated = this.qrCodes().map(q => q.id === id ? { ...q, scans: q.scans + 1 } : q);
+    this.qrCodes.set(updated);
     await this.sb.incrementScans(id);
+    const qr = updated.find(q => q.id === id);
+    if (qr && qr.maxScans !== null && qr.scans >= qr.maxScans) {
+      await this.toggleQrCode(id);
+    }
   }
 
   // ────────────────────────────────────────────────────────────

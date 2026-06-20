@@ -53,6 +53,8 @@ export class QrGeneratorComponent implements AfterViewInit {
   qrName       = signal('');
   hasExpiry    = signal(false);
   expiryDate   = signal('');
+  hasMaxScans  = signal(false);
+  maxScans     = signal(100);
 
   // ── Save state
   savedId      = signal('');
@@ -166,6 +168,7 @@ export class QrGeneratorComponent implements AfterViewInit {
       destination: this.rawValue(),
       active:      true,
       expiresAt:   this.hasExpiry() && this.expiryDate() ? this.expiryDate() : null,
+      maxScans:    this.hasMaxScans() ? this.maxScans() : null,
       style: {
         dotType:      this.dotType(),
         cornerType:   this.cornerType(),
