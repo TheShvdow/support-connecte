@@ -12,6 +12,7 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['products']['Row'], 'created_at'>;
         Update: Partial<Database['public']['Tables']['products']['Insert']>;
+        Relationships: [];
       };
       realisations: {
         Row: {
@@ -20,6 +21,7 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['realisations']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['realisations']['Insert']>;
+        Relationships: [];
       };
       demandes: {
         Row: {
@@ -29,11 +31,13 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['demandes']['Row'], 'id' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['demandes']['Insert']>;
+        Relationships: [];
       };
       contenus: {
         Row: { id: string; title: string; body: string };
         Insert: Database['public']['Tables']['contenus']['Row'];
         Update: Partial<Database['public']['Tables']['contenus']['Row']>;
+        Relationships: [];
       };
       qr_codes: {
         Row: {
@@ -43,10 +47,14 @@ export interface Database {
         };
         Insert: Omit<Database['public']['Tables']['qr_codes']['Row'], 'scans' | 'created_at'>;
         Update: Partial<Database['public']['Tables']['qr_codes']['Insert']>;
+        Relationships: [];
       };
     };
+    Views: Record<string, never>;
     Functions: {
       increment_qr_scans: { Args: { qr_id: string }; Returns: void };
     };
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
