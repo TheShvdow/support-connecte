@@ -2,6 +2,7 @@ import { Component, inject, signal, OnInit } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { SupabaseService } from '../../services/supabase.service';
+import type { Database } from '../../models/database.types';
 
 @Component({
   selector: 'app-qr-redirect',
@@ -69,14 +70,17 @@ export class QrRedirectComponent implements OnInit {
     // Fallback: fetch directly from Supabase if not in store yet
     if (!qr) {
       const { data, error } = await this.sb.client
-        .from('qr_codes').select('*').eq('id', id).single();
+        .from('qr_codes')
+        .select<'*', Database['public']['Tables']['qr_codes']['Row']>('*')
+        .eq('id', id)
+        .single();
       if (error || !data) { this.status.set('notfound'); return; }
       qr = {
         id: data.id, name: data.name, destination: data.destination,
         active: data.active, expiresAt: data.expires_at,
         createdAt: data.created_at, scans: data.scans,
-        maxScans: (data as any).max_scans ?? null,
-        style: (data as any).style ?? {},
+        maxScans: data.max_scans ?? null,
+        style: (data.style as any) ?? {},
       };
     }
 
