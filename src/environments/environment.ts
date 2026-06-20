@@ -1,5 +1,5 @@
 export const environment = {
   production: false,
-  supabaseUrl: 'REMPLACE_PAR_TON_URL',       // Settings → API → Project URL
-  supabaseKey: 'REMPLACE_PAR_TA_CLE_ANON',   // Settings → API → anon public
+  supabaseUrl: 'https://supabase.com/dashboard/project/eahzgcnwafyxkuzqzxnr',       // Settings → API → Project URL
+  supabaseKey: 'sb_publishable_-3Io8xTnK2YztWZ_4bMwvw_XBiuTfVG',   // Settings → API → anon public
 };
