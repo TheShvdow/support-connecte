@@ -1,5 +1,5 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
-import { STR, PRODUCTS_BASE, REAL_BASE, DEMANDES_BASE, CONTENUS_BASE, QR_CODES_BASE } from '../data/data';
+import { STR } from '../data/data';
 import { SupabaseService } from './supabase.service';
 import {
   Product, Realisation, Demande, Contenu, QrCode,
@@ -35,12 +35,12 @@ export class StoreService {
   contact    = signal<ContactForm>({ nom: '', entreprise: '', email: '', tel: '' });
   files      = signal<string[]>([]);
 
-  // ── Data (initialised with local fallback, then overwritten by Supabase)
-  products      = signal<Product[]>(PRODUCTS_BASE.map(p => ({ ...p, avantages: [...p.avantages] })));
-  realisations  = signal<Realisation[]>(REAL_BASE.map(r => ({ ...r })));
-  demandes      = signal<Demande[]>(DEMANDES_BASE.map(d => ({ ...d })));
-  contenus      = signal<Contenu[]>(CONTENUS_BASE.map(c => ({ ...c })));
-  qrCodes       = signal<QrCode[]>(QR_CODES_BASE.map(q => ({ ...q })));
+  // ── Data — source unique : Supabase
+  products      = signal<Product[]>([]);
+  realisations  = signal<Realisation[]>([]);
+  demandes      = signal<Demande[]>([]);
+  contenus      = signal<Contenu[]>([]);
+  qrCodes       = signal<QrCode[]>([]);
 
   t = computed(() => STR[this.lang() as keyof typeof STR]);
 

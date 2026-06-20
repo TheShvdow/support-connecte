@@ -1,0 +1,97 @@
+<div class="qrd-wrap">
+
+  <!-- Header -->
+  <div class="admin-header">
+    <div style="display:flex;align-items:center;gap:12px">
+      <button class="action-btn" style="font-size:13px;padding:6px 12px;border:1.5px solid rgba(15,23,41,.15);border-radius:8px" (click)="closed.emit()">← Retour</button>
+      <div>
+        <h2>{{ qr().name }}</h2>
+        <div class="qrd-id-sub">{{ qr().id }}</div>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span class="badge" [ngClass]="statusClass()">{{ statusLabel() }}</span>
+      <button class="qr-toggle" [class.qr-toggle-on]="qr().active" (click)="toggle()" [title]="qr().active ? 'Désactiver' : 'Activer'">
+        <span class="qr-toggle-knob"></span>
+      </button>
+      <button class="action-btn action-edit" (click)="startEdit()">Modifier</button>
+      <button class="action-btn action-del" (click)="deleteQr()">Supprimer</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="qrd-body">
+
+    <!-- Left : QR preview -->
+    <div class="qrd-preview-col">
+      <div class="qrd-canvas-wrap">
+        <div #canvas class="qrd-canvas"></div>
+      </div>
+      <div class="qrd-dl-btns">
+        <button class="cta-primary" style="font-size:13px" (click)="downloadPng()">⬇ PNG</button>
+        <button class="cta-outline" style="font-size:13px" (click)="downloadSvg()">⬇ SVG</button>
+      </div>
+      <div class="qrd-shortlink-row">
+        <span class="qrd-short-url">{{ shortUrl() }}</span>
+        <button class="copy-btn" (click)="copyLink()">{{ copied() ? '✓ Copié' : 'Copier' }}</button>
+      </div>
+    </div>
+
+    <!-- Right : infos / édition -->
+    <div class="qrd-info-col">
+
+      @if (!editing()) {
+        <div class="qrd-meta-grid">
+          <div class="qrd-meta-item">
+            <div class="qrd-meta-label">Destination</div>
+            <a [href]="qr().destination" target="_blank" rel="noopener" class="qrd-meta-dest">{{ qr().destination }}</a>
+          </div>
+          <div class="qrd-meta-item">
+            <div class="qrd-meta-label">Scans</div>
+            <div class="qrd-meta-value qrd-scans">{{ qr().scans }}</div>
+          </div>
+          <div class="qrd-meta-item">
+            <div class="qrd-meta-label">Créé le</div>
+            <div class="qrd-meta-value">{{ qr().createdAt }}</div>
+          </div>
+          <div class="qrd-meta-item">
+            <div class="qrd-meta-label">Expire le</div>
+            <div class="qrd-meta-value">{{ qr().expiresAt ?? '—' }}</div>
+          </div>
+          @if (qr().style) {
+            <div class="qrd-meta-item">
+              <div class="qrd-meta-label">Style dots</div>
+              <div class="qrd-meta-value">{{ $any(qr().style).dotType ?? '—' }}</div>
+            </div>
+            <div class="qrd-meta-item">
+              <div class="qrd-meta-label">Couleur</div>
+              <div style="display:flex;align-items:center;gap:8px">
+                <span class="qrd-color-swatch" [style.background]="$any(qr().style).fgColor"></span>
+                <span class="qrd-meta-value">{{ $any(qr().style).fgColor }}</span>
+              </div>
+            </div>
+          }
+        </div>
+      } @else {
+        <!-- Edit form -->
+        <div class="qrd-edit-form">
+          <label class="field-label-sm">Nom</label>
+          <input class="field-input" [ngModel]="editName()" (ngModelChange)="editName.set($event)">
+
+          <label class="field-label-sm" style="margin-top:14px">URL de destination</label>
+          <input class="field-input" type="url" [ngModel]="editDest()" (ngModelChange)="editDest.set($event)">
+
+          <label class="field-label-sm" style="margin-top:14px">Date d'expiration (optionnel)</label>
+          <input class="field-input" type="date" [min]="todayMin" [ngModel]="editExpiry()" (ngModelChange)="editExpiry.set($event)">
+
+          <div style="display:flex;gap:8px;margin-top:20px">
+            <button class="cta-primary" style="font-size:13px;padding:10px 20px" (click)="saveEdit()">Enregistrer</button>
+            <button class="cta-outline" style="font-size:13px;padding:10px 20px" (click)="cancelEdit()">Annuler</button>
+          </div>
+        </div>
+      }
+
+    </div>
+  </div>
+
+</div>

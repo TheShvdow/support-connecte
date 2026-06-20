@@ -7,12 +7,13 @@ import { AuthService } from '../../services/auth.service';
 import { SlidePanelComponent } from '../../shared/components/slide-panel/slide-panel.component';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { QrGeneratorComponent } from '../qr-generator/qr-generator.component';
+import { QrDetailComponent } from './qr-detail/qr-detail.component';
 import { AdminTab, Demande, Product, Realisation, Contenu, QrCode } from '../../models/types';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [RouterLink, NgClass, FormsModule, SlidePanelComponent, ModalComponent, QrGeneratorComponent],
+  imports: [RouterLink, NgClass, FormsModule, SlidePanelComponent, ModalComponent, QrGeneratorComponent, QrDetailComponent],
   templateUrl: './admin.component.html',
 })
 export class AdminComponent {
@@ -62,15 +63,13 @@ export class AdminComponent {
 
   // ── QR view state
   showQrGenerator = signal(false);
-  openQrGenerator() { this.showQrGenerator.set(true); }
-  backToQrList()    { this.showQrGenerator.set(false); }
+  selectedQr      = signal<QrCode | null>(null);
+
+  openQrGenerator() { this.selectedQr.set(null); this.showQrGenerator.set(true); }
+  openQrDetail(qr: QrCode) { this.showQrGenerator.set(false); this.selectedQr.set(qr); }
+  backToQrList()    { this.showQrGenerator.set(false); this.selectedQr.set(null); }
 
   // ── QR management
-  editingQrId   = signal('');
-  editQrName    = signal('');
-  editQrDest    = signal('');
-  editQrExpiry  = signal('');
-
   get filteredQrCodes() {
     const q = this.store.adminSearch().toLowerCase();
     return !q ? this.store.qrCodes()
@@ -90,35 +89,6 @@ export class AdminComponent {
     if (this.isExpired(qr)) return 'Expiré';
     return qr.active ? 'Actif' : 'Inactif';
   }
-
-  startEditQr(qr: QrCode) {
-    this.editingQrId.set(qr.id);
-    this.editQrName.set(qr.name);
-    this.editQrDest.set(qr.destination);
-    this.editQrExpiry.set(qr.expiresAt ?? '');
-  }
-
-  saveQrEdit(id: string) {
-    this.store.updateQrCode(id, {
-      name: this.editQrName(),
-      destination: this.editQrDest(),
-      expiresAt: this.editQrExpiry() || null,
-    });
-    this.editingQrId.set('');
-  }
-
-  cancelQrEdit() { this.editingQrId.set(''); }
-
-  deleteQrCode(id: string) {
-    if (confirm(this.t().deleteConfirm)) this.store.deleteQrCode(id);
-  }
-
-  async copyQrLink(id: string) {
-    await navigator.clipboard.writeText(`${window.location.origin}/r/${id}`);
-    this.store.toast('Lien copié ✓');
-  }
-
-  qrShortLink(id: string) { return `${window.location.origin}/r/${id}`; }
 
   get todayMin() { return new Date().toISOString().split('T')[0]; }
 
