@@ -1,0 +1,26 @@
+<div class="section">
+  <p class="section-label">Portfolio</p>
+  <h2 class="section-title">{{ t().realTitle }}</h2>
+
+  <div class="filter-bar">
+    @for (cat of categories(); track cat) {
+      <button class="filter-pill" [class.active]="store.realFilter() === cat" (click)="store.setRealFilter(cat)">
+        {{ cat }}
+      </button>
+    }
+  </div>
+
+  <div class="real-full-grid">
+    @for (r of filtered(); track r.id) {
+      <div class="real-card">
+        <div class="real-card-bg" [style.background]="r.color"></div>
+        <div class="real-card-info">
+          <h4>{{ store.lang() === 'fr' ? r.fr : r.en }}</h4>
+          <span>{{ r.cat }} · {{ r.year }}</span>
+        </div>
+      </div>
+    }
+  </div>
+</div>
+
+<app-footer />

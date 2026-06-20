@@ -1,0 +1,33 @@
+@if (product(); as p) {
+  <div class="product-detail">
+    <a class="back-btn" routerLink="/catalogue">← {{ t().backToCatalogue }}</a>
+    <div class="product-detail-grid">
+      <div class="product-gallery" [style.background]="p.color">{{ p.ico }}</div>
+      <div class="product-detail-info">
+        <div class="product-cat-label">{{ store.lang() === 'fr' ? p.cat : p.catEn }}</div>
+        <h1>{{ store.lang() === 'fr' ? p.fr : p.en }}</h1>
+        <div class="product-detail-price">{{ store.lang() === 'fr' ? p.price : p.priceEn }}</div>
+        <p class="product-detail-desc">{{ store.lang() === 'fr' ? p.d : p.dEn }}</p>
+        @if (p.avantages.length) {
+          <div class="avantages">
+            <h3>{{ t().advantages }}</h3>
+            @for (a of p.avantages; track a) {
+              <div class="avantage-item">{{ a }}</div>
+            }
+          </div>
+        }
+        <div class="detail-actions">
+          <a class="cta-primary" routerLink="/devis">{{ t().ctaQuote }}</a>
+          <a class="cta-outline" routerLink="/catalogue">{{ t().back }}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <div class="section" style="text-align:center;padding-top:80px">
+    <p>Produit introuvable.</p>
+    <a class="cta-outline" routerLink="/catalogue" style="margin-top:16px;display:inline-block">Retour au catalogue</a>
+  </div>
+}
+
+<app-footer />

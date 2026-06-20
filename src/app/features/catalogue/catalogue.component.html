@@ -1,0 +1,28 @@
+<div class="section">
+  <p class="section-label">Catalogue</p>
+  <h2 class="section-title">{{ store.lang() === 'fr' ? 'Nos produits & services' : 'Our products & services' }}</h2>
+
+  <div class="filter-bar">
+    @for (cat of categories(); track cat) {
+      <button class="filter-pill" [class.active]="store.catFilter() === cat" (click)="store.setCatFilter(cat)">
+        {{ cat }}
+      </button>
+    }
+  </div>
+
+  <div class="products-grid">
+    @for (p of filtered(); track p.id) {
+      <a class="product-card" [routerLink]="['/catalogue', p.id]">
+        <div class="product-thumb" [style.background]="p.color">{{ p.ico }}</div>
+        <div class="product-body">
+          <div class="product-cat">{{ store.lang() === 'fr' ? p.cat : p.catEn }}</div>
+          <div class="product-name">{{ store.lang() === 'fr' ? p.fr : p.en }}</div>
+          <div class="product-desc">{{ store.lang() === 'fr' ? p.d : p.dEn }}</div>
+          <div class="product-price">{{ store.lang() === 'fr' ? p.price : p.priceEn }}</div>
+        </div>
+      </a>
+    }
+  </div>
+</div>
+
+<app-footer />
