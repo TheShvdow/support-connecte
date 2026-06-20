@@ -635,6 +635,23 @@ footer { background: var(--ink); color: #fff; padding: 64px var(--pad) 32px; }
   width: 100%; margin-top: 8px; accent-color: var(--cobalt);
 }
 .range-labels { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-top: 4px; }
+// Logo upload
+.logo-upload-zone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 6px; margin-top: 12px; padding: 24px 16px;
+  border: 2px dashed rgba(35,71,230,.25); border-radius: 12px;
+  cursor: pointer; transition: border-color .2s, background .2s;
+  &:hover { border-color: var(--cobalt); background: rgba(35,71,230,.04); }
+}
+.logo-upload-icon  { font-size: 24px; color: var(--cobalt); }
+.logo-upload-label { font-size: 13px; font-weight: 600; color: var(--dark); }
+.logo-upload-hint  { font-size: 11px; color: var(--muted); }
+.logo-preview-row  { display: flex; align-items: center; gap: 12px; margin-top: 12px; }
+.logo-preview-img  { width: 56px; height: 56px; object-fit: contain; border-radius: 8px; border: 1.5px solid rgba(15,23,41,.1); background: #f8f8f8; padding: 4px; }
+.logo-preview-info { display: flex; flex-direction: column; gap: 6px; }
+.logo-file-name    { font-size: 12px; color: var(--body); max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.logo-remove-btn   { font-size: 12px; color: var(--red); background: rgba(255,91,53,.08); border: none; border-radius: 6px; padding: 4px 10px; cursor: pointer; font-weight: 600; &:hover { background: rgba(255,91,53,.15); } }
+
 .qr-dynamic-section { border: 1.5px solid rgba(35,71,230,.2); background: rgba(35,71,230,.03); }
 .qr-dynamic-desc { font-size: 13px; color: var(--body); line-height: 1.5; margin-bottom: 14px; }
 .dynamic-config { margin-top: 14px; display: flex; flex-direction: column; }

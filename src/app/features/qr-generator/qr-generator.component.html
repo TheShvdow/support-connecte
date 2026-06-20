@@ -92,7 +92,22 @@
           <span>Ajouter un logo</span>
         </label>
         @if (useLogo()) {
-          <input class="field-input" style="margin-top:12px" placeholder="URL du logo (PNG transparent, SVG)" [ngModel]="logoUrl()" (ngModelChange)="logoUrl.set($event)">
+          @if (!logoUrl()) {
+            <label class="logo-upload-zone">
+              <input type="file" accept="image/png,image/svg+xml,image/jpeg,image/webp" (change)="onLogoUpload($event)" style="display:none">
+              <span class="logo-upload-icon">⬆</span>
+              <span class="logo-upload-label">Glisser ou cliquer pour uploader</span>
+              <span class="logo-upload-hint">PNG transparent, SVG, JPG — max 2 Mo</span>
+            </label>
+          } @else {
+            <div class="logo-preview-row">
+              <img [src]="logoUrl()" alt="logo" class="logo-preview-img">
+              <div class="logo-preview-info">
+                <span class="logo-file-name">{{ logoFileName() }}</span>
+                <button class="logo-remove-btn" (click)="removeLogo()">Supprimer</button>
+              </div>
+            </div>
+          }
         }
       </div>
 

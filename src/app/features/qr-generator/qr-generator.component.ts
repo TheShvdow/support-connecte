@@ -42,6 +42,7 @@ export class QrGeneratorComponent implements AfterViewInit {
   // ── Logo
   useLogo      = signal(false);
   logoUrl      = signal('');
+  logoFileName = signal('');
 
   // ── Size
   size         = signal(300);
@@ -177,6 +178,20 @@ export class QrGeneratorComponent implements AfterViewInit {
       }
     });
     this.savedId.set(id);
+  }
+
+  onLogoUpload(event: Event) {
+    const file = (event.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.logoFileName.set(file.name);
+    const reader = new FileReader();
+    reader.onload = (e) => this.logoUrl.set(e.target?.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  removeLogo() {
+    this.logoUrl.set('');
+    this.logoFileName.set('');
   }
 
   async copyUrl() {
