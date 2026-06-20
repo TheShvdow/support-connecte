@@ -8,6 +8,29 @@
         <div class="logo-text">Support<span>Connecté</span></div>
       </div>
     </div>
+
+    <!-- Profil -->
+    <div class="admin-profile">
+      <div class="admin-avatar">{{ auth.initials() }}</div>
+      <div class="admin-profile-info">
+        @if (!editingName()) {
+          <div class="admin-profile-name" (click)="startEditName()" title="Cliquer pour modifier">
+            {{ auth.displayName() }}
+          </div>
+        } @else {
+          <input
+            class="admin-name-input"
+            [ngModel]="nameInput()"
+            (ngModelChange)="nameInput.set($event)"
+            (keydown.enter)="saveName()"
+            (keydown.escape)="editingName.set(false)"
+            (blur)="saveName()"
+            autofocus>
+        }
+        <div class="admin-profile-role">Administrateur</div>
+      </div>
+    </div>
+
     <div class="admin-menu">
       @for (tab of tabs; track tab.key) {
         <button class="admin-menu-item" [class.active]="store.adminTab() === tab.key" (click)="store.setAdminTab(tab.key)">

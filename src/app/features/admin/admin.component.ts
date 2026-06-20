@@ -21,6 +21,21 @@ export class AdminComponent {
   private router = inject(Router);
   t = this.store.t;
 
+  // ── Profile
+  editingName  = signal(false);
+  nameInput    = signal('');
+
+  startEditName() {
+    this.nameInput.set(this.auth.displayName());
+    this.editingName.set(true);
+  }
+
+  saveName() {
+    const n = this.nameInput().trim();
+    if (n) this.auth.updateName(n);
+    this.editingName.set(false);
+  }
+
   logout() {
     this.auth.logout();
     this.router.navigate(['/login']);
