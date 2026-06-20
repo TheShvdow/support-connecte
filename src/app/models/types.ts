@@ -73,6 +73,26 @@ export interface ContactForm {
   tel: string;
 }
 
+export interface QrCode {
+  id: string;
+  name: string;
+  destination: string;
+  active: boolean;
+  expiresAt: string | null;
+  createdAt: string;
+  scans: number;
+  style: {
+    dotType: string;
+    cornerType: string;
+    fgColor: string;
+    bgColor: string;
+    useGradient: boolean;
+    gradientColor: string;
+    size: number;
+    margin: number;
+  };
+}
+
 export type DevisType = 'impression' | 'qr' | 'digital' | null;
-export type AdminTab = 'demandes' | 'catalogue' | 'realisations' | 'contenus';
+export type AdminTab = 'demandes' | 'catalogue' | 'realisations' | 'contenus' | 'qrcodes';
 export type Lang = 'fr' | 'en';

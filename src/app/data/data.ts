@@ -1,6 +1,6 @@
 export const STR = {
   fr: {
-    navHome: 'Accueil', navProducts: 'Catalogue', navWork: 'Réalisations', navQuote: 'Devis', navAdmin: 'Admin',
+    navHome: 'Accueil', navProducts: 'Catalogue', navWork: 'Réalisations', navQuote: 'Devis', navAdmin: 'Admin', navQr: 'QR Code',
     ctaQuote: 'Demander un devis', ctaExplore: 'Explorer les produits',
     eyebrow: 'Communication visuelle & digitale',
     heroA: ['De l\'impression au digital,', 'tout connecté.'],
@@ -54,7 +54,7 @@ export const STR = {
     call: 'Appel', quickMsg: 'Message rapide', quoteForm: 'Formulaire devis', replyTime: 'Réponse sous 24 h',
   },
   en: {
-    navHome: 'Home', navProducts: 'Catalogue', navWork: 'Work', navQuote: 'Quote', navAdmin: 'Admin',
+    navHome: 'Home', navProducts: 'Catalogue', navWork: 'Work', navQuote: 'Quote', navAdmin: 'Admin', navQr: 'QR Code',
     ctaQuote: 'Request a quote', ctaExplore: 'Explore products',
     eyebrow: 'Visual & digital communication',
     heroA: ['From print to digital,', 'all connected.'],
@@ -164,6 +164,27 @@ export const REAL_BASE = [
   { id: 10, fr: 'Site web — Agence Immo Sud',        en: 'Website — Agence Immo Sud',    cat: 'Digital',    color: '#7C3AED', year: '2025', img: PIC('real10') },
   { id: 11, fr: 'Kakémono — Forum Emploi',           en: 'Banner stand — Jobs Fair',     cat: 'PLV',        color: '#2347E6', year: '2024', img: PIC('real11') },
   { id: 12, fr: 'NFC carte — Coach Bien-être',       en: 'NFC card — Wellness Coach',    cat: 'QR Code',    color: '#0FB57E', year: '2025', img: PIC('real12') },
+];
+
+export const QR_CODES_BASE = [
+  {
+    id: 'SC-A1B2C3', name: 'Menu — Restaurant Le Comptoir',
+    destination: 'https://supportconnecte.fr/demo/menu', active: true, expiresAt: null,
+    createdAt: '2025-06-01', scans: 234,
+    style: { dotType: 'rounded', cornerType: 'extra-rounded', fgColor: '#2347E6', bgColor: '#FFFFFF', useGradient: false, gradientColor: '#0FB57E', size: 300, margin: 10 }
+  },
+  {
+    id: 'SC-D4E5F6', name: 'Stand — Salon Pro Nantes 2025',
+    destination: 'https://supportconnecte.fr/demo/salon', active: true, expiresAt: '2025-09-30',
+    createdAt: '2025-05-15', scans: 87,
+    style: { dotType: 'dots', cornerType: 'dot', fgColor: '#0FB57E', bgColor: '#FFFFFF', useGradient: false, gradientColor: '#2347E6', size: 300, margin: 10 }
+  },
+  {
+    id: 'SC-G7H8I9', name: 'Carte NFC — Coach Bien-être',
+    destination: 'https://supportconnecte.fr/demo/coach', active: false, expiresAt: '2025-01-01',
+    createdAt: '2024-12-01', scans: 12,
+    style: { dotType: 'classy', cornerType: 'square', fgColor: '#7C3AED', bgColor: '#FFFFFF', useGradient: false, gradientColor: '#FF5B35', size: 300, margin: 10 }
+  },
 ];
 
 export const DEMANDES_BASE = [

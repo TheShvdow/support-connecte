@@ -1,0 +1,189 @@
+<div class="qr-page">
+  <div class="qr-page-header">
+    <div class="container">
+      <span class="cat-badge"><span class="dot"></span>Outil gratuit</span>
+      <h1>Générateur QR Code</h1>
+      <p>Personnalisez votre QR code à 100 % — couleurs, formes, logo. Créez un QR dynamique pour l'activer ou le désactiver même après impression.</p>
+    </div>
+  </div>
+
+  <div class="qr-builder container">
+
+    <!-- ── LEFT PANEL ── -->
+    <div class="qr-controls">
+
+      <!-- Content type -->
+      <div class="qr-section">
+        <div class="qr-section-title">📋 Type de contenu</div>
+        <div class="qr-type-tabs">
+          @for (ct of contentTypes; track ct.value) {
+            <button [class.active]="contentType() === ct.value" (click)="setContentType(ct.value)">{{ ct.label }}</button>
+          }
+        </div>
+        <input class="field-input" [placeholder]="contentPlaceholder()" [ngModel]="rawValue()" (ngModelChange)="rawValue.set($event)">
+      </div>
+
+      <!-- Dot style -->
+      <div class="qr-section">
+        <div class="qr-section-title">◼ Style des modules</div>
+        <div class="dot-types-grid">
+          @for (dt of dotTypes; track dt.type) {
+            <button class="dot-type-btn" [class.active]="dotType() === dt.type" (click)="dotType.set(dt.type)">
+              <span class="dot-preview">{{ dt.preview }}</span>
+              <span>{{ dt.label }}</span>
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Corner style -->
+      <div class="qr-section">
+        <div class="qr-section-title">◱ Style des coins</div>
+        <div class="corner-types-row">
+          @for (ct of cornerTypes; track ct.type) {
+            <button class="corner-type-btn" [class.active]="cornerType() === ct.type" (click)="cornerType.set(ct.type)">
+              {{ ct.label }}
+            </button>
+          }
+        </div>
+      </div>
+
+      <!-- Colors -->
+      <div class="qr-section">
+        <div class="qr-section-title">🎨 Couleurs</div>
+        <div class="color-fields">
+          <div class="color-field">
+            <label>Couleur principale</label>
+            <div class="color-input-row">
+              <input type="color" [ngModel]="fgColor()" (ngModelChange)="fgColor.set($event)">
+              <input class="hex-input field-input" [ngModel]="fgColor()" (ngModelChange)="fgColor.set($event)" maxlength="7">
+            </div>
+          </div>
+          <div class="color-field">
+            <label>Fond</label>
+            <div class="color-input-row">
+              <input type="color" [ngModel]="bgColor()" (ngModelChange)="bgColor.set($event)">
+              <input class="hex-input field-input" [ngModel]="bgColor()" (ngModelChange)="bgColor.set($event)" maxlength="7">
+            </div>
+          </div>
+        </div>
+        <label class="qr-toggle-row">
+          <input type="checkbox" [checked]="useGradient()" (change)="useGradient.set(!useGradient())">
+          <span>Activer le dégradé</span>
+        </label>
+        @if (useGradient()) {
+          <div class="color-field" style="margin-top:12px">
+            <label>Couleur 2 (dégradé)</label>
+            <div class="color-input-row">
+              <input type="color" [ngModel]="gradColor()" (ngModelChange)="gradColor.set($event)">
+              <input class="hex-input field-input" [ngModel]="gradColor()" (ngModelChange)="gradColor.set($event)" maxlength="7">
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- Logo -->
+      <div class="qr-section">
+        <div class="qr-section-title">🖼️ Logo central</div>
+        <label class="qr-toggle-row">
+          <input type="checkbox" [checked]="useLogo()" (change)="useLogo.set(!useLogo())">
+          <span>Ajouter un logo</span>
+        </label>
+        @if (useLogo()) {
+          <input class="field-input" style="margin-top:12px" placeholder="URL du logo (PNG transparent, SVG)" [ngModel]="logoUrl()" (ngModelChange)="logoUrl.set($event)">
+        }
+      </div>
+
+      <!-- Size & margin -->
+      <div class="qr-section">
+        <div class="qr-section-title">📐 Taille — {{ size() }}px</div>
+        <input type="range" min="200" max="600" step="50" [ngModel]="size()" (ngModelChange)="size.set(+$event)" class="qr-range">
+        <div class="range-labels"><span>200</span><span>600</span></div>
+        <div class="qr-section-title" style="margin-top:16px">Marge — {{ qrMargin() }}px</div>
+        <input type="range" min="0" max="30" step="5" [ngModel]="qrMargin()" (ngModelChange)="qrMargin.set(+$event)" class="qr-range">
+        <div class="range-labels"><span>0</span><span>30</span></div>
+      </div>
+
+      <!-- Dynamic mode -->
+      <div class="qr-section qr-dynamic-section">
+        <div class="qr-dynamic-header">
+          <div>
+            <div class="qr-section-title">⚡ QR Code Dynamique</div>
+            <p class="qr-dynamic-desc">Le QR code pointe vers notre serveur. Modifiez la destination, activez ou désactivez le lien même après impression et collage.</p>
+          </div>
+        </div>
+        <label class="qr-toggle-row">
+          <input type="checkbox" [checked]="isDynamic()" (change)="toggleDynamic()">
+          <span>Activer le mode dynamique</span>
+        </label>
+        @if (isDynamic()) {
+          <div class="dynamic-config">
+            <label class="field-label-sm">Nom du QR code (pour l'admin)</label>
+            <input class="field-input" placeholder="Ex: Menu Restaurant, Salon Pro 2025…" [ngModel]="qrName()" (ngModelChange)="qrName.set($event)">
+            <label class="qr-toggle-row" style="margin-top:12px">
+              <input type="checkbox" [checked]="hasExpiry()" (change)="hasExpiry.set(!hasExpiry())">
+              <span>Définir une date d'expiration</span>
+            </label>
+            @if (hasExpiry()) {
+              <input type="date" class="field-input" style="margin-top:8px" [min]="todayMin" [ngModel]="expiryDate()" (ngModelChange)="expiryDate.set($event)">
+            }
+          </div>
+        }
+      </div>
+
+    </div>
+
+    <!-- ── RIGHT PANEL ── -->
+    <div class="qr-preview-col">
+      <div class="qr-preview-sticky">
+
+        <div class="qr-canvas-wrap">
+          <div #qrCanvas class="qr-canvas"></div>
+        </div>
+
+        <div class="qr-mode-badge" [class.dynamic]="isDynamic()">
+          {{ isDynamic() ? '⚡ Dynamique' : '◆ Statique' }}
+        </div>
+
+        @if (isDynamic() && savedId()) {
+          <div class="qr-shortlink">
+            <span class="shortlink-label">Lien court généré</span>
+            <div class="shortlink-row">
+              <span class="shortlink-url">{{ shortUrl() }}</span>
+              <button class="copy-btn" (click)="copyUrl()">{{ copied() ? '✓ Copié' : 'Copier' }}</button>
+            </div>
+          </div>
+        }
+
+        <div class="qr-download-btns">
+          <button class="cta-primary" (click)="downloadPng()">⬇ PNG</button>
+          <button class="cta-outline" (click)="downloadSvg()">⬇ SVG</button>
+        </div>
+
+        @if (isDynamic() && !savedId()) {
+          <button class="cta-dynamic-save" (click)="saveDynamic()" [disabled]="!rawValue()">
+            ⚡ Créer le QR dynamique & enregistrer
+          </button>
+        }
+
+        @if (savedId()) {
+          <div class="qr-saved-notice">
+            <span>✓ QR enregistré dans l'admin</span>
+            <a routerLink="/admin" (click)="store.setAdminTab('qrcodes')">Gérer →</a>
+          </div>
+        }
+
+        <div class="qr-preview-tips">
+          <div class="tip">💡 Téléchargez en SVG pour une impression haute qualité</div>
+          @if (!isDynamic()) {
+            <div class="tip">⚡ Passez en mode dynamique pour pouvoir modifier la destination après impression</div>
+          }
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<app-footer />

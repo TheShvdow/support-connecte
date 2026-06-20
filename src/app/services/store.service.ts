@@ -1,7 +1,7 @@
 import { Injectable, signal, computed } from '@angular/core';
-import { STR, PRODUCTS_BASE, REAL_BASE, DEMANDES_BASE, CONTENUS_BASE } from '../data/data';
+import { STR, PRODUCTS_BASE, REAL_BASE, DEMANDES_BASE, CONTENUS_BASE, QR_CODES_BASE } from '../data/data';
 import {
-  Product, Realisation, Demande, Contenu,
+  Product, Realisation, Demande, Contenu, QrCode,
   ImpressionForm, QrForm, DigitalForm, ContactForm,
   DevisType, AdminTab, Lang
 } from '../models/types';
@@ -31,6 +31,7 @@ export class StoreService {
   realisations = signal<Realisation[]>(REAL_BASE.map(r => ({ ...r })));
   demandes = signal<Demande[]>(DEMANDES_BASE.map(d => ({ ...d })));
   contenus = signal<Contenu[]>(CONTENUS_BASE.map(c => ({ ...c })));
+  qrCodes = signal<QrCode[]>(this.loadQrCodes());
 
   panelOpen = signal(false);
   modalOpen = signal(false);
@@ -136,6 +137,46 @@ export class StoreService {
   updateContenu(id: string, body: string) {
     this.contenus.set(this.contenus().map(c => c.id === id ? { ...c, body } : c));
     this.toast(this.t().toastSaved);
+  }
+
+  private loadQrCodes(): QrCode[] {
+    try {
+      const saved = localStorage.getItem('sc_qr_codes');
+      return saved ? JSON.parse(saved) : QR_CODES_BASE.map(q => ({ ...q }));
+    } catch { return QR_CODES_BASE.map(q => ({ ...q })); }
+  }
+
+  private persistQr() {
+    localStorage.setItem('sc_qr_codes', JSON.stringify(this.qrCodes()));
+  }
+
+  createQrCode(data: Omit<QrCode, 'id' | 'createdAt' | 'scans'>): string {
+    const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    const rand = Array.from({ length: 6 }, () => chars[Math.floor(Math.random() * chars.length)]).join('');
+    const id = 'SC-' + rand;
+    const qr: QrCode = { ...data, id, createdAt: new Date().toISOString().split('T')[0], scans: 0 };
+    this.qrCodes.set([qr, ...this.qrCodes()]);
+    this.persistQr();
+    this.toast('QR créé ✓');
+    return id;
+  }
+
+  toggleQrCode(id: string) {
+    this.qrCodes.set(this.qrCodes().map(q => q.id === id ? { ...q, active: !q.active } : q));
+    this.persistQr();
+    this.toast(this.t().toastSaved);
+  }
+
+  updateQrCode(id: string, patch: Partial<QrCode>) {
+    this.qrCodes.set(this.qrCodes().map(q => q.id === id ? { ...q, ...patch } : q));
+    this.persistQr();
+    this.toast(this.t().toastSaved);
+  }
+
+  deleteQrCode(id: string) {
+    this.qrCodes.set(this.qrCodes().filter(q => q.id !== id));
+    this.persistQr();
+    this.toast(this.t().toastDeleted);
   }
 
   toast(msg: string) {
