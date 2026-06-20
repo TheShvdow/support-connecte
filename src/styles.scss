@@ -564,6 +564,10 @@ footer { background: var(--ink); color: #fff; padding: 64px var(--pad) 32px; }
 
 // ── QR GENERATOR PAGE
 .qr-page { background: var(--cream); }
+.qr-page.qr-embedded {
+  background: transparent;
+  .qr-builder { padding-bottom: 32px; }
+}
 .qr-page-header {
   padding: 60px var(--pad) 40px;
   text-align: center;

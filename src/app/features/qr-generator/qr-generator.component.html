@@ -1,4 +1,5 @@
-<div class="qr-page">
+<div class="qr-page" [class.qr-embedded]="embedded()">
+  @if (!embedded()) {
   <div class="qr-page-header">
     <div class="container">
       <span class="cat-badge"><span class="dot"></span>Outil gratuit</span>
@@ -6,6 +7,7 @@
       <p>Personnalisez votre QR code à 100 % — couleurs, formes, logo. Créez un QR dynamique pour l'activer ou le désactiver même après impression.</p>
     </div>
   </div>
+  }
 
   <div class="qr-builder container">
 
@@ -186,4 +188,6 @@
   </div>
 </div>
 
-<app-footer />
+@if (!embedded()) {
+  <app-footer />
+}

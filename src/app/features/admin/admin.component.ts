@@ -6,12 +6,13 @@ import { StoreService } from '../../services/store.service';
 import { AuthService } from '../../services/auth.service';
 import { SlidePanelComponent } from '../../shared/components/slide-panel/slide-panel.component';
 import { ModalComponent } from '../../shared/components/modal/modal.component';
+import { QrGeneratorComponent } from '../qr-generator/qr-generator.component';
 import { AdminTab, Demande, Product, Realisation, Contenu, QrCode } from '../../models/types';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [RouterLink, NgClass, FormsModule, SlidePanelComponent, ModalComponent],
+  imports: [RouterLink, NgClass, FormsModule, SlidePanelComponent, ModalComponent, QrGeneratorComponent],
   templateUrl: './admin.component.html',
 })
 export class AdminComponent {
@@ -43,6 +44,11 @@ export class AdminComponent {
     if (key === 'qrcodes') return 'QR Codes';
     return this.t().adminContenus;
   }
+
+  // ── QR view state
+  showQrGenerator = signal(false);
+  openQrGenerator() { this.showQrGenerator.set(true); }
+  backToQrList()    { this.showQrGenerator.set(false); }
 
   // ── QR management
   editingQrId   = signal('');

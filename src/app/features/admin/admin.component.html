@@ -156,13 +156,25 @@
 
     <!-- QR CODES -->
     @if (store.adminTab() === 'qrcodes') {
+
+      @if (showQrGenerator()) {
+        <!-- Générateur intégré -->
+        <div class="admin-header">
+          <div style="display:flex;align-items:center;gap:12px">
+            <button class="action-btn" style="font-size:13px;padding:6px 12px;border:1.5px solid rgba(15,23,41,.15);border-radius:8px" (click)="backToQrList()">← Retour</button>
+            <h2>Nouveau QR Code</h2>
+          </div>
+        </div>
+        <app-qr-generator [embedded]="true" />
+      } @else {
+        <!-- Liste des QR codes -->
       <div class="admin-header">
         <div>
           <h2>QR Codes dynamiques <span class="count">({{ store.qrCodes().length }})</span></h2>
         </div>
         <div class="header-actions">
           <input class="admin-search" placeholder="Rechercher…" [value]="store.adminSearch()" (input)="store.setAdminSearch($any($event.target).value)">
-          <a class="admin-add-btn" routerLink="/qr">+ Nouveau QR</a>
+          <button class="admin-add-btn" (click)="openQrGenerator()">+ Nouveau QR</button>
         </div>
       </div>
 
@@ -213,10 +225,11 @@
           <div class="qr-empty">
             <div>📱</div>
             <p>Aucun QR code dynamique pour l'instant.</p>
-            <a class="cta-primary" routerLink="/qr" style="margin-top:16px;display:inline-flex">Créer mon premier QR</a>
+            <button class="cta-primary" style="margin-top:16px" (click)="openQrGenerator()">Créer mon premier QR</button>
           </div>
         }
       </div>
+      } <!-- fin @else -->
     }
 
   </div>

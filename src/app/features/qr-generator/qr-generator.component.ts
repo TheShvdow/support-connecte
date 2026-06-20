@@ -1,5 +1,5 @@
 import {
-  Component, inject, signal, computed, effect,
+  Component, inject, signal, computed, effect, input,
   ViewChild, ElementRef, AfterViewInit, ChangeDetectionStrategy
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
@@ -21,6 +21,7 @@ type ContentT = 'url' | 'text' | 'email' | 'phone' | 'whatsapp';
 })
 export class QrGeneratorComponent implements AfterViewInit {
   store = inject(StoreService);
+  embedded = input(false);
 
   @ViewChild('qrCanvas') canvasRef!: ElementRef<HTMLDivElement>;
 
