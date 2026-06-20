@@ -53,7 +53,7 @@ CREATE TABLE IF NOT EXISTS demandes (
 CREATE TABLE IF NOT EXISTS contenus (
   id    TEXT PRIMARY KEY,
   title TEXT NOT NULL,
-  body  TEXT
+  body  JSONB
 );
 
 -- ── QR CODES dynamiques
@@ -87,7 +87,7 @@ INSERT INTO contenus (id, title, body) VALUES
   ('hero',     'Accueil — Héro',  'De l''impression au digital, tout connecté. Une seule équipe pour tous vos besoins en communication visuelle et digitale.'),
   ('apropos',  'À propos',        'Support Connecté est une agence spécialisée en communication visuelle et digitale. Nos cinq pôles d''expertise couvrent l''intégralité de vos besoins.'),
   ('services', 'Services',        'Cinq pôles, une seule équipe : Impression & Signalétique, QR Code & Solutions, Digital & Créatif, Objets Publicitaires, Formation & IA.'),
-  ('contact',  'Contact',         E'contact@supportconnecte.fr\n+33 5 00 00 00 00\n12 rue de la Communication, 33000 Bordeaux')
+  ('contact',  'Contact',         '{"email":"contact@supportconnecte.fr","phone":"+33 5 00 00 00 00","address":"12 rue de la Communication, 33000 Bordeaux","whatsapp":""}'::jsonb)
 ON CONFLICT (id) DO NOTHING;
 
 -- Produits

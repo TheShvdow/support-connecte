@@ -242,7 +242,7 @@ export class StoreService {
   // ────────────────────────────────────────────────────────────
   // CONTENUS
   // ────────────────────────────────────────────────────────────
-  async updateContenu(id: string, body: string) {
+  async updateContenu(id: string, body: string | object) {
     this.contenus.set(this.contenus().map(c => c.id === id ? { ...c, body } : c));
     const updated = this.contenus().find(c => c.id === id)!;
     await this.dbWrite(this.sb.upsertContenu(updated), 'updateContenu');

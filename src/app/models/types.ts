@@ -40,7 +40,14 @@ export interface Demande {
 export interface Contenu {
   id: string;
   title: string;
-  body: string;
+  body: string | ContactBody;
+}
+
+export interface ContactBody {
+  email: string;
+  phone: string;
+  address: string;
+  whatsapp: string;
 }
 
 export interface ImpressionForm {

@@ -178,4 +178,12 @@ export class AdminComponent {
     event.stopPropagation();
     if (confirm(this.t().deleteConfirm)) this.store.deleteRealisation(id);
   }
+
+  bodyPreview(body: string | object): string {
+    if (typeof body !== 'string') {
+      const b = body as any;
+      return [b.email, b.phone, b.address].filter(Boolean).join(' · ');
+    }
+    return body;
+  }
 }

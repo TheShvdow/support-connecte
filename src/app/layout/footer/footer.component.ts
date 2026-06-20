@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../services/store.service';
+import { ContactBody } from '../../models/types';
 
 @Component({
   selector: 'app-footer',
@@ -22,9 +23,16 @@ import { StoreService } from '../../services/store.service';
           </div>
           <div class="footer-col">
             <h4>{{ t().footerContact }}</h4>
-            <a>contact&#64;supportconnecte.fr</a>
-            <a>+33 5 00 00 00 00</a>
-            <a>WhatsApp</a>
+            @if (contact) {
+              @if (contact.email) { <a [href]="'mailto:' + contact.email">{{ contact.email }}</a> }
+              @if (contact.phone) { <a [href]="'tel:' + contact.phone">{{ contact.phone }}</a> }
+              @if (contact.address) { <span>{{ contact.address }}</span> }
+              @if (contact.whatsapp) { <a [href]="contact.whatsapp" target="_blank">WhatsApp</a> }
+            } @else {
+              <a>contact&#64;supportconnecte.fr</a>
+              <a>+33 5 00 00 00 00</a>
+              <a>WhatsApp</a>
+            }
           </div>
           <div class="footer-col">
             <h4>{{ t().footerLegal }}</h4>
@@ -44,4 +52,9 @@ import { StoreService } from '../../services/store.service';
 export class FooterComponent {
   store = inject(StoreService);
   t = this.store.t;
+
+  get contact(): ContactBody | null {
+    const c = this.store.contenus().find(c => c.id === 'contact');
+    return c && typeof c.body === 'object' ? c.body as ContactBody : null;
+  }
 }

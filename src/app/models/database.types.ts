@@ -34,7 +34,7 @@ export interface Database {
         Relationships: [];
       };
       contenus: {
-        Row: { id: string; title: string; body: string };
+        Row: { id: string; title: string; body: any };
         Insert: Database['public']['Tables']['contenus']['Row'];
         Update: Partial<Database['public']['Tables']['contenus']['Row']>;
         Relationships: [];

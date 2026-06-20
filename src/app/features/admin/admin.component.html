@@ -215,7 +215,7 @@
               <h3>{{ c.title }}</h3>
               <button class="action-btn action-edit" (click)="openContenuModal(c)">{{ t().edit }}</button>
             </div>
-            <p class="contenu-body">{{ c.body }}</p>
+            <p class="contenu-body">{{ bodyPreview(c.body) }}</p>
           </div>
         }
       </div>

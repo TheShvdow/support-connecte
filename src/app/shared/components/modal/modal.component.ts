@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StoreService } from '../../../services/store.service';
 import { OPTS } from '../../../data/data';
-import { Product, Realisation, Contenu } from '../../../models/types';
+import { Product, Realisation, Contenu, ContactBody } from '../../../models/types';
 
 type ModalMode = 'product' | 'realisation' | 'contenu' | null;
 
@@ -69,7 +69,14 @@ type ModalMode = 'product' | 'realisation' | 'contenu' | null;
           <div class="modal-body">
             <div class="field-group">
               <label>{{ contenuItem()?.title }}</label>
-              <textarea rows="8" [(ngModel)]="cBody" style="resize:vertical"></textarea>
+              @if (contenuItem()?.id === 'contact') {
+                <div class="field-group" style="margin-top:8px"><label>Email</label><input class="field-input" [(ngModel)]="cEmail" placeholder="contact@exemple.fr"></div>
+                <div class="field-group" style="margin-top:8px"><label>Téléphone</label><input class="field-input" [(ngModel)]="cPhone" placeholder="+33 5 00 00 00 00"></div>
+                <div class="field-group" style="margin-top:8px"><label>Adresse</label><input class="field-input" [(ngModel)]="cAddress" placeholder="12 rue …, 33000 Bordeaux"></div>
+                <div class="field-group" style="margin-top:8px"><label>WhatsApp (URL ou numéro)</label><input class="field-input" [(ngModel)]="cWhatsapp" placeholder="https://wa.me/33500000000"></div>
+              } @else {
+                <textarea rows="8" [(ngModel)]="cBody" style="resize:vertical"></textarea>
+              }
             </div>
           </div>
           <div class="modal-footer">
@@ -100,6 +107,7 @@ export class ModalComponent {
   // Contenu fields
   contenuItem = signal<Contenu | null>(null);
   cBody = '';
+  cEmail = ''; cPhone = ''; cAddress = ''; cWhatsapp = '';
 
   openProduct(p?: Product) {
     this.mode.set('product');
@@ -127,7 +135,13 @@ export class ModalComponent {
     this.mode.set('contenu');
     this.contenuItem.set(c);
     this.title.set(`Modifier — ${c.title}`);
-    this.cBody = c.body;
+    if (typeof c.body === 'object') {
+      const b = c.body as ContactBody;
+      this.cEmail = b.email ?? ''; this.cPhone = b.phone ?? '';
+      this.cAddress = b.address ?? ''; this.cWhatsapp = b.whatsapp ?? '';
+    } else {
+      this.cBody = c.body as string;
+    }
     this.open.set(true);
   }
 
@@ -151,7 +165,11 @@ export class ModalComponent {
 
   saveContenu() {
     const c = this.contenuItem();
-    if (c) this.store.updateContenu(c.id, this.cBody);
+    if (!c) { this.close(); return; }
+    const body = c.id === 'contact'
+      ? { email: this.cEmail, phone: this.cPhone, address: this.cAddress, whatsapp: this.cWhatsapp }
+      : this.cBody;
+    this.store.updateContenu(c.id, body);
     this.close();
   }
 
