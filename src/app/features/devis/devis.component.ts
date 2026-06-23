@@ -3,18 +3,28 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { StoreService } from '../../services/store.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
+import { AosDirective } from '../../shared/directives/aos.directive';
+import { SeoService } from '../../services/seo.service';
 import { OPTS } from '../../data/data';
 
 @Component({
   selector: 'app-devis',
   standalone: true,
-  imports: [RouterLink, FormsModule, FooterComponent],
+  imports: [RouterLink, FormsModule, FooterComponent, AosDirective],
   templateUrl: './devis.component.html',
 })
 export class DevisComponent {
   store = inject(StoreService);
   t = this.store.t;
   opts = OPTS;
+
+  constructor() {
+    inject(SeoService).set(
+      'Demande de devis — Support Connecté',
+      "Obtenez un devis gratuit pour vos projets d'impression, QR codes ou communication digitale. Réponse sous 24h.",
+      '/devis'
+    );
+  }
 
   steps = ['devisStep0', 'devisStep1', 'devisStep2', 'devisStep3'] as const;
 

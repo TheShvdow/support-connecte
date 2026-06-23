@@ -2,12 +2,15 @@ import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
+import { AosDirective } from '../../shared/directives/aos.directive';
+import { SeoService } from '../../services/seo.service';
+import { ContactBody } from '../../models/types';
 import { POLES } from '../../data/data';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, FooterComponent],
+  imports: [RouterLink, FooterComponent, AosDirective],
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
@@ -15,6 +18,22 @@ export class HomeComponent {
   t = this.store.t;
   poles = POLES;
   variants = [0, 1, 2];
+
+  constructor() {
+    inject(SeoService).set(
+      'Support Connecté — Communication & Impression à Bordeaux',
+      'Agence de communication visuelle à Bordeaux : impression grand format, QR codes dynamiques, identité visuelle et solutions digitales. Devis gratuit sous 24h.',
+      '/'
+    );
+  }
+
+  get contact(): ContactBody | null {
+    const c = this.store.contenus().find(c =>
+      c.id === 'contact' ||
+      c.title.toLowerCase() === 'contact'
+    );
+    return c && typeof c.body === 'object' ? c.body as ContactBody : null;
+  }
 
   stats = [
     { num: '500+', key: 'happy' as const },

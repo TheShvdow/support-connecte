@@ -2,16 +2,26 @@ import { Component, inject, computed } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
+import { AosDirective } from '../../shared/directives/aos.directive';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-catalogue',
   standalone: true,
-  imports: [RouterLink, FooterComponent],
+  imports: [RouterLink, FooterComponent, AosDirective],
   templateUrl: './catalogue.component.html',
 })
 export class CatalogueComponent {
   store = inject(StoreService);
   t = this.store.t;
+
+  constructor() {
+    inject(SeoService).set(
+      'Catalogue produits & services — Support Connecté',
+      "Découvrez nos solutions d'impression grand format, QR codes, NFC et communication digitale. Bâches, enseignes, stickers, identité visuelle et plus.",
+      '/catalogue'
+    );
+  }
 
   categories = computed(() => {
     const all = this.store.lang() === 'fr' ? this.store.t().catAll : this.store.t().catAll;

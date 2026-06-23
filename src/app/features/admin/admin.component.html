@@ -1,38 +1,53 @@
 <div class="admin-wrap">
 
   <!-- Sidebar -->
-  <div class="admin-sidebar">
+  <aside class="admin-sidebar" [class.sb-closed]="!sidebarOpen()">
 
-    <!-- Profil cliquable -->
-    <div class="admin-profile" [class.active]="store.adminTab() === 'profil'" (click)="openProfile()" title="Modifier mon profil">
-      <div class="admin-avatar">{{ auth.initials() }}</div>
-      <div class="admin-profile-info">
-        <div class="admin-profile-name">{{ auth.displayName() }}</div>
-        @if (auth.userEmail()) {
-          <div class="admin-profile-email">{{ auth.userEmail() }}</div>
-        }
-        <div class="admin-profile-role">Administrateur · Modifier →</div>
-      </div>
+    <!-- Brand + toggle (toujours visible) -->
+    <div class="sb-brand">
+      <a class="sb-logo-link" routerLink="/">
+        <div class="logo-icon"><div class="logo-ring"></div><div class="logo-dot"></div></div>
+        <span class="sb-logo-name">Support<span>Connecté</span></span>
+      </a>
+      <button class="sb-toggle" (click)="toggleSidebar()"
+        [title]="sidebarOpen() ? 'Réduire' : 'Agrandir'">
+        {{ sidebarOpen() ? '←' : '→' }}
+      </button>
     </div>
 
-    <div class="admin-menu">
+    <!-- Navigation -->
+    <nav class="sb-nav">
       @for (tab of tabs; track tab.key) {
-        <button class="admin-menu-item" [class.active]="store.adminTab() === tab.key" (click)="store.setAdminTab(tab.key)">
-          <span class="ico">{{ tab.ico }}</span>{{ tabLabel(tab.key) }}
+        <button class="sb-item" [class.active]="store.adminTab() === tab.key"
+          (click)="store.setAdminTab(tab.key)" [title]="tabLabel(tab.key)">
+          <span class="sb-ico">{{ tab.ico }}</span>
+          <span class="sb-label">{{ tabLabel(tab.key) }}</span>
         </button>
       }
-      <div class="admin-spacer"></div>
-      <button class="admin-menu-item admin-menu-qr" (click)="store.setAdminTab('qrcodes'); openQrGenerator()">
-        <span class="ico">⚡</span>Nouveau QR
-      </button>
-      <a class="admin-menu-item" routerLink="/">
-        <span class="ico">🏠</span>{{ t().viewSite }}
+    </nav>
+
+    <!-- Footer sidebar -->
+    <div class="sb-foot">
+      <div class="sb-profile" [class.active]="store.adminTab() === 'profil'"
+        (click)="openProfile()" title="Mon profil">
+        <div class="sb-avatar">{{ auth.initials() }}</div>
+        <div class="sb-profile-meta">
+          <div class="sb-profile-name">{{ auth.displayName() }}</div>
+          @if (auth.userEmail()) {
+            <div class="sb-profile-email">{{ auth.userEmail() }}</div>
+          }
+        </div>
+      </div>
+      <a class="sb-item" routerLink="/" [title]="t().viewSite">
+        <span class="sb-ico">🏠</span>
+        <span class="sb-label">{{ t().viewSite }}</span>
       </a>
-      <button class="admin-menu-item" style="color:rgba(255,91,53,.7)" (click)="logout()">
-        <span class="ico">🔓</span>Déconnexion
+      <button class="sb-item sb-logout-btn" (click)="logout()" title="Déconnexion">
+        <span class="sb-ico">🔓</span>
+        <span class="sb-label">Déconnexion</span>
       </button>
     </div>
-  </div>
+  </aside>
 
   <!-- Content -->
   <div class="admin-content">
@@ -43,17 +58,25 @@
         <h2>Mon profil</h2>
       </div>
       <div class="profil-page">
-        <!-- Avatar -->
-        <div class="profil-avatar-block">
-          <div class="profil-avatar">{{ auth.initials() }}</div>
-          <div class="profil-avatar-hint">Les initiales sont générées depuis votre nom d'affichage</div>
+
+        <!-- Hero card -->
+        <div class="profil-hero">
+          <div class="profil-hero-avatar">{{ auth.initials() }}</div>
+          <div class="profil-hero-info">
+            <div class="profil-hero-name">{{ auth.displayName() }}</div>
+            <div class="profil-hero-email">{{ auth.userEmail() }}</div>
+            <span class="profil-role-badge">Administrateur</span>
+          </div>
         </div>
 
         <div class="profil-form">
 
           <!-- Section identité -->
           <div class="profil-section">
-            <div class="profil-section-title">Identité</div>
+            <div class="profil-section-head">
+              <span class="profil-section-ico">👤</span>
+              <div class="profil-section-title">Identité</div>
+            </div>
             <div class="profil-field">
               <label class="field-label-sm">Nom d'affichage</label>
               <input class="field-input" [ngModel]="profileName()" (ngModelChange)="profileName.set($event)" placeholder="Votre nom">
@@ -67,7 +90,10 @@
 
           <!-- Section sécurité -->
           <div class="profil-section">
-            <div class="profil-section-title">Sécurité</div>
+            <div class="profil-section-head">
+              <span class="profil-section-ico">🔒</span>
+              <div class="profil-section-title">Sécurité</div>
+            </div>
             <div class="profil-field">
               <label class="field-label-sm">Nouveau mot de passe</label>
               <input class="field-input" type="password" [ngModel]="profilePassword()" (ngModelChange)="profilePassword.set($event)" placeholder="Laisser vide pour ne pas modifier" autocomplete="new-password">
@@ -86,8 +112,8 @@
           }
 
           <div class="profil-actions">
-            <button class="cta-primary" (click)="saveProfile()" [disabled]="profileSaving()">
-              {{ profileSaving() ? 'Enregistrement…' : 'Enregistrer les modifications' }}
+            <button class="profil-save-btn" (click)="saveProfile()" [disabled]="profileSaving()">
+              {{ profileSaving() ? 'Enregistrement…' : 'Enregistrer les modifications →' }}
             </button>
           </div>
         </div>

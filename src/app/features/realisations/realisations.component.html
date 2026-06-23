@@ -1,8 +1,8 @@
 <div class="real-wrap">
-  <h1 class="real-h1">{{ t().realTitle }}</h1>
-  <p class="real-sub">{{ t().realSub }}</p>
+  <h1 class="real-h1" [aos]="'up'">{{ t().realTitle }}</h1>
+  <p class="real-sub" [aos]="'up'" [aosDelay]="80">{{ t().realSub }}</p>
 
-  <div class="filter-bar">
+  <div class="filter-bar" [aos]="'up'" [aosDelay]="140">
     @for (cat of categories(); track cat) {
       <button class="filter-pill" [class.active]="store.realFilter() === cat" (click)="store.setRealFilter(cat)">
         {{ cat }}
@@ -11,8 +11,8 @@
   </div>
 
   <div class="real-grid-full">
-    @for (r of filtered(); track r.id) {
-      <div class="work-card">
+    @for (r of filtered(); track r.id; let i = $index) {
+      <div class="work-card" [aos]="'up'" [aosDelay]="(i % 4) * 60">
         <div class="work-thumb">
           @if (r.img) { <img [src]="r.img" [alt]="store.lang() === 'fr' ? r.fr : r.en"> }
           <div class="work-badge">

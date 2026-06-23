@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://supportconnecte.com/sitemap.xml

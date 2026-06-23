@@ -2,6 +2,7 @@ import { Component, inject, signal, ViewChild } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import Swal from 'sweetalert2';
 import { StoreService } from '../../services/store.service';
 import { AuthService } from '../../services/auth.service';
 import { SlidePanelComponent } from '../../shared/components/slide-panel/slide-panel.component';
@@ -22,9 +23,26 @@ export class AdminComponent {
   private router = inject(Router);
   t = this.store.t;
 
+  sidebarOpen = signal(localStorage.getItem('sb-open') !== 'false');
+  toggleSidebar() {
+    this.sidebarOpen.update(v => { localStorage.setItem('sb-open', String(!v)); return !v; });
+  }
+
   async logout() {
-    await this.auth.logout();
-    this.router.navigate(['/login']);
+    const result = await Swal.fire({
+      title: 'Se déconnecter ?',
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonColor: '#2347E6',
+      cancelButtonColor: '#9aa1ac',
+      confirmButtonText: 'Déconnexion',
+      cancelButtonText: 'Annuler',
+      customClass: { popup: 'swal-font' },
+    });
+    if (result.isConfirmed) {
+      await this.auth.logout();
+      this.router.navigate(['/']);
+    }
   }
 
   @ViewChild(SlidePanelComponent) panel!: SlidePanelComponent;
@@ -169,14 +187,34 @@ export class AdminComponent {
   openRealModal(r?: Realisation) { this.modal.openRealisation(r); }
   openContenuModal(c: Contenu)   { this.modal.openContenu(c); }
 
-  deleteProduct(id: string, event: Event) {
+  async deleteProduct(id: string, event: Event) {
     event.stopPropagation();
-    if (confirm(this.t().deleteConfirm)) this.store.deleteProduct(id);
+    const result = await Swal.fire({
+      title: this.t().deleteConfirm,
+      text: 'Cette action est irréversible.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#FF5B35',
+      cancelButtonColor: '#9aa1ac',
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler',
+    });
+    if (result.isConfirmed) this.store.deleteProduct(id);
   }
 
-  deleteReal(id: number, event: Event) {
+  async deleteReal(id: number, event: Event) {
     event.stopPropagation();
-    if (confirm(this.t().deleteConfirm)) this.store.deleteRealisation(id);
+    const result = await Swal.fire({
+      title: this.t().deleteConfirm,
+      text: 'Cette action est irréversible.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#FF5B35',
+      cancelButtonColor: '#9aa1ac',
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler',
+    });
+    if (result.isConfirmed) this.store.deleteRealisation(id);
   }
 
   bodyPreview(body: string | object): string {

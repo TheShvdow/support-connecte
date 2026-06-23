@@ -1,9 +1,9 @@
 <div class="catalogue-wrap">
-  <span class="cat-badge"><span class="dot"></span>Catalogue</span>
-  <h1 class="cat-h1">{{ store.lang() === 'fr' ? 'Nos produits & services' : 'Our products & services' }}</h1>
-  <p class="cat-sub">{{ store.lang() === 'fr' ? 'Découvrez l\'ensemble de nos solutions de communication.' : 'Discover all our communication solutions.' }}</p>
+  <span class="cat-badge" [aos]="'up'"><span class="dot"></span>Catalogue</span>
+  <h1 class="cat-h1" [aos]="'up'" [aosDelay]="80">{{ store.lang() === 'fr' ? 'Nos produits & services' : 'Our products & services' }}</h1>
+  <p class="cat-sub" [aos]="'up'" [aosDelay]="140">{{ store.lang() === 'fr' ? 'Découvrez l\'ensemble de nos solutions de communication.' : 'Discover all our communication solutions.' }}</p>
 
-  <div class="filter-bar">
+  <div class="filter-bar" [aos]="'up'" [aosDelay]="200">
     @for (cat of categories(); track cat) {
       <button class="filter-pill" [class.active]="store.catFilter() === cat" (click)="store.setCatFilter(cat)">
         {{ cat }}
@@ -13,8 +13,8 @@
   </div>
 
   <div class="products-grid">
-    @for (p of filtered(); track p.id) {
-      <a class="product-card" [routerLink]="['/catalogue', p.id]">
+    @for (p of filtered(); track p.id; let i = $index) {
+      <a class="product-card" [routerLink]="['/catalogue', p.id]" [aos]="'up'" [aosDelay]="(i % 4) * 60">
         <div class="product-thumb-btn">
           @if (p.img) { <img [src]="p.img" [alt]="store.lang() === 'fr' ? p.fr : p.en"> }
           <span class="tag-badge">{{ store.lang() === 'fr' ? p.cat : p.catEn }}</span>

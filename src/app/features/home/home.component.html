@@ -94,8 +94,8 @@
 <!-- Trust Strip -->
 <div class="trust-strip">
   <div class="trust-inner">
-    @for (st of stats; track st.num) {
-      <div>
+    @for (st of stats; track st.num; let i = $index) {
+      <div [aos]="'up'" [aosDelay]="i * 80">
         <div class="stat-num">{{ st.num }}</div>
         <div class="stat-label">{{ t()[st.key] }}</div>
       </div>
@@ -106,13 +106,13 @@
 <!-- Pôles -->
 <div class="poles-section">
   <div class="container">
-    <div class="section-head">
+    <div class="section-head" [aos]="'up'">
       <h2>{{ t().polesTitle }}</h2>
       <p>{{ t().polesSub }}</p>
     </div>
     <div class="poles-grid">
       @for (pole of poles; track pole.key; let i = $index) {
-        <a class="pole-card" routerLink="/catalogue">
+        <a class="pole-card" routerLink="/catalogue" [aos]="'up'" [aosDelay]="i * 80">
           <div class="pole-card-header">
             <div class="pole-num-icon" [style.background]="pole.tint" [style.color]="pole.color">0{{ i + 1 }}</div>
             <div class="pole-arrow">→</div>
@@ -135,10 +135,10 @@
 <!-- Process -->
 <div class="process-section">
   <div class="process-inner">
-    <h2>{{ t().processTitle }}</h2>
+    <h2 [aos]="'up'">{{ t().processTitle }}</h2>
     <div class="process-grid">
-      @for (step of steps; track step.n) {
-        <div class="process-step">
+      @for (step of steps; track step.n; let i = $index) {
+        <div class="process-step" [aos]="'up'" [aosDelay]="i * 90">
           <div class="step-num">0{{ step.n }}</div>
           <div class="step-divider"></div>
           <h3>{{ t()[step.key] }}</h3>
@@ -152,29 +152,47 @@
 <!-- Contact -->
 <div class="contact-section">
   <div class="container">
-    <div class="contact-card">
-      <h2>{{ t().contactTitle }}</h2>
-      <p>{{ store.lang() === 'fr' ? 'Choisissez le canal qui vous convient.' : 'Choose the channel that works for you.' }}</p>
-      <div class="contact-grid">
-        <div class="ch">
-          <span class="ch-ico">📞</span>
-          <span class="ch-label">{{ t().call }}</span>
-          <span>+33 5 00 00 00 00</span>
-        </div>
-        <div class="ch wa">
-          <span class="ch-ico">💬</span>
-          <span class="ch-label">WhatsApp</span>
-          <span>{{ t().quickMsg }}</span>
-        </div>
-        <div class="ch">
-          <span class="ch-ico">✉️</span>
-          <span class="ch-label">Email</span>
-          <span>contact&#64;supportconnecte.fr</span>
-        </div>
-        <a class="ch dark" routerLink="/devis">
-          <span class="ch-ico">📋</span>
-          <span class="ch-label">{{ t().quoteForm }}</span>
-          <span>{{ t().replyTime }}</span>
+    <div class="cta-band" [aos]="'up'">
+      <div class="cta-band-head">
+        <span class="cta-eyebrow"><span class="dot"></span>{{ store.lang() === 'fr' ? 'Contact' : 'Contact' }}</span>
+        <h2>{{ t().contactTitle }}</h2>
+        <p>{{ store.lang() === 'fr' ? 'Plusieurs façons de nous joindre — choisissez ce qui vous convient.' : 'Multiple ways to reach us — choose what works for you.' }}</p>
+      </div>
+      <div class="cta-channels">
+        <a class="ctach"
+           [attr.href]="contact?.phone ? 'tel:' + contact!.phone : null">
+          <div class="ctach-ico ctach-ico--phone">📞</div>
+          <div class="ctach-info">
+            <span class="ctach-name">{{ t().call }}</span>
+            <span class="ctach-val">{{ contact?.phone || '+33 5 00 00 00 00' }}</span>
+          </div>
+          <span class="ctach-arr">→</span>
+        </a>
+        <a class="ctach ctach--wa"
+           [attr.href]="contact?.whatsapp || null" target="_blank">
+          <div class="ctach-ico ctach-ico--wa">💬</div>
+          <div class="ctach-info">
+            <span class="ctach-name">WhatsApp</span>
+            <span class="ctach-val">{{ store.lang() === 'fr' ? 'Message rapide' : 'Quick message' }}</span>
+          </div>
+          <span class="ctach-arr">→</span>
+        </a>
+        <a class="ctach"
+           [attr.href]="contact?.email ? 'mailto:' + contact!.email : null">
+          <div class="ctach-ico ctach-ico--email">✉️</div>
+          <div class="ctach-info">
+            <span class="ctach-name">Email</span>
+            <span class="ctach-val">{{ contact?.email || 'contact@supportconnecte.fr' }}</span>
+          </div>
+          <span class="ctach-arr">→</span>
+        </a>
+        <a class="ctach ctach--cta" routerLink="/devis">
+          <div class="ctach-ico ctach-ico--devis">📋</div>
+          <div class="ctach-info">
+            <span class="ctach-name">{{ t().quoteForm }}</span>
+            <span class="ctach-val">{{ t().replyTime }}</span>
+          </div>
+          <span class="ctach-arr">→</span>
         </a>
       </div>
     </div>

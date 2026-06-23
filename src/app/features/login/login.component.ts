@@ -2,14 +2,16 @@ import { Component, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../services/auth.service';
+import { AosDirective } from '../../shared/directives/aos.directive';
+import { SeoService } from '../../services/seo.service';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [RouterLink, FormsModule, AosDirective],
   template: `
     <div class="login-wrap">
-      <div class="login-card">
+      <div class="login-card" [aos]="'scale'">
         <a class="logo" routerLink="/" style="justify-content:center;margin-bottom:28px">
           <div class="logo-icon"><div class="logo-ring"></div><div class="logo-dot"></div></div>
           <div class="logo-text">Support<span>Connecté</span></div>
@@ -70,6 +72,13 @@ import { AuthService } from '../../services/auth.service';
 export class LoginComponent {
   private auth = inject(AuthService);
   private router = inject(Router);
+
+  constructor() {
+    inject(SeoService).set(
+      'Espace admin — Support Connecté',
+      'Connexion à l\'espace d\'administration Support Connecté.'
+    );
+  }
 
   email    = '';
   password = '';

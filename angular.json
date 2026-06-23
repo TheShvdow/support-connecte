@@ -62,7 +62,8 @@
             ],
             "scripts": [],
             "allowedCommonJsDependencies": [
-              "qr-code-styling"
+              "qr-code-styling",
+              "sweetalert2"
             ]
           },
           "configurations": {

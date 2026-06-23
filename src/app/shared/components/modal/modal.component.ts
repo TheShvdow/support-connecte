@@ -21,22 +21,22 @@ type ModalMode = 'product' | 'realisation' | 'contenu' | null;
         @if (mode() === 'product') {
           <div class="modal-body">
             <div class="field-row">
-              <div class="field-group"><label>Nom (FR) *</label><input [(ngModel)]="pFr"></div>
-              <div class="field-group"><label>Nom (EN)</label><input [(ngModel)]="pEn"></div>
+              <div class="field-group"><label class="field-label-sm">Nom (FR) *</label><input class="field-input" [(ngModel)]="pFr"></div>
+              <div class="field-group"><label class="field-label-sm">Nom (EN)</label><input class="field-input" [(ngModel)]="pEn"></div>
             </div>
             <div class="field-row">
-              <div class="field-group"><label>Catégorie (FR)</label><input [(ngModel)]="pCat"></div>
-              <div class="field-group"><label>Catégorie (EN)</label><input [(ngModel)]="pCatEn"></div>
+              <div class="field-group"><label class="field-label-sm">Catégorie (FR)</label><input class="field-input" [(ngModel)]="pCat"></div>
+              <div class="field-group"><label class="field-label-sm">Catégorie (EN)</label><input class="field-input" [(ngModel)]="pCatEn"></div>
             </div>
             <div class="field-row">
-              <div class="field-group"><label>Prix (FR)</label><input [(ngModel)]="pPrice"></div>
-              <div class="field-group"><label>Prix (EN)</label><input [(ngModel)]="pPriceEn"></div>
+              <div class="field-group"><label class="field-label-sm">Prix (FR)</label><input class="field-input" [(ngModel)]="pPrice"></div>
+              <div class="field-group"><label class="field-label-sm">Prix (EN)</label><input class="field-input" [(ngModel)]="pPriceEn"></div>
             </div>
-            <div class="field-group"><label>Description (FR)</label><textarea rows="2" [(ngModel)]="pDesc"></textarea></div>
-            <div class="field-group"><label>Description (EN)</label><textarea rows="2" [(ngModel)]="pDescEn"></textarea></div>
+            <div class="field-group"><label class="field-label-sm">Description (FR)</label><textarea class="field-input" rows="2" [(ngModel)]="pDesc"></textarea></div>
+            <div class="field-group"><label class="field-label-sm">Description (EN)</label><textarea class="field-input" rows="2" [(ngModel)]="pDescEn"></textarea></div>
             <div class="field-row">
-              <div class="field-group"><label>Couleur</label><input type="color" [(ngModel)]="pColor" style="height:40px;padding:2px 6px"></div>
-              <div class="field-group"><label>Icône</label><input [(ngModel)]="pIco"></div>
+              <div class="field-group"><label class="field-label-sm">Couleur</label><input type="color" [(ngModel)]="pColor" class="field-input" style="height:40px;padding:2px 6px"></div>
+              <div class="field-group"><label class="field-label-sm">Icône</label><input class="field-input" [(ngModel)]="pIco"></div>
             </div>
           </div>
           <div class="modal-footer">
@@ -47,17 +47,17 @@ type ModalMode = 'product' | 'realisation' | 'contenu' | null;
 
         @if (mode() === 'realisation') {
           <div class="modal-body">
-            <div class="field-group"><label>Titre (FR) *</label><input [(ngModel)]="rFr"></div>
-            <div class="field-group"><label>Titre (EN)</label><input [(ngModel)]="rEn"></div>
+            <div class="field-group"><label class="field-label-sm">Titre (FR) *</label><input class="field-input" [(ngModel)]="rFr"></div>
+            <div class="field-group"><label class="field-label-sm">Titre (EN)</label><input class="field-input" [(ngModel)]="rEn"></div>
             <div class="field-row">
-              <div class="field-group"><label>Catégorie</label>
-                <select [(ngModel)]="rCat">
+              <div class="field-group"><label class="field-label-sm">Catégorie</label>
+                <select class="field-input" [(ngModel)]="rCat">
                   @for (c of realCats; track c) { <option>{{ c }}</option> }
                 </select>
               </div>
-              <div class="field-group"><label>Année</label><input [(ngModel)]="rYear"></div>
+              <div class="field-group"><label class="field-label-sm">Année</label><input class="field-input" [(ngModel)]="rYear"></div>
             </div>
-            <div class="field-group"><label>Couleur</label><input type="color" [(ngModel)]="rColor" style="height:40px;padding:2px 6px;width:100%"></div>
+            <div class="field-group"><label class="field-label-sm">Couleur</label><input type="color" [(ngModel)]="rColor" class="field-input" style="height:40px;padding:2px 6px;width:100%"></div>
           </div>
           <div class="modal-footer">
             <button class="panel-cancel" (click)="close()">{{ store.t().cancel }}</button>
@@ -68,14 +68,14 @@ type ModalMode = 'product' | 'realisation' | 'contenu' | null;
         @if (mode() === 'contenu') {
           <div class="modal-body">
             <div class="field-group">
-              <label>{{ contenuItem()?.title }}</label>
+              <label class="field-label-sm">{{ contenuItem()?.title }}</label>
               @if (contenuItem()?.id === 'contact') {
-                <div class="field-group" style="margin-top:8px"><label>Email</label><input class="field-input" [(ngModel)]="cEmail" placeholder="contact@exemple.fr"></div>
-                <div class="field-group" style="margin-top:8px"><label>Téléphone</label><input class="field-input" [(ngModel)]="cPhone" placeholder="+33 5 00 00 00 00"></div>
-                <div class="field-group" style="margin-top:8px"><label>Adresse</label><input class="field-input" [(ngModel)]="cAddress" placeholder="12 rue …, 33000 Bordeaux"></div>
-                <div class="field-group" style="margin-top:8px"><label>WhatsApp (URL ou numéro)</label><input class="field-input" [(ngModel)]="cWhatsapp" placeholder="https://wa.me/33500000000"></div>
+                <div class="field-group"><label class="field-label-sm">Email</label><input class="field-input" [(ngModel)]="cEmail" placeholder="contact@exemple.fr"></div>
+                <div class="field-group"><label class="field-label-sm">Téléphone</label><input class="field-input" [(ngModel)]="cPhone" placeholder="+33 5 00 00 00 00"></div>
+                <div class="field-group"><label class="field-label-sm">Adresse</label><input class="field-input" [(ngModel)]="cAddress" placeholder="12 rue …, 33000 Bordeaux"></div>
+                <div class="field-group"><label class="field-label-sm">WhatsApp (URL ou numéro)</label><input class="field-input" [(ngModel)]="cWhatsapp" placeholder="https://wa.me/33500000000"></div>
               } @else {
-                <textarea rows="8" [(ngModel)]="cBody" style="resize:vertical"></textarea>
+                <textarea class="field-input" rows="8" [(ngModel)]="cBody" style="resize:vertical"></textarea>
               }
             </div>
           </div>

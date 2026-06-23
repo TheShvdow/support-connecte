@@ -5,6 +5,7 @@ import {
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import QRCodeStyling from 'qr-code-styling';
+import Swal from 'sweetalert2';
 import { StoreService } from '../../../services/store.service';
 import { QrCode } from '../../../models/types';
 
@@ -122,8 +123,18 @@ export class QrDetailComponent implements AfterViewInit, OnChanges {
 
   cancelEdit() { this.editing.set(false); }
 
-  deleteQr() {
-    if (confirm('Supprimer ce QR code ?')) {
+  async deleteQr() {
+    const result = await Swal.fire({
+      title: 'Supprimer ce QR code ?',
+      text: 'Cette action est irréversible.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#FF5B35',
+      cancelButtonColor: '#9aa1ac',
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler',
+    });
+    if (result.isConfirmed) {
       this.store.deleteQrCode(this.qr().id);
       this.closed.emit();
     }

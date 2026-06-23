@@ -1,7 +1,7 @@
 <!-- Confirmation -->
 @if (store.submitted()) {
   <div class="devis-wrap">
-    <div class="confirm-wrap">
+    <div class="confirm-wrap" [aos]="'scale'">
       <div class="confirm-circle">✓</div>
       <h1>{{ t().confirmTitle }}</h1>
       <div class="confirm-ref-box">
@@ -35,20 +35,20 @@
 
   <!-- Step 0: Type -->
   @if (store.devisStep() === 0) {
-    <h1 class="devis-h1">{{ t().devisTitle }}</h1>
-    <p class="devis-lead">{{ t().chooseType }}</p>
+    <h1 class="devis-h1" [aos]="'up'">{{ t().devisTitle }}</h1>
+    <p class="devis-lead" [aos]="'up'" [aosDelay]="80">{{ t().chooseType }}</p>
     <div class="type-grid">
-      <button class="type-card" [class.selected]="store.devisType() === 'impression'" (click)="store.setDevisType('impression')">
+      <button class="type-card" [class.selected]="store.devisType() === 'impression'" (click)="store.setDevisType('impression')" [aos]="'up'">
         <div class="type-icon" style="background:rgba(35,71,230,.1)">🖨️</div>
         <h3>{{ t().impTitle }}</h3>
         <p>{{ store.lang() === 'fr' ? 'Bâches, enseignes, stickers…' : 'Banners, signs, stickers…' }}</p>
       </button>
-      <button class="type-card" [class.selected]="store.devisType() === 'qr'" (click)="store.setDevisType('qr')">
+      <button class="type-card" [class.selected]="store.devisType() === 'qr'" (click)="store.setDevisType('qr')" [aos]="'up'" [aosDelay]="80">
         <div class="type-icon" style="background:rgba(15,181,126,.1)">📱</div>
         <h3>{{ t().qrTitle }}</h3>
         <p>{{ store.lang() === 'fr' ? 'QR menus, NFC, digital…' : 'QR menus, NFC, digital…' }}</p>
       </button>
-      <button class="type-card" [class.selected]="store.devisType() === 'digital'" (click)="store.setDevisType('digital')">
+      <button class="type-card" [class.selected]="store.devisType() === 'digital'" (click)="store.setDevisType('digital')" [aos]="'up'" [aosDelay]="160">
         <div class="type-icon" style="background:rgba(124,58,237,.1)">✦</div>
         <h3>{{ t().digTitle }}</h3>
         <p>{{ store.lang() === 'fr' ? 'Logo, web, vidéo, réseaux…' : 'Logo, web, video, social…' }}</p>
@@ -61,7 +61,7 @@
 
   <!-- Step 1: Détails -->
   @if (store.devisStep() === 1) {
-    <div class="config-card">
+    <div class="config-card" [aos]="'up'">
 
       <!-- Impression -->
       @if (store.devisType() === 'impression') {
@@ -178,7 +178,7 @@
   <!-- Step 2: Fichiers & Contact -->
   @if (store.devisStep() === 2) {
     <div class="files-section">
-      <div class="upload-card">
+      <div class="upload-card" [aos]="'up'">
         <div class="upload-title">{{ store.lang() === 'fr' ? 'Fichiers' : 'Files' }}</div>
         <div class="upload-hint">{{ t().addFilesSub }}</div>
         <div class="upload-label" (click)="fileInput.click()">
@@ -199,7 +199,7 @@
           </div>
         }
       </div>
-      <div class="contact-card-form">
+      <div class="contact-card-form" [aos]="'up'" [aosDelay]="80">
         <div class="form-title">{{ t().contactDetails }}</div>
         <div class="field-group">
           <div class="field-row-2">
@@ -233,7 +233,7 @@
 
   <!-- Step 3: Récapitulatif -->
   @if (store.devisStep() === 3) {
-    <div class="recap-section">
+    <div class="recap-section" [aos]="'up'">
       <h2>{{ t().recapTitle }}</h2>
       <p class="recap-hint">{{ t().reviewBefore }}</p>
       <div class="recap-row" style="font-weight:700">
