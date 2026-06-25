@@ -66,9 +66,7 @@
               "sweetalert2"
             ],
             "server": "src/main.server.ts",
-            "prerender": {
-              "routesFile": "routes.txt"
-            },
+            "prerender": false,
             "ssr": {
               "entry": "server.ts"
             }
