@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavComponent } from './layout/nav/nav.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { trigger, transition, style, animate, query } from '@angular/animations';
+import { AnalyticsService } from './services/analytics.service';
 
 export const routeFade = trigger('routeAnim', [
   transition('* <=> *', [
@@ -34,4 +35,8 @@ export const routeFade = trigger('routeAnim', [
     }
   `]
 })
-export class AppComponent {}
+export class AppComponent {
+  constructor() {
+    inject(AnalyticsService).init();
+  }
+}
