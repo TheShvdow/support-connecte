@@ -205,7 +205,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--cobalt); ou
     &::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
       background: linear-gradient(to top, rgba(0,0,0,.72) 0%, rgba(0,0,0,.2) 55%, transparent 100%); }
     .card-label { font-size: 13px; font-weight: 600; opacity: .9; position: relative; z-index: 4; }
-    .card-title { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; line-height: 1; letter-spacing: -.02em; position: relative; z-index: 4; }
+    .card-title { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 26px; line-height: 1; letter-spacing: -.02em; position: relative; z-index: 4; margin-top: auto; }
   }
   .card-sm {
     height: 100%; border-radius: 22px; padding: 20px; display: flex; flex-direction: column;
@@ -223,7 +223,7 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--cobalt); ou
     &::after { content: ''; position: absolute; inset: 0; z-index: 3; pointer-events: none; border-radius: inherit;
       background: linear-gradient(to top, rgba(0,0,0,.65) 0%, rgba(0,0,0,.15) 50%, transparent 100%); }
     .card-label { font-size: 12px; font-weight: 600; opacity: .9; position: relative; z-index: 4; }
-    .card-title { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; line-height: 1; position: relative; z-index: 4; }
+    .card-title { font-family: 'Bricolage Grotesque', sans-serif; font-weight: 700; font-size: 19px; line-height: 1; position: relative; z-index: 4; margin-top: auto; }
   }
 }
 
