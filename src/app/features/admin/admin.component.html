@@ -6,8 +6,7 @@
     <!-- Brand + toggle (toujours visible) -->
     <div class="sb-brand">
       <a class="sb-logo-link" routerLink="/">
-        <div class="logo-icon"><div class="logo-ring"></div><div class="logo-dot"></div></div>
-        <span class="sb-logo-name">Support<span>Connecté</span></span>
+        <img class="sb-logo-img" src="/logo-full.png" alt="Support Connecté">
       </a>
       <button class="sb-toggle" (click)="toggleSidebar()"
         [title]="sidebarOpen() ? 'Réduire' : 'Agrandir'">
@@ -126,7 +125,7 @@
         <div>
           <h2>{{ t().adminDemandes }} <span class="count">({{ store.demandes().length }})</span></h2>
         </div>
-        <input class="admin-search" [placeholder]="t().search" [value]="store.adminSearch()" (input)="store.setAdminSearch($any($event.target).value)">
+        <input class="admin-search" [placeholder]="t().search" [value]="store.adminSearch()" (input)="setSearch($any($event.target).value)">
       </div>
       <div class="admin-stats">
         @for (st of stats; track st.l) {
@@ -143,7 +142,7 @@
             <tr><th>Réf.</th><th>Client</th><th>Détail</th><th>Type</th><th>Date</th><th>Statut</th></tr>
           </thead>
           <tbody>
-            @for (d of filteredDemandes; track d.id) {
+            @for (d of pagedDemandes; track d.id) {
               <tr (click)="openDemande(d)">
                 <td class="ref-col">{{ d.ref }}</td>
                 <td><strong>{{ d.client }}</strong></td>
@@ -155,6 +154,18 @@
             }
           </tbody>
         </table>
+        @if (totalPages(filteredDemandes) > 1) {
+          <div class="pagination">
+            <span class="pg-info">{{ (demandesPage() - 1) * PAGE_SIZE + 1 }}–{{ pageEnd(demandesPage(), filteredDemandes.length) }} sur {{ filteredDemandes.length }}</span>
+            <div class="pg-controls">
+              <button class="pg-btn" [disabled]="demandesPage() <= 1" (click)="demandesPage.set(demandesPage() - 1)">‹</button>
+              @for (p of pageNums(demandesPage(), totalPages(filteredDemandes)); track p) {
+                <button class="pg-btn" [class.active]="p === demandesPage()" (click)="demandesPage.set(p)">{{ p }}</button>
+              }
+              <button class="pg-btn" [disabled]="demandesPage() >= totalPages(filteredDemandes)" (click)="demandesPage.set(demandesPage() + 1)">›</button>
+            </div>
+          </div>
+        }
       </div>
     }
 
@@ -165,7 +176,7 @@
           <h2>{{ t().adminCatalogue }} <span class="count">({{ store.products().length }})</span></h2>
         </div>
         <div class="header-actions">
-          <input class="admin-search" [placeholder]="t().search" [value]="store.adminSearch()" (input)="store.setAdminSearch($any($event.target).value)">
+          <input class="admin-search" [placeholder]="t().search" [value]="store.adminSearch()" (input)="setSearch($any($event.target).value)">
           <button class="admin-add-btn" (click)="openProductModal()">{{ t().addProduct }}</button>
         </div>
       </div>
@@ -175,7 +186,7 @@
             <tr><th>Produit</th><th>Catégorie</th><th>Prix</th><th>Actions</th></tr>
           </thead>
           <tbody>
-            @for (p of filteredProducts; track p.id) {
+            @for (p of pagedProducts; track p.id) {
               <tr>
                 <td><span style="font-size:18px;margin-right:8px">{{ p.ico }}</span><strong>{{ store.lang() === 'fr' ? p.fr : p.en }}</strong></td>
                 <td class="muted">{{ store.lang() === 'fr' ? p.cat : p.catEn }}</td>
@@ -188,6 +199,18 @@
             }
           </tbody>
         </table>
+        @if (totalPages(filteredProducts) > 1) {
+          <div class="pagination">
+            <span class="pg-info">{{ (cataloguePage() - 1) * PAGE_SIZE + 1 }}–{{ pageEnd(cataloguePage(), filteredProducts.length) }} sur {{ filteredProducts.length }}</span>
+            <div class="pg-controls">
+              <button class="pg-btn" [disabled]="cataloguePage() <= 1" (click)="cataloguePage.set(cataloguePage() - 1)">‹</button>
+              @for (p of pageNums(cataloguePage(), totalPages(filteredProducts)); track p) {
+                <button class="pg-btn" [class.active]="p === cataloguePage()" (click)="cataloguePage.set(p)">{{ p }}</button>
+              }
+              <button class="pg-btn" [disabled]="cataloguePage() >= totalPages(filteredProducts)" (click)="cataloguePage.set(cataloguePage() + 1)">›</button>
+            </div>
+          </div>
+        }
       </div>
     }
 
@@ -198,7 +221,7 @@
           <h2>{{ t().adminReal }} <span class="count">({{ store.realisations().length }})</span></h2>
         </div>
         <div class="header-actions">
-          <input class="admin-search" [placeholder]="t().search" [value]="store.adminSearch()" (input)="store.setAdminSearch($any($event.target).value)">
+          <input class="admin-search" [placeholder]="t().search" [value]="store.adminSearch()" (input)="setSearch($any($event.target).value)">
           <button class="admin-add-btn" (click)="openRealModal()">{{ t().addReal }}</button>
         </div>
       </div>
@@ -208,7 +231,7 @@
             <tr><th>Réalisation</th><th>Catégorie</th><th>Année</th><th>Actions</th></tr>
           </thead>
           <tbody>
-            @for (r of filteredReal; track r.id) {
+            @for (r of pagedReal; track r.id) {
               <tr>
                 <td>
                   <span class="color-dot" [style.background]="r.color"></span>
@@ -224,6 +247,18 @@
             }
           </tbody>
         </table>
+        @if (totalPages(filteredReal) > 1) {
+          <div class="pagination">
+            <span class="pg-info">{{ (realisationsPage() - 1) * PAGE_SIZE + 1 }}–{{ pageEnd(realisationsPage(), filteredReal.length) }} sur {{ filteredReal.length }}</span>
+            <div class="pg-controls">
+              <button class="pg-btn" [disabled]="realisationsPage() <= 1" (click)="realisationsPage.set(realisationsPage() - 1)">‹</button>
+              @for (p of pageNums(realisationsPage(), totalPages(filteredReal)); track p) {
+                <button class="pg-btn" [class.active]="p === realisationsPage()" (click)="realisationsPage.set(p)">{{ p }}</button>
+              }
+              <button class="pg-btn" [disabled]="realisationsPage() >= totalPages(filteredReal)" (click)="realisationsPage.set(realisationsPage() + 1)">›</button>
+            </div>
+          </div>
+        }
       </div>
     }
 
@@ -268,12 +303,12 @@
             <h2>QR Codes dynamiques <span class="count">({{ store.qrCodes().length }})</span></h2>
           </div>
           <div class="header-actions">
-            <input class="admin-search" placeholder="Rechercher…" [value]="store.adminSearch()" (input)="store.setAdminSearch($any($event.target).value)">
+            <input class="admin-search" placeholder="Rechercher…" [value]="store.adminSearch()" (input)="setSearch($any($event.target).value)">
             <button class="admin-add-btn" (click)="openQrGenerator()">+ Nouveau QR</button>
           </div>
         </div>
         <div class="qr-admin-grid">
-          @for (qr of filteredQrCodes; track qr.id) {
+          @for (qr of pagedQrCodes; track qr.id) {
             <div class="qr-admin-card qr-card-clickable" [class.qr-inactive]="!qr.active" [class.qr-expired]="isExpired(qr)" (click)="openQrDetail(qr)">
               <div class="qr-card-top">
                 <div class="qr-id-pill">{{ qr.id }}</div>
@@ -290,6 +325,18 @@
             </div>
           }
         </div>
+        @if (totalPages(filteredQrCodes) > 1) {
+          <div class="pagination" style="background:transparent;padding:16px 0 0">
+            <span class="pg-info">{{ (qrPage() - 1) * PAGE_SIZE + 1 }}–{{ pageEnd(qrPage(), filteredQrCodes.length) }} sur {{ filteredQrCodes.length }}</span>
+            <div class="pg-controls">
+              <button class="pg-btn" [disabled]="qrPage() <= 1" (click)="qrPage.set(qrPage() - 1)">‹</button>
+              @for (p of pageNums(qrPage(), totalPages(filteredQrCodes)); track p) {
+                <button class="pg-btn" [class.active]="p === qrPage()" (click)="qrPage.set(p)">{{ p }}</button>
+              }
+              <button class="pg-btn" [disabled]="qrPage() >= totalPages(filteredQrCodes)" (click)="qrPage.set(qrPage() + 1)">›</button>
+            </div>
+          </div>
+        }
       }
     }
 

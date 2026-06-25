@@ -1,4 +1,5 @@
-import { Component, inject, signal, ViewChild, afterNextRender } from '@angular/core';
+import { Component, inject, signal, ViewChild, afterNextRender, OnDestroy, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -17,10 +18,11 @@ import { AdminTab, Demande, Product, Realisation, Contenu, QrCode } from '../../
   imports: [RouterLink, NgClass, FormsModule, SlidePanelComponent, ModalComponent, QrGeneratorComponent, QrDetailComponent],
   templateUrl: './admin.component.html',
 })
-export class AdminComponent {
+export class AdminComponent implements OnDestroy {
   store = inject(StoreService);
   auth  = inject(AuthService);
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
   t = this.store.t;
 
   sidebarOpen = signal(true);
@@ -29,11 +31,30 @@ export class AdminComponent {
     afterNextRender(() => {
       const saved = localStorage.getItem('sb-open');
       if (saved !== null) this.sidebarOpen.set(saved !== 'false');
+      document.body.classList.add('admin-open');
+      this.syncNavPadding(this.sidebarOpen());
     });
   }
 
+  ngOnDestroy() {
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.classList.remove('admin-open', 'sb-closed');
+    }
+  }
+
   toggleSidebar() {
-    this.sidebarOpen.update(v => { localStorage.setItem('sb-open', String(!v)); return !v; });
+    this.sidebarOpen.update(v => {
+      const next = !v;
+      localStorage.setItem('sb-open', String(next));
+      this.syncNavPadding(next);
+      return next;
+    });
+  }
+
+  private syncNavPadding(open: boolean) {
+    if (isPlatformBrowser(this.platformId)) {
+      document.body.classList.toggle('sb-closed', !open);
+    }
   }
 
   async logout() {
@@ -134,6 +155,42 @@ export class AdminComponent {
   openQrGenerator() { this.selectedQr.set(null); this.showQrGenerator.set(true); }
   openQrDetail(qr: QrCode) { this.showQrGenerator.set(false); this.selectedQr.set(qr); }
   backToQrList()    { this.showQrGenerator.set(false); this.selectedQr.set(null); }
+
+  // ── Pagination
+  readonly PAGE_SIZE = 10;
+  demandesPage     = signal(1);
+  cataloguePage    = signal(1);
+  realisationsPage = signal(1);
+  qrPage           = signal(1);
+
+  setSearch(val: string) {
+    this.store.setAdminSearch(val);
+    this.demandesPage.set(1);
+    this.cataloguePage.set(1);
+    this.realisationsPage.set(1);
+    this.qrPage.set(1);
+  }
+
+  pageSlice<T>(list: T[], page: number): T[] {
+    return list.slice((page - 1) * this.PAGE_SIZE, page * this.PAGE_SIZE);
+  }
+  totalPages(list: unknown[]): number {
+    return Math.max(1, Math.ceil(list.length / this.PAGE_SIZE));
+  }
+  pageEnd(page: number, total: number): number {
+    return Math.min(page * this.PAGE_SIZE, total);
+  }
+  pageNums(current: number, total: number): number[] {
+    if (total <= 5) return Array.from({ length: total }, (_, i) => i + 1);
+    if (current <= 3) return [1, 2, 3, 4, 5];
+    if (current >= total - 2) return [total - 4, total - 3, total - 2, total - 1, total];
+    return [current - 2, current - 1, current, current + 1, current + 2];
+  }
+
+  get pagedDemandes()  { return this.pageSlice(this.filteredDemandes,  this.demandesPage()); }
+  get pagedProducts()  { return this.pageSlice(this.filteredProducts,  this.cataloguePage()); }
+  get pagedReal()      { return this.pageSlice(this.filteredReal,       this.realisationsPage()); }
+  get pagedQrCodes()   { return this.pageSlice(this.filteredQrCodes,   this.qrPage()); }
 
   // ── Filtered lists
   get filteredQrCodes() {

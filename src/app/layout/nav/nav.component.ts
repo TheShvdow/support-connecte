@@ -1,5 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
-import { RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { filter, map, startWith } from 'rxjs';
 import { StoreService } from '../../services/store.service';
 import { AuthService } from '../../services/auth.service';
 
@@ -8,11 +10,13 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [RouterLink, RouterLinkActive],
   template: `
-    <nav id="nav">
+    <nav id="nav" [class.admin-mode]="isAdmin()">
       <div class="nav-inner">
-        <a class="logo" routerLink="/">
-          <img src="/logo-full.png" alt="Support Connecté" class="logo-img">
-        </a>
+        @if (!isAdmin()) {
+          <a class="logo" routerLink="/">
+            <img src="/logo-full.png" alt="Support Connecté" class="logo-img">
+          </a>
+        }
         <div class="nav-links">
           @for (link of publicLinks; track link.path) {
             <a [routerLink]="link.path" routerLinkActive="active" [routerLinkActiveOptions]="{exact: link.path === '/'}">
@@ -40,8 +44,18 @@ import { AuthService } from '../../services/auth.service';
 export class NavComponent {
   store = inject(StoreService);
   auth = inject(AuthService);
+  private router = inject(Router);
   t = this.store.t;
   mobileOpen = signal(false);
+
+  isAdmin = toSignal(
+    this.router.events.pipe(
+      filter(e => e instanceof NavigationEnd),
+      map(() => this.router.url.startsWith('/admin')),
+      startWith(this.router.url.startsWith('/admin')),
+    ),
+    { initialValue: false },
+  );
 
   get publicLinks() {
     return [
