@@ -1,5 +1,6 @@
 import { Component, inject, AfterViewInit, OnDestroy, ViewChild, ViewChildren, ElementRef, QueryList } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { StoreService } from '../../services/store.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { AosDirective } from '../../shared/directives/aos.directive';
@@ -30,8 +31,15 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   private gsap = inject(GsapService);
   private particles = inject(ParticlesService);
   private cardThree = inject(CardThreeService);
+  private sanitizer = inject(DomSanitizer);
   t = this.store.t;
   poles = POLES;
+
+  get mapUrl(): SafeResourceUrl {
+    const address = this.contact?.address || 'Dakar, Sénégal';
+    const url = `https://www.google.com/maps?q=${encodeURIComponent(address)}&output=embed&z=15`;
+    return this.sanitizer.bypassSecurityTrustResourceUrl(url);
+  }
   variants = [0, 1, 2];
 
   constructor() {

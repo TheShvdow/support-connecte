@@ -504,6 +504,12 @@ input:focus, select:focus, textarea:focus { outline: 2px solid var(--cobalt); ou
 .contact-split {
   display: grid; grid-template-columns: 1fr 1.5fr; gap: 16px; align-items: start;
 }
+.contact-map {
+  margin-top: 24px; border-radius: 20px; overflow: hidden;
+  height: 360px; width: 100%;
+  box-shadow: 0 4px 24px rgba(0,0,0,.08);
+  iframe { display: block; }
+}
 
 // ── Carte info gauche
 .contact-info-card {
