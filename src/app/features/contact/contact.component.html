@@ -1,0 +1,212 @@
+<div class="ct-page">
+
+  <!-- ══ BANDE HÉRO — sombre ══════════════════════════════════ -->
+  <div class="ct-band">
+    <div class="ct-band-inner">
+
+      <!-- Gauche : identité + texte -->
+      <div class="ct-band-left">
+
+        <div class="ct-eyebrow">
+          <span class="ct-eyebrow-dot"></span>
+          {{ store.lang() === 'fr' ? 'Agence · Saly, Sénégal' : 'Agency · Saly, Senegal' }}
+        </div>
+
+        <h1 class="ct-hl">
+          {{ store.lang() === 'fr' ? 'Parlons de' : "Let's talk" }}<br>
+          {{ store.lang() === 'fr' ? 'votre projet' : 'your project' }}<span class="ct-hl-dot">.</span>
+        </h1>
+
+        <p class="ct-band-desc">
+          {{ store.lang() === 'fr'
+            ? 'Un devis, une question, ou simplement envie d\'échanger — notre équipe répond rapidement et avec le sourire.'
+            : 'A quote, a question, or just a hello — our team replies fast and with a smile.' }}
+        </p>
+
+        <p class="ct-band-sub">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+               stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          {{ store.lang() === 'fr' ? 'Lun – Sam · 8h – 19h · Réponse sous 24h' : 'Mon – Sat · 8am – 7pm · Reply within 24h' }}
+        </p>
+
+      </div>
+
+      <!-- Droite : 4 canaux de contact -->
+      <div class="ct-band-chs">
+
+        <a class="ct-ch" [attr.href]="contact?.phone ? 'tel:' + contact!.phone : null">
+          <div class="ct-ch-ico">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 11.5 19.79 19.79 0 011 2.95 2 2 0 013 .77h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L7.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/>
+            </svg>
+          </div>
+          <div class="ct-ch-body">
+            <span class="ct-ch-label">{{ store.lang() === 'fr' ? 'Téléphone' : 'Phone' }}</span>
+            <span class="ct-ch-val">{{ contact?.phone || '+221 77 000 00 00' }}</span>
+          </div>
+          <span class="ct-ch-arr" aria-hidden="true">→</span>
+        </a>
+
+        <a class="ct-ch ct-ch--wa" [attr.href]="contact?.whatsapp || null" target="_blank" rel="noopener">
+          <div class="ct-ch-ico ct-ch-ico--wa">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z"/>
+            </svg>
+          </div>
+          <div class="ct-ch-body">
+            <span class="ct-ch-label">WhatsApp</span>
+            <span class="ct-ch-val">{{ store.lang() === 'fr' ? 'Message direct' : 'Direct message' }}</span>
+          </div>
+          <span class="ct-ch-arr" aria-hidden="true">→</span>
+        </a>
+
+        <a class="ct-ch" [attr.href]="contact?.email ? 'mailto:' + contact!.email : null">
+          <div class="ct-ch-ico ct-ch-ico--email">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="2"/>
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/>
+            </svg>
+          </div>
+          <div class="ct-ch-body">
+            <span class="ct-ch-label">Email</span>
+            <span class="ct-ch-val">{{ contact?.email || 'contact@supportconnecte.sn' }}</span>
+          </div>
+          <span class="ct-ch-arr" aria-hidden="true">→</span>
+        </a>
+
+        <div class="ct-ch ct-ch--addr">
+          <div class="ct-ch-ico ct-ch-ico--addr">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0116 0z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </div>
+          <div class="ct-ch-body">
+            <span class="ct-ch-label">{{ store.lang() === 'fr' ? 'Adresse' : 'Address' }}</span>
+            <span class="ct-ch-val">{{ contact?.address || 'Saly Portudal, Sénégal' }}</span>
+          </div>
+        </div>
+
+      </div><!-- /ct-band-chs -->
+
+    </div>
+  </div><!-- /ct-band -->
+
+  <!-- ══ CORPS : formulaire + carte ═══════════════════════════ -->
+  <div class="ct-body">
+
+    <!-- Formulaire -->
+    <div class="ct-form-col">
+
+      @if (!sent()) {
+
+        <div class="ct-form-hd">
+          <span class="ct-form-eyebrow">{{ store.lang() === 'fr' ? 'Formulaire' : 'Contact form' }}</span>
+          <h2 class="ct-form-title">
+            {{ store.lang() === 'fr' ? 'Votre projet,' : 'Your project,' }}<br>
+            <span class="ct-form-title-light">{{ store.lang() === 'fr' ? 'en quelques mots.' : 'in a few words.' }}</span>
+          </h2>
+        </div>
+
+        <div class="ct-form">
+
+          <div class="ct-field">
+            <label class="ct-label" for="ct-nom">{{ store.lang() === 'fr' ? 'Nom complet' : 'Full name' }} *</label>
+            <input id="ct-nom" class="ct-input" type="text"
+              [placeholder]="store.lang() === 'fr' ? 'Jean Dupont' : 'John Doe'"
+              [value]="nom()" (input)="nom.set($any($event.target).value)">
+          </div>
+
+          <div class="ct-field-row">
+            <div class="ct-field">
+              <label class="ct-label" for="ct-email">Email *</label>
+              <input id="ct-email" class="ct-input" type="email"
+                placeholder="vous@exemple.com"
+                [value]="email()" (input)="email.set($any($event.target).value)">
+            </div>
+            <div class="ct-field">
+              <label class="ct-label" for="ct-tel">{{ store.lang() === 'fr' ? 'Téléphone' : 'Phone' }}</label>
+              <input id="ct-tel" class="ct-input" type="tel"
+                placeholder="+221 77…"
+                [value]="tel()" (input)="tel.set($any($event.target).value)">
+            </div>
+          </div>
+
+          <div class="ct-field">
+            <label class="ct-label" for="ct-msg">Message *</label>
+            <textarea id="ct-msg" class="ct-textarea" rows="5"
+              [placeholder]="store.lang() === 'fr' ? 'Décrivez votre projet…' : 'Describe your project…'"
+              [value]="message()" (input)="message.set($any($event.target).value)"></textarea>
+          </div>
+
+          <div class="ct-form-footer">
+            <button class="ct-submit" type="button"
+              [disabled]="sending() || !nom() || !email() || !message()"
+              (click)="send()">
+              @if (sending()) {
+                <span class="ct-spinner" aria-hidden="true"></span>
+                {{ store.lang() === 'fr' ? 'Envoi en cours…' : 'Sending…' }}
+              } @else {
+                {{ store.lang() === 'fr' ? 'Envoyer le message' : 'Send message' }}
+                <svg class="ct-arrow" width="17" height="17" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M5 12h14"/><path d="m12 5 7 7-7 7"/>
+                </svg>
+              }
+            </button>
+            <p class="ct-reply-note">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                   stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+              </svg>
+              {{ store.lang() === 'fr' ? 'Réponse garantie sous 24h' : 'Reply within 24h' }}
+            </p>
+          </div>
+
+        </div><!-- /ct-form -->
+
+      } @else {
+
+        <div class="ct-success">
+          <div class="ct-success-icon">✓</div>
+          <h2>{{ store.lang() === 'fr' ? 'Message envoyé !' : 'Message sent!' }}</h2>
+          <p>{{ store.lang() === 'fr'
+            ? 'Notre équipe revient vers vous sous 24h. Un email de confirmation vous a été envoyé.'
+            : 'Our team will get back to you within 24h. A confirmation email was sent to you.' }}</p>
+          <div class="ct-success-actions">
+            <a routerLink="/" class="cta-primary">{{ store.lang() === 'fr' ? 'Retour à l\'accueil' : 'Back to home' }}</a>
+            <a routerLink="/devis" class="cta-outline">{{ store.lang() === 'fr' ? 'Faire un devis' : 'Get a quote' }}</a>
+          </div>
+        </div>
+
+      }
+
+    </div><!-- /ct-form-col -->
+
+    <!-- Carte OpenStreetMap -->
+    <div class="ct-map-col">
+      <iframe
+        class="ct-map-frame"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=-17.0700%2C14.4200%2C-16.9400%2C14.4900&layer=mapnik&marker=14.4538%2C-17.0038"
+        [title]="store.lang() === 'fr' ? 'Localisation — Saly, Sénégal' : 'Location — Saly, Senegal'"
+        loading="lazy" allowfullscreen>
+      </iframe>
+      <a class="ct-map-pin"
+         href="https://www.openstreetmap.org/?mlat=14.4538&mlon=-17.0038#map=15/14.4538/-17.0038"
+         target="_blank" rel="noopener">
+        <div class="ct-map-pin-dot"></div>
+        <div class="ct-map-pin-info">
+          <strong>Support Connecté</strong>
+          <span>{{ contact?.address || 'Saly Portudal, Sénégal' }}</span>
+        </div>
+        <span class="ct-map-pin-open">{{ store.lang() === 'fr' ? 'Ouvrir' : 'Open' }} →</span>
+      </a>
+    </div><!-- /ct-map-col -->
+
+  </div><!-- /ct-body -->
+
+</div><!-- /ct-page -->
+
+<app-footer />

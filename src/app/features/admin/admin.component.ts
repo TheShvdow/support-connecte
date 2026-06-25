@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, afterNextRender } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -23,7 +23,15 @@ export class AdminComponent {
   private router = inject(Router);
   t = this.store.t;
 
-  sidebarOpen = signal(localStorage.getItem('sb-open') !== 'false');
+  sidebarOpen = signal(true);
+
+  constructor() {
+    afterNextRender(() => {
+      const saved = localStorage.getItem('sb-open');
+      if (saved !== null) this.sidebarOpen.set(saved !== 'false');
+    });
+  }
+
   toggleSidebar() {
     this.sidebarOpen.update(v => { localStorage.setItem('sb-open', String(!v)); return !v; });
   }
@@ -33,7 +41,7 @@ export class AdminComponent {
       title: 'Se déconnecter ?',
       icon: 'question',
       showCancelButton: true,
-      confirmButtonColor: '#2347E6',
+      confirmButtonColor: '#C41A1A',
       cancelButtonColor: '#9aa1ac',
       confirmButtonText: 'Déconnexion',
       cancelButtonText: 'Annuler',

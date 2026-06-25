@@ -64,7 +64,14 @@
             "allowedCommonJsDependencies": [
               "qr-code-styling",
               "sweetalert2"
-            ]
+            ],
+            "server": "src/main.server.ts",
+            "prerender": {
+              "routesFile": "routes.txt"
+            },
+            "ssr": {
+              "entry": "server.ts"
+            }
           },
           "configurations": {
             "production": {

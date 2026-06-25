@@ -1,4 +1,5 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { environment } from '../../environments/environment';
 import type { Database } from '../models/database.types';
@@ -8,14 +9,17 @@ export class SupabaseService {
   readonly client: SupabaseClient<Database>;
 
   constructor() {
+    const isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
     this.client = createClient<Database>(
       environment.supabaseUrl,
       environment.supabaseKey,
       {
-        global: {
-          headers: { 'X-Client-Info': 'support-connecte' },
+        global: { headers: { 'X-Client-Info': 'support-connecte' } },
+        auth: {
+          persistSession:  isBrowser,
+          autoRefreshToken: isBrowser,
+          detectSessionInUrl: isBrowser,
         },
-        auth: { persistSession: true },
       }
     );
   }
@@ -56,6 +60,11 @@ export class SupabaseService {
   }
   async updateUser(data: { email?: string; password?: string }) {
     return this.client.auth.updateUser(data);
+  }
+
+  // ── Edge Functions
+  async invokeFunction(name: string, body: object) {
+    return this.client.functions.invoke(name, { body });
   }
 
   // ── QR Codes

@@ -97,11 +97,11 @@ export class ModalComponent {
   // Product fields
   editProductId = signal<string | null>(null);
   pFr = ''; pEn = ''; pCat = ''; pCatEn = ''; pPrice = ''; pPriceEn = '';
-  pDesc = ''; pDescEn = ''; pColor = '#2347E6'; pIco = '📦';
+  pDesc = ''; pDescEn = ''; pColor = '#C41A1A'; pIco = '📦';
 
   // Realisation fields
   editRealId = signal<number | null>(null);
-  rFr = ''; rEn = ''; rCat = 'Impression'; rYear = '2025'; rColor = '#2347E6';
+  rFr = ''; rEn = ''; rCat = 'Impression'; rYear = '2025'; rColor = '#C41A1A';
   realCats = ['Impression', 'Marquage', 'QR Code', 'Digital', 'PLV', 'Objets', 'Formation'];
 
   // Contenu fields
@@ -117,7 +117,7 @@ export class ModalComponent {
     this.pCat = p?.cat ?? ''; this.pCatEn = p?.catEn ?? '';
     this.pPrice = p?.price ?? ''; this.pPriceEn = p?.priceEn ?? '';
     this.pDesc = p?.d ?? ''; this.pDescEn = p?.dEn ?? '';
-    this.pColor = p?.color ?? '#2347E6'; this.pIco = p?.ico ?? '📦';
+    this.pColor = p?.color ?? '#C41A1A'; this.pIco = p?.ico ?? '📦';
     this.open.set(true);
   }
 
@@ -127,7 +127,7 @@ export class ModalComponent {
     this.title.set(r ? `Modifier — ${r.fr}` : 'Ajouter une réalisation');
     this.rFr = r?.fr ?? ''; this.rEn = r?.en ?? '';
     this.rCat = r?.cat ?? 'Impression'; this.rYear = r?.year ?? '2025';
-    this.rColor = r?.color ?? '#2347E6';
+    this.rColor = r?.color ?? '#C41A1A';
     this.open.set(true);
   }
 

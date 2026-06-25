@@ -39,7 +39,7 @@
     <p class="devis-lead" [aos]="'up'" [aosDelay]="80">{{ t().chooseType }}</p>
     <div class="type-grid">
       <button class="type-card" [class.selected]="store.devisType() === 'impression'" (click)="store.setDevisType('impression')" [aos]="'up'">
-        <div class="type-icon" style="background:rgba(35,71,230,.1)">🖨️</div>
+        <div class="type-icon" style="background:rgba(196,26,26,.1)">🖨️</div>
         <h3>{{ t().impTitle }}</h3>
         <p>{{ store.lang() === 'fr' ? 'Bâches, enseignes, stickers…' : 'Banners, signs, stickers…' }}</p>
       </button>

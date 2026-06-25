@@ -1,4 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
+import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { StoreService } from '../../services/store.service';
 import { SupabaseService } from '../../services/supabase.service';
@@ -48,7 +49,7 @@ import type { Database } from '../../models/database.types';
     .qr-redir-card h2 { font-size: 22px; margin: 16px 0 10px; }
     .qr-redir-card p { color: var(--body); line-height: 1.6; }
     .qr-redir-ico { font-size: 48px; }
-    .qr-redir-spinner { width: 48px; height: 48px; border: 4px solid rgba(35,71,230,.15); border-top-color: var(--cobalt); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
+    .qr-redir-spinner { width: 48px; height: 48px; border: 4px solid rgba(196,26,26,.15); border-top-color: var(--cobalt); border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 16px; }
     @keyframes spin { to { transform: rotate(360deg); } }
   `]
 })
@@ -56,6 +57,7 @@ export class QrRedirectComponent implements OnInit {
   store = inject(StoreService);
   sb    = inject(SupabaseService);
   route = inject(ActivatedRoute);
+  private doc = inject(DOCUMENT);
 
   status     = signal<'loading' | 'redirecting' | 'inactive' | 'expired' | 'notfound'>('loading');
   expiryDate = signal('');
@@ -93,6 +95,6 @@ export class QrRedirectComponent implements OnInit {
     }
     this.status.set('redirecting');
     this.store.incrementQrScans(qr.id);
-    setTimeout(() => { window.location.href = qr!.destination; }, 800);
+    setTimeout(() => { this.doc.location.href = qr!.destination; }, 800);
   }
 }

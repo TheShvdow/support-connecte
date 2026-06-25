@@ -2,7 +2,7 @@ import {
   Component, inject, input, output, signal,
   ViewChild, ElementRef, AfterViewInit, OnChanges
 } from '@angular/core';
-import { NgClass } from '@angular/common';
+import { NgClass, DOCUMENT } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import QRCodeStyling from 'qr-code-styling';
 import Swal from 'sweetalert2';
@@ -17,6 +17,7 @@ import { QrCode } from '../../../models/types';
 })
 export class QrDetailComponent implements AfterViewInit, OnChanges {
   store  = inject(StoreService);
+  private doc = inject(DOCUMENT);
   qr     = input.required<QrCode>();
   closed = output<void>();
 
@@ -33,7 +34,7 @@ export class QrDetailComponent implements AfterViewInit, OnChanges {
 
   copied = signal(false);
 
-  shortUrl()  { return `${window.location.origin}/r/${this.qr().id}`; }
+  shortUrl()  { return `${this.doc.location.origin}/r/${this.qr().id}`; }
 
   isExpired() {
     const q = this.qr();
@@ -70,14 +71,14 @@ export class QrDetailComponent implements AfterViewInit, OnChanges {
       margin: s.margin ?? 10,
       dotsOptions: {
         type: s.dotType ?? 'rounded',
-        color: s.fgColor ?? '#2347E6',
+        color: s.fgColor ?? '#C41A1A',
         ...(s.useGradient ? {
           gradient: { type: 'linear' as const, rotation: 45,
             colorStops: [{ offset: 0, color: s.fgColor }, { offset: 1, color: s.gradientColor }] }
         } : {}),
       },
-      cornersSquareOptions: { type: s.cornerType ?? 'extra-rounded', color: s.fgColor ?? '#2347E6' },
-      cornersDotOptions:    { color: s.fgColor ?? '#2347E6' },
+      cornersSquareOptions: { type: s.cornerType ?? 'extra-rounded', color: s.fgColor ?? '#C41A1A' },
+      cornersDotOptions:    { color: s.fgColor ?? '#C41A1A' },
       backgroundOptions:    { color: s.bgColor ?? '#FFFFFF' },
       qrOptions:            { errorCorrectionLevel: 'M' as const },
     };

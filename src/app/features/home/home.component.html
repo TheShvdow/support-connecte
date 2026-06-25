@@ -11,6 +11,10 @@
 </div>
 
 <div class="hero-section">
+  <canvas #particleCanvas class="particle-canvas" aria-hidden="true"></canvas>
+  <span class="hero-blob hero-blob--red"    aria-hidden="true"></span>
+  <span class="hero-blob hero-blob--teal"   aria-hidden="true"></span>
+  <span class="hero-blob hero-blob--violet" aria-hidden="true"></span>
   <div class="container">
 
     <!-- Hero A — Bold -->
@@ -29,17 +33,33 @@
           </div>
         </div>
         <div class="hero-a-grid">
-          <div class="card-tall">
-            <span class="card-label">{{ poleText(poles[0]).t }}</span>
-            <span class="card-title">{{ poles[0].tags[0] }}<br>{{ poles[0].tags[1] }}</span>
+          <!-- Wrapper .card-3d reçoit le tilt (rotateX/Y) — la card intérieure reçoit le float (translateY) -->
+          <div class="card-3d card-3d--tall">
+            <div class="card-tall">
+              <canvas #cardCanvas class="card-three-canvas" aria-hidden="true"></canvas>
+              <div class="card-shine" aria-hidden="true"></div>
+              @if (poles[0].img) { <img [src]="poles[0].img" alt="" class="card-img"> }
+              <span class="card-label">{{ poleText(poles[0]).t }}</span>
+              <span class="card-title">{{ poles[0].tags[0] }}<br>{{ poles[0].tags[1] }}</span>
+            </div>
           </div>
-          <div class="card-sm qr">
-            <span class="card-label">{{ poleText(poles[1]).t }}</span>
-            <span class="card-title">{{ poles[1].tags[0] }}</span>
+          <div class="card-3d">
+            <div class="card-sm qr">
+              <canvas #cardCanvas class="card-three-canvas" aria-hidden="true"></canvas>
+              <div class="card-shine" aria-hidden="true"></div>
+              @if (poles[1].img) { <img [src]="poles[1].img" alt="" class="card-img"> }
+              <span class="card-label">{{ poleText(poles[1]).t }}</span>
+              <span class="card-title">{{ poles[1].tags[0] }}</span>
+            </div>
           </div>
-          <div class="card-sm digital">
-            <span class="card-label">{{ poleText(poles[2]).t }}</span>
-            <span class="card-title">{{ poles[2].tags[0] }}</span>
+          <div class="card-3d">
+            <div class="card-sm digital">
+              <canvas #cardCanvas class="card-three-canvas" aria-hidden="true"></canvas>
+              <div class="card-shine" aria-hidden="true"></div>
+              @if (poles[2].img) { <img [src]="poles[2].img" alt="" class="card-img"> }
+              <span class="card-label">{{ poleText(poles[2]).t }}</span>
+              <span class="card-title">{{ poles[2].tags[0] }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -56,7 +76,7 @@
           <a class="cta-outline" routerLink="/catalogue">{{ t().ctaExplore }}</a>
         </div>
         <div class="hero-b-image">
-          <img src="https://picsum.photos/seed/hero-sc/1200/500" alt="Support Connecté">
+          <img src="/images/hero_1.jpg" alt="Support Connecté">
         </div>
       </div>
     }
@@ -135,66 +155,123 @@
 <!-- Process -->
 <div class="process-section">
   <div class="process-inner">
-    <h2 [aos]="'up'">{{ t().processTitle }}</h2>
-    <div class="process-grid">
-      @for (step of steps; track step.n; let i = $index) {
-        <div class="process-step" [aos]="'up'" [aosDelay]="i * 90">
-          <div class="step-num">0{{ step.n }}</div>
-          <div class="step-divider"></div>
-          <h3>{{ t()[step.key] }}</h3>
-          <p>{{ t()[step.dk] }}</p>
+
+    <div class="proc-header">
+      <div class="proc-header-l">
+        <span class="proc-eyebrow">
+          <span class="proc-eyebrow-line"></span>
+          {{ store.lang() === 'fr' ? 'Notre méthode' : 'Our approach' }}
+        </span>
+        <h2 [aos]="'up'">{{ t().processTitle }}</h2>
+      </div>
+      <div class="proc-header-r" [aos]="'fade'">
+        <p>{{ t().processSub }}</p>
+        <div class="proc-count">
+          <span>04</span>{{ store.lang() === 'fr' ? 'étapes' : 'steps' }}
+        </div>
+      </div>
+    </div>
+
+    <div class="proc-grid">
+      @for (step of steps; track step.n; let last = $last) {
+        <div class="proc-card">
+          <div class="proc-card-top">
+            <div class="proc-badge">0{{ step.n }}</div>
+            @if (!last) {
+              <div class="proc-connector" aria-hidden="true">→</div>
+            }
+          </div>
+          <div class="proc-ghost" aria-hidden="true">0{{ step.n }}</div>
+          <div class="proc-content">
+            <h3>{{ t()[step.key] }}</h3>
+            <p>{{ t()[step.dk] }}</p>
+          </div>
         </div>
       }
     </div>
+
   </div>
 </div>
 
 <!-- Contact -->
 <div class="contact-section">
   <div class="container">
-    <div class="cta-band" [aos]="'up'">
-      <div class="cta-band-head">
-        <span class="cta-eyebrow"><span class="dot"></span>{{ store.lang() === 'fr' ? 'Contact' : 'Contact' }}</span>
-        <h2>{{ t().contactTitle }}</h2>
-        <p>{{ store.lang() === 'fr' ? 'Plusieurs façons de nous joindre — choisissez ce qui vous convient.' : 'Multiple ways to reach us — choose what works for you.' }}</p>
+
+    <div class="contact-head" [aos]="'up'">
+      <span class="contact-eyebrow">
+        <span class="dot"></span>
+        {{ store.lang() === 'fr' ? 'Contact' : 'Contact' }}
+      </span>
+      <h2>{{ t().contactTitle }}</h2>
+    </div>
+
+    <div class="contact-split">
+
+      <!-- Carte info -->
+      <div class="contact-info-card" [aos]="'up'">
+        <p class="contact-tagline">
+          {{ store.lang() === 'fr'
+            ? 'Plusieurs façons de nous joindre — choisissez ce qui vous convient.'
+            : 'Multiple ways to reach us — choose what works for you.' }}
+        </p>
+        <div class="contact-meta">
+          @if (contact?.address) {
+            <div class="cmeta-row">
+              <span class="cmeta-ico"><svg lucideMapPin [size]="14" /></span>
+              <span>{{ contact!.address }}</span>
+            </div>
+          }
+          <div class="cmeta-row">
+            <span class="cmeta-ico"><svg lucideClock [size]="14" /></span>
+            <span>{{ store.lang() === 'fr' ? 'Lun – Sam · 8h – 19h' : 'Mon – Sat · 8am – 7pm' }}</span>
+          </div>
+        </div>
+        <div class="contact-badge">
+          <span class="cbadge-dot"></span>
+          {{ store.lang() === 'fr' ? 'Disponible maintenant' : 'Available now' }}
+        </div>
       </div>
-      <div class="cta-channels">
-        <a class="ctach"
-           [attr.href]="contact?.phone ? 'tel:' + contact!.phone : null">
-          <div class="ctach-ico ctach-ico--phone">📞</div>
-          <div class="ctach-info">
-            <span class="ctach-name">{{ t().call }}</span>
-            <span class="ctach-val">{{ contact?.phone || '+33 5 00 00 00 00' }}</span>
+
+      <!-- Canaux de contact -->
+      <div class="contact-channels" [aos]="'up'" [aosDelay]="100">
+
+        <a class="cch-row" [attr.href]="contact?.phone ? 'tel:' + contact!.phone : null">
+          <div class="cch-ico cch-ico--phone"><svg lucidePhone [size]="16" /></div>
+          <div class="cch-info">
+            <span class="cch-label">{{ t().call }}</span>
+            <span class="cch-val">{{ contact?.phone || '+221 77 000 00 00' }}</span>
           </div>
-          <span class="ctach-arr">→</span>
+          <svg lucideArrowRight class="cch-arr" [size]="15" />
         </a>
-        <a class="ctach ctach--wa"
-           [attr.href]="contact?.whatsapp || null" target="_blank">
-          <div class="ctach-ico ctach-ico--wa">💬</div>
-          <div class="ctach-info">
-            <span class="ctach-name">WhatsApp</span>
-            <span class="ctach-val">{{ store.lang() === 'fr' ? 'Message rapide' : 'Quick message' }}</span>
+
+        <a class="cch-row" [attr.href]="contact?.whatsapp || null" target="_blank">
+          <div class="cch-ico cch-ico--wa"><svg lucideMessageCircle [size]="16" /></div>
+          <div class="cch-info">
+            <span class="cch-label">WhatsApp</span>
+            <span class="cch-val">{{ store.lang() === 'fr' ? 'Message rapide' : 'Quick message' }}</span>
           </div>
-          <span class="ctach-arr">→</span>
+          <svg lucideArrowRight class="cch-arr" [size]="15" />
         </a>
-        <a class="ctach"
-           [attr.href]="contact?.email ? 'mailto:' + contact!.email : null">
-          <div class="ctach-ico ctach-ico--email">✉️</div>
-          <div class="ctach-info">
-            <span class="ctach-name">Email</span>
-            <span class="ctach-val">{{ contact?.email || 'contact@supportconnecte.fr' }}</span>
+
+        <a class="cch-row" [attr.href]="contact?.email ? 'mailto:' + contact!.email : null">
+          <div class="cch-ico cch-ico--email"><svg lucideMail [size]="16" /></div>
+          <div class="cch-info">
+            <span class="cch-label">Email</span>
+            <span class="cch-val">{{ contact?.email || 'contact@supportconnecte.sn' }}</span>
           </div>
-          <span class="ctach-arr">→</span>
+          <svg lucideArrowRight class="cch-arr" [size]="15" />
         </a>
-        <a class="ctach ctach--cta" routerLink="/devis">
-          <div class="ctach-ico ctach-ico--devis">📋</div>
-          <div class="ctach-info">
-            <span class="ctach-name">{{ t().quoteForm }}</span>
-            <span class="ctach-val">{{ t().replyTime }}</span>
+
+        <a class="cch-cta" routerLink="/devis">
+          <div class="cch-cta-text">
+            <span>{{ t().quoteForm }}</span>
+            <small>{{ t().replyTime }}</small>
           </div>
-          <span class="ctach-arr">→</span>
+          <svg lucideArrowRight [size]="18" />
         </a>
+
       </div>
+
     </div>
   </div>
 </div>

@@ -112,15 +112,15 @@ export const STR = {
 export type Lang = keyof typeof STR;
 
 export const POLES = [
-  { key: 'impression', color: '#2347E6', tint: 'rgba(35,71,230,.1)', ico: '🖨️',
+  { key: 'impression', img: '/images/bache.jpg', color: '#C41A1A', tint: 'rgba(196,26,26,.1)', ico: '🖨️',
     fr: { t: 'Impression & Signalétique', d: 'Bâches, enseignes, covering, roll-up, panneaux, stickers.' },
     en: { t: 'Print & Signage', d: 'Banners, signs, covering, roll-up, panels, stickers.' },
     tags: ['Bâches', 'Enseignes', 'Covering', 'Roll-up'] },
-  { key: 'qr', color: '#0FB57E', tint: 'rgba(15,181,126,.1)', ico: '📱',
+  { key: 'qr', img: '/images/qr.jpg', color: '#0FB57E', tint: 'rgba(15,181,126,.1)', ico: '📱',
     fr: { t: 'QR Code & Solutions', d: 'QR menus, cartes NFC, solutions digitales connectées.' },
     en: { t: 'QR Code & Solutions', d: 'QR menus, NFC cards, connected digital solutions.' },
     tags: ['QR Menu', 'NFC', 'Carte digitale'] },
-  { key: 'digital', color: '#7C3AED', tint: 'rgba(124,58,237,.1)', ico: '✦',
+  { key: 'digital', img: '/images/digital.jpg', color: '#7C3AED', tint: 'rgba(124,58,237,.1)', ico: '✦',
     fr: { t: 'Digital & Créatif', d: 'Logo, identité visuelle, photo, vidéo, web, réseaux.' },
     en: { t: 'Digital & Creative', d: 'Logo, visual identity, photo, video, web, social media.' },
     tags: ['Logo', 'Photo', 'Vidéo', 'Web'] },

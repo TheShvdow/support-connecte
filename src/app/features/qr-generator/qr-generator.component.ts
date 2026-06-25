@@ -4,6 +4,7 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { DOCUMENT } from '@angular/common';
 import QRCodeStyling, { type Options, type DotType as LibDotType, type CornerSquareType as LibCornerT } from 'qr-code-styling';
 import { StoreService } from '../../services/store.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
@@ -21,20 +22,21 @@ type ContentT = 'url' | 'text' | 'email' | 'phone' | 'whatsapp';
 })
 export class QrGeneratorComponent implements AfterViewInit {
   store = inject(StoreService);
+  private doc = inject(DOCUMENT);
   embedded = input(false);
 
   @ViewChild('qrCanvas') canvasRef!: ElementRef<HTMLDivElement>;
 
   // ── Content
   contentType  = signal<ContentT>('url');
-  rawValue     = signal('https://supportconnecte.fr');
+  rawValue     = signal('https://supportconnecte.com');
 
   // ── Style
   dotType      = signal<DotT>('rounded');
   cornerType   = signal<CornerT>('extra-rounded');
 
   // ── Colors
-  fgColor      = signal('#2347E6');
+  fgColor      = signal('#C41A1A');
   bgColor      = signal('#FFFFFF');
   useGradient  = signal(false);
   gradColor    = signal('#0FB57E');
@@ -97,7 +99,7 @@ export class QrGeneratorComponent implements AfterViewInit {
 
   qrData = computed(() => {
     if (this.isDynamic() && this.savedId()) {
-      return `${window.location.origin}/r/${this.savedId()}`;
+      return `${this.doc.location.origin}/r/${this.savedId()}`;
     }
     const v = this.rawValue();
     switch (this.contentType()) {
@@ -108,7 +110,7 @@ export class QrGeneratorComponent implements AfterViewInit {
     }
   });
 
-  shortUrl = computed(() => `${window.location.origin}/r/${this.savedId()}`);
+  shortUrl = computed(() => `${this.doc.location.origin}/r/${this.savedId()}`);
 
   private opts = computed((): Options => {
     const base: Options = {

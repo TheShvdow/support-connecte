@@ -11,6 +11,8 @@ export class SeoService {
     this.meta.updateTag({ name: 'description', content: description });
     this.meta.updateTag({ property: 'og:title', content: title });
     this.meta.updateTag({ property: 'og:description', content: description });
+    this.meta.updateTag({ property: 'og:image', content: 'https://supportconnecte.com/logo.png' });
+    this.meta.updateTag({ name: 'twitter:card', content: 'summary_large_image' });
     if (url) this.meta.updateTag({ property: 'og:url', content: `https://supportconnecte.com${url}` });
   }
 }

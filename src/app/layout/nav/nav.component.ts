@@ -11,8 +11,7 @@ import { AuthService } from '../../services/auth.service';
     <nav id="nav">
       <div class="nav-inner">
         <a class="logo" routerLink="/">
-          <div class="logo-icon"><div class="logo-ring"></div><div class="logo-dot"></div></div>
-          <div class="logo-text">Support<span>Connecté</span></div>
+          <img src="/logo-full.png" alt="Support Connecté" class="logo-img">
         </a>
         <div class="nav-links">
           @for (link of publicLinks; track link.path) {
@@ -51,6 +50,7 @@ export class NavComponent {
       // { path: '/realisations', label: this.t().navRealisations },
       // { path: '/qr', label: this.t().navQr },
       { path: '/devis', label: this.t().navQuote },
+      { path: '/contact', label: this.store.lang() === 'fr' ? 'Contact' : 'Contact' },
     ];
   }
 }

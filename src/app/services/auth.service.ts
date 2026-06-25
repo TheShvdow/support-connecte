@@ -1,11 +1,13 @@
-import { Injectable, signal, computed, inject } from '@angular/core';
+import { Injectable, signal, computed, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 import { SupabaseService } from './supabase.service';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
-  private sb     = inject(SupabaseService);
-  private router = inject(Router);
+  private sb         = inject(SupabaseService);
+  private router     = inject(Router);
+  private platformId = inject(PLATFORM_ID);
 
   isLoggedIn  = signal(false);
   displayName = signal('Administrateur');
@@ -20,6 +22,7 @@ export class AuthService {
   private boundReset = () => this.resetSessionTimer();
 
   private startSessionTimer() {
+    if (!isPlatformBrowser(this.platformId)) return;
     this.clearSessionTimer();
     document.addEventListener('mousemove', this.boundReset);
     document.addEventListener('keydown',   this.boundReset);
@@ -37,6 +40,7 @@ export class AuthService {
 
   private clearSessionTimer() {
     if (this.sessionTimer) { clearTimeout(this.sessionTimer); this.sessionTimer = null; }
+    if (!isPlatformBrowser(this.platformId)) return;
     document.removeEventListener('mousemove', this.boundReset);
     document.removeEventListener('keydown',   this.boundReset);
     document.removeEventListener('click',     this.boundReset);
