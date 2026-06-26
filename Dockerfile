@@ -19,8 +19,8 @@ RUN npm ci --omit=dev && npm cache clean --force
 # Bundle SSR compilé
 COPY --from=builder /app/dist ./dist
 
-EXPOSE 4000
-ENV PORT=4000
+EXPOSE 3000
+ENV PORT=3000
 ENV NODE_ENV=production
 
 CMD ["node", "dist/support-connecte/server/server.mjs"]
