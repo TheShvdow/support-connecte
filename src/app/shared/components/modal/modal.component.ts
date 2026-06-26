@@ -1,6 +1,7 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { StoreService } from '../../../services/store.service';
+import { SupabaseService } from '../../../services/supabase.service';
 import { OPTS } from '../../../data/data';
 import { Product, Realisation, Contenu, ContactBody } from '../../../models/types';
 
@@ -20,28 +21,33 @@ type ModalMode = 'product' | 'realisation' | 'contenu' | null;
 
         @if (mode() === 'product') {
           <div class="modal-body">
-            <div class="field-row">
-              <div class="field-group"><label class="field-label-sm">Nom (FR) *</label><input class="field-input" [(ngModel)]="pFr"></div>
-              <div class="field-group"><label class="field-label-sm">Nom (EN)</label><input class="field-input" [(ngModel)]="pEn"></div>
+            <!-- Photo -->
+            <div class="img-upload-zone" (click)="pFileInput.click()">
+              @if (pImgPreview()) {
+                <img [src]="pImgPreview()" class="img-preview" alt="aperçu">
+                <span class="img-change">Changer la photo</span>
+              } @else {
+                <span class="img-placeholder">📷 Cliquer pour ajouter une photo</span>
+              }
             </div>
+            <input #pFileInput type="file" accept="image/*" style="display:none" (change)="onPImgChange($event)">
+            @if (imgUploading()) { <span class="img-uploading">Upload en cours…</span> }
+
+            <!-- Nom + Catégorie -->
+            <div class="field-group"><label class="field-label-sm">Nom *</label><input class="field-input" [(ngModel)]="pFr" placeholder="Nom du produit"></div>
             <div class="field-row">
-              <div class="field-group"><label class="field-label-sm">Catégorie (FR)</label><input class="field-input" [(ngModel)]="pCat"></div>
-              <div class="field-group"><label class="field-label-sm">Catégorie (EN)</label><input class="field-input" [(ngModel)]="pCatEn"></div>
+              <div class="field-group"><label class="field-label-sm">Catégorie</label><input class="field-input" [(ngModel)]="pCat" placeholder="Impression…"></div>
+              <div class="field-group"><label class="field-label-sm">Prix</label><input class="field-input" [(ngModel)]="pPrice" placeholder="15 000 FCFA"></div>
             </div>
-            <div class="field-row">
-              <div class="field-group"><label class="field-label-sm">Prix (FR)</label><input class="field-input" [(ngModel)]="pPrice"></div>
-              <div class="field-group"><label class="field-label-sm">Prix (EN)</label><input class="field-input" [(ngModel)]="pPriceEn"></div>
-            </div>
-            <div class="field-group"><label class="field-label-sm">Description (FR)</label><textarea class="field-input" rows="2" [(ngModel)]="pDesc"></textarea></div>
-            <div class="field-group"><label class="field-label-sm">Description (EN)</label><textarea class="field-input" rows="2" [(ngModel)]="pDescEn"></textarea></div>
+            <div class="field-group"><label class="field-label-sm">Description</label><textarea class="field-input" rows="2" [(ngModel)]="pDesc" placeholder="Courte description…"></textarea></div>
             <div class="field-row">
               <div class="field-group"><label class="field-label-sm">Couleur</label><input type="color" [(ngModel)]="pColor" class="field-input" style="height:40px;padding:2px 6px"></div>
-              <div class="field-group"><label class="field-label-sm">Icône</label><input class="field-input" [(ngModel)]="pIco"></div>
+              <div class="field-group"><label class="field-label-sm">Icône</label><input class="field-input" [(ngModel)]="pIco" placeholder="📦"></div>
             </div>
           </div>
           <div class="modal-footer">
             <button class="panel-cancel" (click)="close()">{{ store.t().cancel }}</button>
-            <button class="panel-save" (click)="saveProduct()">{{ store.t().save }}</button>
+            <button class="panel-save" (click)="saveProduct()" [disabled]="imgUploading()">{{ store.t().save }}</button>
           </div>
         }
 
@@ -86,18 +92,37 @@ type ModalMode = 'product' | 'realisation' | 'contenu' | null;
         }
       </div>
     </div>
-  `
+  `,
+  styles: [`
+    .img-upload-zone {
+      border: 2px dashed rgba(15,23,41,.15); border-radius: 12px;
+      padding: 16px; cursor: pointer; text-align: center;
+      transition: border-color .15s; min-height: 80px;
+      display: flex; align-items: center; justify-content: center; gap: 10px;
+      &:hover { border-color: var(--cobalt, #3b6fd4); }
+    }
+    .img-preview { height: 64px; width: auto; border-radius: 8px; object-fit: cover; }
+    .img-change  { font-size: 13px; color: var(--body); font-weight: 500; }
+    .img-placeholder { font-size: 14px; color: var(--muted); }
+    .img-uploading { font-size: 13px; color: var(--cobalt, #3b6fd4); margin-top: 6px; display: block; }
+  `]
 })
 export class ModalComponent {
-  store = inject(StoreService);
-  open = signal(false);
-  mode = signal<ModalMode>(null);
+  store     = inject(StoreService);
+  private sb = inject(SupabaseService);
+  open  = signal(false);
+  mode  = signal<ModalMode>(null);
   title = signal('');
+
+  imgUploading = signal(false);
 
   // Product fields
   editProductId = signal<string | null>(null);
   pFr = ''; pEn = ''; pCat = ''; pCatEn = ''; pPrice = ''; pPriceEn = '';
   pDesc = ''; pDescEn = ''; pColor = '#C41A1A'; pIco = '📦';
+  pImg     = '';
+  pImgFile = signal<File | null>(null);
+  pImgPreview = signal<string>('');
 
   // Realisation fields
   editRealId = signal<number | null>(null);
@@ -118,7 +143,19 @@ export class ModalComponent {
     this.pPrice = p?.price ?? ''; this.pPriceEn = p?.priceEn ?? '';
     this.pDesc = p?.d ?? ''; this.pDescEn = p?.dEn ?? '';
     this.pColor = p?.color ?? '#C41A1A'; this.pIco = p?.ico ?? '📦';
+    this.pImg = p?.img ?? '';
+    this.pImgFile.set(null);
+    this.pImgPreview.set(p?.img ?? '');
     this.open.set(true);
+  }
+
+  onPImgChange(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.pImgFile.set(file);
+    const reader = new FileReader();
+    reader.onload = () => this.pImgPreview.set(reader.result as string);
+    reader.readAsDataURL(file);
   }
 
   openRealisation(r?: Realisation) {
@@ -145,9 +182,19 @@ export class ModalComponent {
     this.open.set(true);
   }
 
-  saveProduct() {
+  async saveProduct() {
     if (!this.pFr) { this.store.toast(this.store.t().nameRequired); return; }
-    const data = { fr: this.pFr, en: this.pEn, cat: this.pCat, catEn: this.pCatEn, price: this.pPrice, priceEn: this.pPriceEn, d: this.pDesc, dEn: this.pDescEn, color: this.pColor, ico: this.pIco };
+    let imgUrl = this.pImg;
+    const file = this.pImgFile();
+    if (file) {
+      this.imgUploading.set(true);
+      const ext  = file.name.split('.').pop();
+      const path = `products/${Date.now()}.${ext}`;
+      const url  = await this.sb.uploadImage('images', path, file);
+      this.imgUploading.set(false);
+      if (url) imgUrl = url;
+    }
+    const data = { fr: this.pFr, en: this.pEn, cat: this.pCat, catEn: this.pCatEn, price: this.pPrice, priceEn: this.pPriceEn, d: this.pDesc, dEn: this.pDescEn, color: this.pColor, ico: this.pIco, img: imgUrl };
     const id = this.editProductId();
     if (id) this.store.updateProduct(id, data);
     else this.store.addProduct({ ...data, avantages: [] });

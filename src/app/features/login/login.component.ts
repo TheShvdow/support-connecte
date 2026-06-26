@@ -26,7 +26,12 @@ import { SeoService } from '../../services/seo.service';
           </div>
           <div>
             <label class="field-label-sm">Mot de passe</label>
-            <input class="field-input" type="password" [(ngModel)]="password" placeholder="••••••••" (keyup.enter)="submit()">
+            <div class="pw-wrap">
+              <input class="field-input" [type]="showPw() ? 'text' : 'password'" [(ngModel)]="password" placeholder="••••••••" (keyup.enter)="submit()">
+              <button type="button" class="pw-eye" (click)="showPw.set(!showPw())" [title]="showPw() ? 'Masquer' : 'Afficher'">
+                {{ showPw() ? '🙈' : '👁️' }}
+              </button>
+            </div>
           </div>
         </div>
 
@@ -67,6 +72,14 @@ import { SeoService } from '../../services/seo.service';
       color: var(--body); font-weight: 600; transition: .15s;
     }
     .login-back:hover { color: var(--ink); }
+    .pw-wrap { position: relative; }
+    .pw-wrap .field-input { width: 100%; padding-right: 44px; }
+    .pw-eye {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; font-size: 16px;
+      padding: 4px; line-height: 1; opacity: .6; transition: opacity .15s;
+    }
+    .pw-eye:hover { opacity: 1; }
   `]
 })
 export class LoginComponent {
@@ -82,6 +95,7 @@ export class LoginComponent {
 
   email    = '';
   password = '';
+  showPw   = signal(false);
   error    = signal(false);
   loading  = signal(false);
 

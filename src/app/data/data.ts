@@ -141,6 +141,6 @@ export const OPTS = {
   qrTypes: ['Menu Restaurant', 'Immobilier', 'Entreprise', 'Événementiel', 'Catalogue', 'Carte digitale'],
   prestations: ['Logo', 'Identité visuelle', 'Branding', 'Photo', 'Vidéo', 'Captation drone', 'Site web', 'SEO', 'Réseaux sociaux', 'Marketing digital', 'Formation', 'Solutions IA'],
   secteurs: ['Immobilier', 'Commerce', 'Industrie', 'Hôtellerie', 'Restauration', 'Santé', 'Autre'],
-  budgets: ['< 500 €', '500 – 2 000 €', '2 000 – 5 000 €', '5 000 € +'],
+  budgets: ['< 300 000 FCFA', '300 000 – 1 200 000 FCFA', '1 200 000 – 3 000 000 FCFA', '3 000 000 FCFA +'],
   statutOptions: ['Nouveau', 'En cours', 'En attente', 'Livré'],
 };

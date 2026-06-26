@@ -62,6 +62,16 @@ export class SupabaseService {
     return this.client.auth.updateUser(data);
   }
 
+  // ── Storage
+  async uploadImage(bucket: string, path: string, file: File) {
+    const { data, error } = await this.client.storage
+      .from(bucket)
+      .upload(path, file, { upsert: true, contentType: file.type });
+    if (error) return null;
+    const { data: pub } = this.client.storage.from(bucket).getPublicUrl(data.path);
+    return pub.publicUrl;
+  }
+
   // ── Edge Functions
   async invokeFunction(name: string, body: object) {
     return this.client.functions.invoke(name, { body });
