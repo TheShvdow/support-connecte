@@ -62,6 +62,14 @@ export class SupabaseService {
     return this.client.auth.updateUser(data);
   }
 
+  // ── Contacts
+  async getContacts()    { return this.client.from('contacts').select('*').order('created_at', { ascending: false }); }
+  async insertContact(c: { nom: string; email: string; tel: string; message: string }) {
+    return this.client.from('contacts').insert(c);
+  }
+  async markContactLu(id: number) { return this.client.from('contacts').update({ lu: true }).eq('id', id); }
+  async deleteContact(id: number) { return this.client.from('contacts').delete().eq('id', id); }
+
   // ── Storage
   async uploadImage(bucket: string, path: string, file: File) {
     const { data, error } = await this.client.storage

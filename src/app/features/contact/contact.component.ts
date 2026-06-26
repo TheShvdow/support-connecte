@@ -47,14 +47,7 @@ export class ContactComponent implements AfterViewInit {
     this.sending.set(true);
     this.error.set('');
     try {
-      await this.sb.upsertDemande({
-        ref:    `CTG-${Date.now()}`,
-        client: this.nom(),
-        detail: this.message(),
-        type:   'contact',
-        statut: 'Nouveau',
-        notes:  `Email: ${this.email()}${this.tel() ? ' | Tél: ' + this.tel() : ''}`,
-      });
+      await this.store.submitContact(this.nom(), this.email(), this.tel(), this.message());
       this.sb.invokeFunction('notify-contact', {
         nom: this.nom(), email: this.email(), tel: this.tel(), message: this.message(),
       }).catch(() => {});

@@ -2,7 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { STR } from '../data/data';
 import { SupabaseService } from './supabase.service';
 import {
-  Product, Realisation, Demande, Contenu, QrCode,
+  Product, Realisation, Demande, Contenu, QrCode, Contact,
   ImpressionForm, QrForm, DigitalForm, ContactForm,
   DevisType, AdminTab, Lang, ContactBody
 } from '../models/types';
@@ -39,6 +39,7 @@ export class StoreService {
   products      = signal<Product[]>([]);
   realisations  = signal<Realisation[]>([]);
   demandes      = signal<Demande[]>([]);
+  contacts      = signal<Contact[]>([]);
   contenus      = signal<Contenu[]>([]);
   qrCodes       = signal<QrCode[]>([]);
 
@@ -50,10 +51,11 @@ export class StoreService {
   async init() {
     this.loading.set(true);
     try {
-      const [p, r, d, c, q] = await Promise.all([
+      const [p, r, d, ct, c, q] = await Promise.all([
         this.sb.getProducts(),
         this.sb.getRealisations(),
         this.sb.getDemandes(),
+        this.sb.getContacts(),
         this.sb.getContenus(),
         this.sb.getQrCodes(),
       ]);
@@ -66,6 +68,9 @@ export class StoreService {
 
       if (d.error) console.error('[Supabase] demandes:', d.error.message);
       else { console.log(`[Supabase] demandes: ${d.data?.length ?? 0} ligne(s)`); if (d.data?.length) this.demandes.set(d.data.map(this.mapDemande)); }
+
+      if (ct.error) console.error('[Supabase] contacts:', ct.error.message);
+      else { console.log(`[Supabase] contacts: ${ct.data?.length ?? 0} ligne(s)`); if (ct.data?.length) this.contacts.set(ct.data.map(this.mapContact)); }
 
       if (c.error) console.error('[Supabase] contenus:', c.error.message);
       else { console.log(`[Supabase] contenus: ${c.data?.length ?? 0} ligne(s)`); if (c.data?.length) this.contenus.set(c.data.map(this.mapContenu)); }
@@ -102,6 +107,11 @@ export class StoreService {
     id: d.id, ref: d.ref, client: d.client, detail: d.detail,
     type: d.type, date: d.date, statut: d.statut,
     notes: d.notes ?? '', email: d.email ?? '', tel: d.tel ?? '',
+  });
+
+  private mapContact = (c: any): Contact => ({
+    id: c.id, nom: c.nom, email: c.email, tel: c.tel ?? '',
+    message: c.message, createdAt: c.created_at, lu: c.lu ?? false,
   });
 
   private mapContenu = (c: any): Contenu => ({ id: c.id, title: c.title, body: c.body });
@@ -183,6 +193,29 @@ export class StoreService {
     this.demandes.set(this.demandes().map(d => d.id === id ? { ...d, statut, notes } : d));
     await this.dbWrite(this.sb.updateDemande(id, statut, notes), 'saveDemande');
     this.toast(this.t().toastSaved);
+  }
+
+  // ────────────────────────────────────────────────────────────
+  // CONTACTS
+  // ────────────────────────────────────────────────────────────
+  async submitContact(nom: string, email: string, tel: string, message: string) {
+    const newC: Contact = {
+      id: Date.now(), nom, email, tel, message,
+      createdAt: new Date().toISOString(), lu: false,
+    };
+    this.contacts.set([newC, ...this.contacts()]);
+    await this.dbWrite(this.sb.insertContact({ nom, email, tel, message }), 'submitContact');
+  }
+
+  async markContactLu(id: number) {
+    this.contacts.set(this.contacts().map(c => c.id === id ? { ...c, lu: true } : c));
+    await this.dbWrite(this.sb.markContactLu(id), 'markContactLu');
+  }
+
+  async deleteContact(id: number) {
+    this.contacts.set(this.contacts().filter(c => c.id !== id));
+    await this.dbWrite(this.sb.deleteContact(id), 'deleteContact');
+    this.toast(this.t().toastDeleted);
   }
 
   // ────────────────────────────────────────────────────────────

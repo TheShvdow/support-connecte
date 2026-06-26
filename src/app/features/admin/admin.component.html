@@ -169,6 +169,52 @@
       </div>
     }
 
+    <!-- CONTACTS -->
+    @if (store.adminTab() === 'contacts') {
+      <div class="admin-header">
+        <div>
+          <h2>Messages <span class="count">({{ store.contacts().length }})</span></h2>
+          @if (store.contacts().filter(c => !c.lu).length > 0) {
+            <span class="badge badge-new" style="margin-left:8px">{{ store.contacts().filter(c => !c.lu).length }} non lu(s)</span>
+          }
+        </div>
+        <input class="admin-search" placeholder="Rechercher…" [value]="store.adminSearch()" (input)="setSearch($any($event.target).value)">
+      </div>
+      <div class="admin-table-wrap">
+        <table>
+          <thead>
+            <tr><th>Nom</th><th>Email</th><th>Téléphone</th><th>Message</th><th>Date</th><th>Actions</th></tr>
+          </thead>
+          <tbody>
+            @for (c of pagedContacts; track c.id) {
+              <tr (click)="openContact(c)" [class.row-unread]="!c.lu" style="cursor:pointer">
+                <td><strong>{{ c.nom }}</strong>@if (!c.lu) { <span class="unread-dot"></span> }</td>
+                <td class="muted">{{ c.email }}</td>
+                <td class="muted">{{ c.tel || '—' }}</td>
+                <td class="muted" style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.message }}</td>
+                <td class="muted" style="white-space:nowrap">{{ c.createdAt | date:'dd/MM/yy HH:mm' }}</td>
+                <td class="actions-col">
+                  <button class="action-btn action-del" (click)="deleteContact(c.id, $event)">{{ t().del }}</button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        @if (totalPages(filteredContacts) > 1) {
+          <div class="pagination">
+            <span class="pg-info">{{ (contactsPage() - 1) * PAGE_SIZE + 1 }}–{{ pageEnd(contactsPage(), filteredContacts.length) }} sur {{ filteredContacts.length }}</span>
+            <div class="pg-controls">
+              <button class="pg-btn" [disabled]="contactsPage() <= 1" (click)="contactsPage.set(contactsPage() - 1)">‹</button>
+              @for (p of pageNums(contactsPage(), totalPages(filteredContacts)); track p) {
+                <button class="pg-btn" [class.active]="p === contactsPage()" (click)="contactsPage.set(p)">{{ p }}</button>
+              }
+              <button class="pg-btn" [disabled]="contactsPage() >= totalPages(filteredContacts)" (click)="contactsPage.set(contactsPage() + 1)">›</button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+
     <!-- CATALOGUE -->
     @if (store.adminTab() === 'catalogue') {
       <div class="admin-header">

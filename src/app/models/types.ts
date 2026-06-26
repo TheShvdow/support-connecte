@@ -80,6 +80,16 @@ export interface ContactForm {
   tel: string;
 }
 
+export interface Contact {
+  id: number;
+  nom: string;
+  email: string;
+  tel: string;
+  message: string;
+  createdAt: string;
+  lu: boolean;
+}
+
 export interface QrCode {
   id: string;
   name: string;
@@ -102,5 +112,5 @@ export interface QrCode {
 }
 
 export type DevisType = 'impression' | 'qr' | 'digital' | null;
-export type AdminTab = 'demandes' | 'catalogue' | 'realisations' | 'contenus' | 'qrcodes' | 'profil';
+export type AdminTab = 'demandes' | 'catalogue' | 'realisations' | 'contenus' | 'qrcodes' | 'contacts' | 'profil';
 export type Lang = 'fr' | 'en';

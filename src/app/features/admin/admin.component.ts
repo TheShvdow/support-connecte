@@ -1,7 +1,6 @@
 import { Component, inject, signal, ViewChild, afterNextRender, OnDestroy, PLATFORM_ID } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, NgClass, DatePipe } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
-import { NgClass } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { StoreService } from '../../services/store.service';
@@ -10,12 +9,12 @@ import { SlidePanelComponent } from '../../shared/components/slide-panel/slide-p
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { QrGeneratorComponent } from '../qr-generator/qr-generator.component';
 import { QrDetailComponent } from './qr-detail/qr-detail.component';
-import { AdminTab, Demande, Product, Realisation, Contenu, QrCode } from '../../models/types';
+import { AdminTab, Demande, Product, Realisation, Contenu, QrCode, Contact } from '../../models/types';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [RouterLink, NgClass, FormsModule, SlidePanelComponent, ModalComponent, QrGeneratorComponent, QrDetailComponent],
+  imports: [RouterLink, NgClass, DatePipe, FormsModule, SlidePanelComponent, ModalComponent, QrGeneratorComponent, QrDetailComponent],
   templateUrl: './admin.component.html',
 })
 export class AdminComponent implements OnDestroy {
@@ -79,6 +78,7 @@ export class AdminComponent implements OnDestroy {
 
   tabs = [
     { key: 'demandes'    as AdminTab, ico: '📋' },
+    { key: 'contacts'    as AdminTab, ico: '✉️' },
     { key: 'catalogue'   as AdminTab, ico: '🛍️' },
     { key: 'realisations'as AdminTab, ico: '🖼️' },
     { key: 'contenus'    as AdminTab, ico: '✏️' },
@@ -87,6 +87,7 @@ export class AdminComponent implements OnDestroy {
 
   tabLabel(key: AdminTab) {
     if (key === 'demandes')     return this.t().adminDemandes;
+    if (key === 'contacts')     return 'Messages';
     if (key === 'catalogue')    return this.t().adminCatalogue;
     if (key === 'realisations') return this.t().adminReal;
     if (key === 'qrcodes')      return 'QR Codes';
@@ -159,6 +160,7 @@ export class AdminComponent implements OnDestroy {
   // ── Pagination
   readonly PAGE_SIZE = 10;
   demandesPage     = signal(1);
+  contactsPage     = signal(1);
   cataloguePage    = signal(1);
   realisationsPage = signal(1);
   qrPage           = signal(1);
@@ -166,6 +168,7 @@ export class AdminComponent implements OnDestroy {
   setSearch(val: string) {
     this.store.setAdminSearch(val);
     this.demandesPage.set(1);
+    this.contactsPage.set(1);
     this.cataloguePage.set(1);
     this.realisationsPage.set(1);
     this.qrPage.set(1);
@@ -188,11 +191,22 @@ export class AdminComponent implements OnDestroy {
   }
 
   get pagedDemandes()  { return this.pageSlice(this.filteredDemandes,  this.demandesPage()); }
+  get pagedContacts()  { return this.pageSlice(this.filteredContacts,  this.contactsPage()); }
   get pagedProducts()  { return this.pageSlice(this.filteredProducts,  this.cataloguePage()); }
   get pagedReal()      { return this.pageSlice(this.filteredReal,       this.realisationsPage()); }
   get pagedQrCodes()   { return this.pageSlice(this.filteredQrCodes,   this.qrPage()); }
 
   // ── Filtered lists
+  get filteredContacts() {
+    const q = this.store.adminSearch().toLowerCase();
+    return !q ? this.store.contacts()
+      : this.store.contacts().filter(c =>
+          c.nom.toLowerCase().includes(q) ||
+          c.email.toLowerCase().includes(q) ||
+          c.message.toLowerCase().includes(q)
+        );
+  }
+
   get filteredQrCodes() {
     const q = this.store.adminSearch().toLowerCase();
     return !q ? this.store.qrCodes()
@@ -245,6 +259,38 @@ export class AdminComponent implements OnDestroy {
       { n: d.filter(x => x.statut === 'Livré').length,    l: 'Livrées',    sub: 'Total' },
       { n: d.length,                                       l: 'Total',      sub: 'Toutes statuts' },
     ];
+  }
+
+  async deleteContact(id: number, event: Event) {
+    event.stopPropagation();
+    const result = await Swal.fire({
+      title: this.t().deleteConfirm,
+      text: 'Cette action est irréversible.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#FF5B35',
+      cancelButtonColor: '#9aa1ac',
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler',
+    });
+    if (result.isConfirmed) this.store.deleteContact(id);
+  }
+
+  async openContact(c: Contact) {
+    if (!c.lu) await this.store.markContactLu(c.id);
+    await Swal.fire({
+      title: c.nom,
+      html: `
+        <div style="text-align:left;font-size:14px;line-height:1.6">
+          <p><strong>Email :</strong> <a href="mailto:${c.email}">${c.email}</a></p>
+          ${c.tel ? `<p><strong>Tél :</strong> ${c.tel}</p>` : ''}
+          <p style="margin-top:12px;padding:12px;background:#f6f6f6;border-radius:8px;white-space:pre-wrap">${c.message}</p>
+          <p style="margin-top:8px;font-size:12px;color:#9aa1ac">${new Date(c.createdAt).toLocaleString('fr-FR')}</p>
+        </div>`,
+      confirmButtonColor: '#3b6fd4',
+      confirmButtonText: 'Fermer',
+      customClass: { popup: 'swal-font' },
+    });
   }
 
   openDemande(d: Demande)        { this.panel.openWith(d); }
