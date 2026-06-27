@@ -6,11 +6,12 @@ import {
   LucideMail, LucidePhone, LucideMapPin,
   LucideMessageCircle, LucideArrowUpRight
 } from '@lucide/angular';
+import { BannerSlotComponent } from '../../shared/components/banner-slot/banner-slot.component';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [RouterLink, LucideMail, LucidePhone, LucideMapPin, LucideMessageCircle, LucideArrowUpRight],
+  imports: [RouterLink, LucideMail, LucidePhone, LucideMapPin, LucideMessageCircle, LucideArrowUpRight, BannerSlotComponent],
   styles: [`
     :host { display: block; }
 
@@ -145,6 +146,9 @@ import {
     }
   `],
   template: `
+    <!-- Bannière publicitaire (maison ou AdSense) — visible au-dessus du footer sur tout le site -->
+    <app-banner-slot position="footer" />
+
     <footer>
 
       <!-- CTA top -->

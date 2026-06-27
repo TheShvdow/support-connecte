@@ -3,9 +3,9 @@ import { FormsModule } from '@angular/forms';
 import { StoreService } from '../../../services/store.service';
 import { SupabaseService } from '../../../services/supabase.service';
 import { OPTS } from '../../../data/data';
-import { Product, Realisation, Contenu, ContactBody } from '../../../models/types';
+import { Product, Realisation, Contenu, ContactBody, Banner, BannerPosition } from '../../../models/types';
 
-type ModalMode = 'product' | 'realisation' | 'contenu' | null;
+type ModalMode = 'product' | 'realisation' | 'contenu' | 'banner' | null;
 
 @Component({
   selector: 'app-modal',
@@ -68,6 +68,43 @@ type ModalMode = 'product' | 'realisation' | 'contenu' | null;
           <div class="modal-footer">
             <button class="panel-cancel" (click)="close()">{{ store.t().cancel }}</button>
             <button class="panel-save" (click)="saveRealisation()">{{ store.t().save }}</button>
+          </div>
+        }
+
+        @if (mode() === 'banner') {
+          <div class="modal-body">
+            <!-- Image -->
+            <div class="img-upload-zone" (click)="bFileInput.click()">
+              @if (bImgPreview()) {
+                <img [src]="bImgPreview()" class="img-preview" alt="aperçu">
+                <span class="img-change">Changer l'image</span>
+              } @else {
+                <span class="img-placeholder">📷 Cliquer pour ajouter une image</span>
+              }
+            </div>
+            <input #bFileInput type="file" accept="image/*" style="display:none" (change)="onBImgChange($event)">
+            @if (imgUploading()) { <span class="img-uploading">Upload en cours…</span> }
+
+            <div class="field-group"><label class="field-label-sm">Titre *</label><input class="field-input" [(ngModel)]="bTitle" placeholder="Nom de la bannière"></div>
+            <div class="field-group"><label class="field-label-sm">Lien (URL)</label><input class="field-input" [(ngModel)]="bLink" placeholder="https://…"></div>
+            <div class="field-row">
+              <div class="field-group"><label class="field-label-sm">Emplacement</label>
+                <select class="field-input" [(ngModel)]="bPosition">
+                  <option value="footer">Avant le footer (tout le site)</option>
+                  <option value="catalogue">Page catalogue</option>
+                </select>
+              </div>
+              <div class="field-group"><label class="field-label-sm">Statut</label>
+                <select class="field-input" [(ngModel)]="bActive">
+                  <option [ngValue]="true">Active</option>
+                  <option [ngValue]="false">Inactive</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="panel-cancel" (click)="close()">{{ store.t().cancel }}</button>
+            <button class="panel-save" (click)="saveBanner()" [disabled]="imgUploading()">{{ store.t().save }}</button>
           </div>
         }
 
@@ -134,6 +171,13 @@ export class ModalComponent {
   cBody = '';
   cEmail = ''; cPhone = ''; cAddress = ''; cWhatsapp = '';
 
+  // Banner fields
+  editBannerId = signal<string | null>(null);
+  bTitle = ''; bLink = ''; bPosition: BannerPosition = 'footer'; bActive = true;
+  bImg = '';
+  bImgFile = signal<File | null>(null);
+  bImgPreview = signal<string>('');
+
   openProduct(p?: Product) {
     this.mode.set('product');
     this.editProductId.set(p?.id ?? null);
@@ -166,6 +210,49 @@ export class ModalComponent {
     this.rCat = r?.cat ?? 'Impression'; this.rYear = r?.year ?? '2025';
     this.rColor = r?.color ?? '#C41A1A';
     this.open.set(true);
+  }
+
+  openBanner(b?: Banner) {
+    this.mode.set('banner');
+    this.editBannerId.set(b?.id ?? null);
+    this.title.set(b ? `Modifier — ${b.title}` : 'Ajouter une bannière');
+    this.bTitle = b?.title ?? '';
+    this.bLink = b?.link ?? '';
+    this.bPosition = b?.position ?? 'footer';
+    this.bActive = b?.active ?? true;
+    this.bImg = b?.imageUrl ?? '';
+    this.bImgFile.set(null);
+    this.bImgPreview.set(b?.imageUrl ?? '');
+    this.open.set(true);
+  }
+
+  onBImgChange(e: Event) {
+    const file = (e.target as HTMLInputElement).files?.[0];
+    if (!file) return;
+    this.bImgFile.set(file);
+    const reader = new FileReader();
+    reader.onload = () => this.bImgPreview.set(reader.result as string);
+    reader.readAsDataURL(file);
+  }
+
+  async saveBanner() {
+    if (!this.bTitle) { this.store.toast(this.store.t().nameRequired); return; }
+    let imgUrl = this.bImg;
+    const file = this.bImgFile();
+    if (file) {
+      this.imgUploading.set(true);
+      const ext  = file.name.split('.').pop();
+      const path = `banners/${Date.now()}.${ext}`;
+      const url  = await this.sb.uploadImage('images', path, file);
+      this.imgUploading.set(false);
+      if (url) imgUrl = url;
+    }
+    if (!imgUrl) { this.store.toast('Image requise'); return; }
+    const data = { title: this.bTitle, imageUrl: imgUrl, link: this.bLink, position: this.bPosition, active: this.bActive };
+    const id = this.editBannerId();
+    if (id) this.store.updateBanner(id, data);
+    else this.store.addBanner(data);
+    this.close();
   }
 
   openContenu(c: Contenu) {

@@ -70,6 +70,11 @@ export class SupabaseService {
   async markContactLu(id: number) { return this.client.from('contacts').update({ lu: true }).eq('id', id); }
   async deleteContact(id: number) { return this.client.from('contacts').delete().eq('id', id); }
 
+  // ── Bannières
+  async getBanners()         { return this.client.from('banners').select('*').order('created_at', { ascending: false }); }
+  async upsertBanner(b: any) { return this.client.from('banners').upsert(b); }
+  async deleteBanner(id: string) { return this.client.from('banners').delete().eq('id', id); }
+
   // ── Storage
   async uploadImage(bucket: string, path: string, file: File) {
     const { data, error } = await this.client.storage

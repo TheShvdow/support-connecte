@@ -2,7 +2,7 @@ import { Injectable, signal, computed, inject } from '@angular/core';
 import { STR } from '../data/data';
 import { SupabaseService } from './supabase.service';
 import {
-  Product, Realisation, Demande, Contenu, QrCode, Contact,
+  Product, Realisation, Demande, Contenu, QrCode, Contact, Banner, BannerPosition,
   ImpressionForm, QrForm, DigitalForm, ContactForm,
   DevisType, AdminTab, Lang, ContactBody
 } from '../models/types';
@@ -42,8 +42,14 @@ export class StoreService {
   contacts      = signal<Contact[]>([]);
   contenus      = signal<Contenu[]>([]);
   qrCodes       = signal<QrCode[]>([]);
+  banners       = signal<Banner[]>([]);
 
   t = computed(() => STR[this.lang() as keyof typeof STR]);
+
+  // Bannières actives pour un emplacement donné (utilisé par les slots)
+  bannersFor(pos: BannerPosition): Banner[] {
+    return this.banners().filter(b => b.active && b.position === pos);
+  }
 
   // ────────────────────────────────────────────────────────────
   // INIT — charge tout depuis Supabase au démarrage
@@ -51,13 +57,14 @@ export class StoreService {
   async init() {
     this.loading.set(true);
     try {
-      const [p, r, d, ct, c, q] = await Promise.all([
+      const [p, r, d, ct, c, q, b] = await Promise.all([
         this.sb.getProducts(),
         this.sb.getRealisations(),
         this.sb.getDemandes(),
         this.sb.getContacts(),
         this.sb.getContenus(),
         this.sb.getQrCodes(),
+        this.sb.getBanners(),
       ]);
 
       if (p.error) console.error('[Supabase] products:', p.error.message);
@@ -77,6 +84,9 @@ export class StoreService {
 
       if (q.error) console.error('[Supabase] qr_codes:', q.error.message);
       else { console.log(`[Supabase] qr_codes: ${q.data?.length ?? 0} ligne(s)`); if (q.data?.length) this.qrCodes.set(q.data.map(this.mapQrCode)); }
+
+      if (b.error) console.error('[Supabase] banners:', b.error.message);
+      else { console.log(`[Supabase] banners: ${b.data?.length ?? 0} ligne(s)`); if (b.data?.length) this.banners.set(b.data.map(this.mapBanner)); }
 
     } catch (e) {
       console.error('[Supabase] init failed:', e);
@@ -122,6 +132,18 @@ export class StoreService {
     maxScans: q.max_scans ?? null,
     style: q.style ?? {},
   });
+
+  private mapBanner = (b: any): Banner => ({
+    id: b.id, title: b.title, imageUrl: b.image_url, link: b.link ?? '',
+    position: b.position, active: b.active, createdAt: b.created_at,
+  });
+
+  private toDbBanner(b: Banner) {
+    return {
+      id: b.id, title: b.title, image_url: b.imageUrl, link: b.link,
+      position: b.position, active: b.active,
+    };
+  }
 
   // ────────────────────────────────────────────────────────────
   // LANGUAGE
@@ -332,6 +354,38 @@ export class StoreService {
     if (qr && qr.maxScans !== null && qr.scans >= qr.maxScans) {
       await this.toggleQrCode(id);
     }
+  }
+
+  // ────────────────────────────────────────────────────────────
+  // BANNIÈRES
+  // ────────────────────────────────────────────────────────────
+  async addBanner(b: Omit<Banner, 'id' | 'createdAt'>) {
+    const banner: Banner = { ...b, id: 'ban-' + Date.now(), createdAt: new Date().toISOString() };
+    this.banners.set([banner, ...this.banners()]);
+    await this.dbWrite(this.sb.upsertBanner(this.toDbBanner(banner)), 'addBanner');
+    this.toast(this.t().toastAdded);
+  }
+
+  async updateBanner(id: string, patch: Partial<Banner>) {
+    this.banners.set(this.banners().map(b => b.id === id ? { ...b, ...patch } : b));
+    const updated = this.banners().find(b => b.id === id)!;
+    await this.dbWrite(this.sb.upsertBanner(this.toDbBanner(updated)), 'updateBanner');
+    this.toast(this.t().toastSaved);
+  }
+
+  async toggleBanner(id: string) {
+    const banner = this.banners().find(b => b.id === id);
+    if (!banner) return;
+    const next = { ...banner, active: !banner.active };
+    this.banners.set(this.banners().map(b => b.id === id ? next : b));
+    await this.dbWrite(this.sb.upsertBanner(this.toDbBanner(next)), 'toggleBanner');
+    this.toast(this.t().toastSaved);
+  }
+
+  async deleteBanner(id: string) {
+    this.banners.set(this.banners().filter(b => b.id !== id));
+    await this.dbWrite(this.sb.deleteBanner(id), 'deleteBanner');
+    this.toast(this.t().toastDeleted);
   }
 
   // ────────────────────────────────────────────────────────────

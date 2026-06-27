@@ -4,11 +4,12 @@ import { StoreService } from '../../services/store.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { AosDirective } from '../../shared/directives/aos.directive';
 import { SeoService } from '../../services/seo.service';
+import { BannerSlotComponent } from '../../shared/components/banner-slot/banner-slot.component';
 
 @Component({
   selector: 'app-catalogue',
   standalone: true,
-  imports: [RouterLink, FooterComponent, AosDirective],
+  imports: [RouterLink, FooterComponent, AosDirective, BannerSlotComponent],
   templateUrl: './catalogue.component.html',
 })
 export class CatalogueComponent {

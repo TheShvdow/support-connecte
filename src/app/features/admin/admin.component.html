@@ -328,6 +328,46 @@
       </div>
     }
 
+    <!-- BANNIÈRES -->
+    @if (store.adminTab() === 'banners') {
+      <div class="admin-header">
+        <div>
+          <h2>Bannières publicitaires <span class="count">({{ store.banners().length }})</span></h2>
+        </div>
+        <div class="header-actions">
+          <button class="admin-add-btn" (click)="openBannerModal()">+ Nouvelle bannière</button>
+        </div>
+      </div>
+      @if (store.banners().length === 0) {
+        <div class="contenu-card" style="text-align:center;color:var(--muted)">
+          Aucune bannière. Cliquez sur « + Nouvelle bannière » pour en créer une.
+        </div>
+      } @else {
+        <div class="admin-table-wrap">
+          <table>
+            <thead>
+              <tr><th>Image</th><th>Titre</th><th>Emplacement</th><th>Statut</th><th>Actions</th></tr>
+            </thead>
+            <tbody>
+              @for (b of store.banners(); track b.id) {
+                <tr>
+                  <td><img [src]="b.imageUrl" [alt]="b.title" style="height:36px;width:auto;border-radius:6px;object-fit:cover"></td>
+                  <td><strong>{{ b.title }}</strong></td>
+                  <td class="muted">{{ bannerPositionLabel(b.position) }}</td>
+                  <td><span class="badge" [ngClass]="b.active ? 'badge-done' : 'badge-new'">{{ b.active ? 'Active' : 'Inactive' }}</span></td>
+                  <td class="actions-col">
+                    <button class="action-btn action-edit" (click)="openBannerModal(b)">{{ t().edit }}</button>
+                    <button class="action-btn" (click)="store.toggleBanner(b.id)">{{ b.active ? 'Désactiver' : 'Activer' }}</button>
+                    <button class="action-btn action-del" (click)="deleteBanner(b.id, $event)">{{ t().del }}</button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+
     <!-- QR CODES -->
     @if (store.adminTab() === 'qrcodes') {
 

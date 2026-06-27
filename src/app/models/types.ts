@@ -111,6 +111,18 @@ export interface QrCode {
   };
 }
 
+export type BannerPosition = 'footer' | 'catalogue';
+
+export interface Banner {
+  id: string;
+  title: string;
+  imageUrl: string;
+  link: string;
+  position: BannerPosition;
+  active: boolean;
+  createdAt: string;
+}
+
 export type DevisType = 'impression' | 'qr' | 'digital' | null;
-export type AdminTab = 'demandes' | 'catalogue' | 'realisations' | 'contenus' | 'qrcodes' | 'contacts' | 'profil';
+export type AdminTab = 'demandes' | 'catalogue' | 'realisations' | 'contenus' | 'qrcodes' | 'contacts' | 'banners' | 'profil';
 export type Lang = 'fr' | 'en';

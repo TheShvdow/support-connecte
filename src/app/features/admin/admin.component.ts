@@ -9,7 +9,7 @@ import { SlidePanelComponent } from '../../shared/components/slide-panel/slide-p
 import { ModalComponent } from '../../shared/components/modal/modal.component';
 import { QrGeneratorComponent } from '../qr-generator/qr-generator.component';
 import { QrDetailComponent } from './qr-detail/qr-detail.component';
-import { AdminTab, Demande, Product, Realisation, Contenu, QrCode, Contact } from '../../models/types';
+import { AdminTab, Demande, Product, Realisation, Contenu, QrCode, Contact, Banner } from '../../models/types';
 
 @Component({
   selector: 'app-admin',
@@ -83,6 +83,7 @@ export class AdminComponent implements OnDestroy {
     { key: 'realisations'as AdminTab, ico: '🖼️' },
     { key: 'contenus'    as AdminTab, ico: '✏️' },
     { key: 'qrcodes'     as AdminTab, ico: '📱' },
+    { key: 'banners'     as AdminTab, ico: '📣' },
   ];
 
   tabLabel(key: AdminTab) {
@@ -91,6 +92,7 @@ export class AdminComponent implements OnDestroy {
     if (key === 'catalogue')    return this.t().adminCatalogue;
     if (key === 'realisations') return this.t().adminReal;
     if (key === 'qrcodes')      return 'QR Codes';
+    if (key === 'banners')      return 'Bannières';
     if (key === 'profil')       return 'Mon profil';
     return this.t().adminContenus;
   }
@@ -301,6 +303,26 @@ export class AdminComponent implements OnDestroy {
   openProductModal(p?: Product)  { this.modal.openProduct(p); }
   openRealModal(r?: Realisation) { this.modal.openRealisation(r); }
   openContenuModal(c: Contenu)   { this.modal.openContenu(c); }
+  openBannerModal(b?: Banner)    { this.modal.openBanner(b); }
+
+  bannerPositionLabel(pos: string): string {
+    return pos === 'catalogue' ? 'Catalogue' : 'Avant footer';
+  }
+
+  async deleteBanner(id: string, event: Event) {
+    event.stopPropagation();
+    const result = await Swal.fire({
+      title: this.t().deleteConfirm,
+      text: 'Cette action est irréversible.',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#FF5B35',
+      cancelButtonColor: '#9aa1ac',
+      confirmButtonText: 'Supprimer',
+      cancelButtonText: 'Annuler',
+    });
+    if (result.isConfirmed) this.store.deleteBanner(id);
+  }
 
   async deleteProduct(id: string, event: Event) {
     event.stopPropagation();
