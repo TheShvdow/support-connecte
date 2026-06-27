@@ -39,6 +39,15 @@ export interface Database {
         Update: Partial<Database['public']['Tables']['contenus']['Row']>;
         Relationships: [];
       };
+      contacts: {
+        Row: {
+          id: number; nom: string; email: string; tel: string;
+          message: string; created_at: string; lu: boolean;
+        };
+        Insert: Omit<Database['public']['Tables']['contacts']['Row'], 'id' | 'created_at' | 'lu'> & { lu?: boolean };
+        Update: Partial<Database['public']['Tables']['contacts']['Insert']>;
+        Relationships: [];
+      };
       qr_codes: {
         Row: {
           id: string; name: string; destination: string; active: boolean;

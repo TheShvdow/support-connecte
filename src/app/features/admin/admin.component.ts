@@ -207,6 +207,10 @@ export class AdminComponent implements OnDestroy {
         );
   }
 
+  get unreadContactsCount() {
+    return this.store.contacts().filter(c => !c.lu).length;
+  }
+
   get filteredQrCodes() {
     const q = this.store.adminSearch().toLowerCase();
     return !q ? this.store.qrCodes()

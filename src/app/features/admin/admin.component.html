@@ -174,8 +174,8 @@
       <div class="admin-header">
         <div>
           <h2>Messages <span class="count">({{ store.contacts().length }})</span></h2>
-          @if (store.contacts().filter(c => !c.lu).length > 0) {
-            <span class="badge badge-new" style="margin-left:8px">{{ store.contacts().filter(c => !c.lu).length }} non lu(s)</span>
+          @if (unreadContactsCount > 0) {
+            <span class="badge badge-new" style="margin-left:8px">{{ unreadContactsCount }} non lu(s)</span>
           }
         </div>
         <input class="admin-search" placeholder="Rechercher…" [value]="store.adminSearch()" (input)="setSearch($any($event.target).value)">
