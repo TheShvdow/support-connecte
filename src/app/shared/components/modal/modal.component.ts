@@ -41,8 +41,8 @@ type ModalMode = 'product' | 'realisation' | 'contenu' | 'banner' | null;
             </div>
             <div class="field-group"><label class="field-label-sm">Description</label><textarea class="field-input" rows="2" [(ngModel)]="pDesc" placeholder="Courte description…"></textarea></div>
             <div class="field-row">
-              <div class="field-group"><label class="field-label-sm">Couleur</label><input type="color" [(ngModel)]="pColor" class="field-input" style="height:40px;padding:2px 6px"></div>
-              <div class="field-group"><label class="field-label-sm">Icône</label><input class="field-input" [(ngModel)]="pIco" placeholder="📦"></div>
+              <!-- <div class="field-group"><label class="field-label-sm">Couleur</label><input type="color" [(ngModel)]="pColor" class="field-input" style="height:40px;padding:2px 6px"></div> -->
+              <!-- <div class="field-group"><label class="field-label-sm">Icône</label><input class="field-input" [(ngModel)]="pIco" placeholder="📦"></div> -->
             </div>
           </div>
           <div class="modal-footer">
@@ -63,7 +63,7 @@ type ModalMode = 'product' | 'realisation' | 'contenu' | 'banner' | null;
               </div>
               <div class="field-group"><label class="field-label-sm">Année</label><input class="field-input" [(ngModel)]="rYear"></div>
             </div>
-            <div class="field-group"><label class="field-label-sm">Couleur</label><input type="color" [(ngModel)]="rColor" class="field-input" style="height:40px;padding:2px 6px;width:100%"></div>
+            <!-- <div class="field-group"><label class="field-label-sm">Couleur</label><input type="color" [(ngModel)]="rColor" class="field-input" style="height:40px;padding:2px 6px;width:100%"></div> -->
           </div>
           <div class="modal-footer">
             <button class="panel-cancel" (click)="close()">{{ store.t().cancel }}</button>
