@@ -30,7 +30,7 @@ serve(async (req) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Support Connecté <contact@supportconnecte.com>',
+          from: 'Support Connecté <-no-reply@supportconnecte.com>',
           to,
           subject,
           html,
