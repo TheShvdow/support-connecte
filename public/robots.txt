@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://supportconnecte.tech/sitemap.xml
+Sitemap: https://supportconnecte.com/sitemap.xml
