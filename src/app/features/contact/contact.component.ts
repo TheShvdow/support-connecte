@@ -3,7 +3,7 @@ import { RouterLink } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
 import { StoreService } from '../../services/store.service';
 import { SeoService } from '../../services/seo.service';
-import { SupabaseService } from '../../services/supabase.service';
+import { EmailService } from '../../services/email.service';
 import { FooterComponent } from '../../layout/footer/footer.component';
 import { ContactBody } from '../../models/types';
 
@@ -14,8 +14,8 @@ import { ContactBody } from '../../models/types';
   templateUrl: './contact.component.html',
 })
 export class ContactComponent implements AfterViewInit {
-  store = inject(StoreService);
-  private sb = inject(SupabaseService);
+  store         = inject(StoreService);
+  private emailSvc = inject(EmailService);
   private platformId = inject(PLATFORM_ID);
   t = this.store.t;
 
@@ -47,10 +47,10 @@ export class ContactComponent implements AfterViewInit {
     this.sending.set(true);
     this.error.set('');
     try {
-      await this.store.submitContact(this.nom(), this.email(), this.tel(), this.message());
-      this.sb.invokeFunction('notify-contact', {
-        nom: this.nom(), email: this.email(), tel: this.tel(), message: this.message(),
-      }).catch(() => {});
+      await Promise.all([
+        this.store.submitContact(this.nom(), this.email(), this.tel(), this.message()),
+        this.emailSvc.sendContactForm({ nom: this.nom(), email: this.email(), tel: this.tel(), message: this.message() }),
+      ]);
       this.sent.set(true);
     } catch {
       this.sent.set(true);

@@ -2,6 +2,7 @@ import { ApplicationConfig, APP_INITIALIZER, provideZoneChangeDetection, PLATFOR
 import { isPlatformBrowser } from '@angular/common';
 import { provideRouter } from '@angular/router';
 import { provideAnimations } from '@angular/platform-browser/animations';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { routes } from './app.routes';
 import { AuthService } from './services/auth.service';
 import { StoreService } from './services/store.service';
@@ -17,6 +18,7 @@ export const appConfig: ApplicationConfig = {
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
     provideAnimations(),
+    provideHttpClient(withFetch()),
     {
       provide: APP_INITIALIZER,
       useFactory: initApp,
