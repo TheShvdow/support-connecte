@@ -128,11 +128,17 @@ export class QrGeneratorComponent implements AfterViewInit {
       cornersSquareOptions: { type: this.cornerType(), color: this.fgColor() },
       cornersDotOptions:    { color: this.fgColor() },
       backgroundOptions:    { color: this.bgColor() },
-      qrOptions:            { errorCorrectionLevel: 'M' },
+      // Correction d'erreur 'H' avec un logo : permet un logo plus grand sans casser la lecture du QR
+      qrOptions:            { errorCorrectionLevel: this.useLogo() && this.logoUrl() ? 'H' : 'M' },
     };
     if (this.useLogo() && this.logoUrl()) {
       base.image = this.logoUrl();
-      base.imageOptions = { crossOrigin: 'anonymous', margin: 5 };
+      base.imageOptions = {
+        crossOrigin: 'anonymous',
+        imageSize: 0.7,          // logo = 50% du QR (défaut lib : 0.4)
+        margin: 2,               // marge réduite → logo plus grand
+        hideBackgroundDots: true,
+      };
     }
     return base;
   });
